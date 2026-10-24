@@ -1,0 +1,5018 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>七只小牛签约系统</title>
+<style>
+:root{
+ --bg:#f3f6fb;--white:#fff;--line:#e3e9f2;--ink:#213149;--sub:#6d7c92;
+ --blue:#2463eb;--nav:#162940;--green:#168264;--red:#bf4b4b;--orange:#ac7a29
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.65 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;border:1px solid #d7e0ed;background:white;color:var(--ink);border-radius:7px;padding:8px 13px}
+button:hover:not(:disabled){border-color:#9eb9ec;background:#f4f8ff}
+button:disabled{opacity:.45;cursor:not-allowed}
+input,select,textarea{border:1px solid #d8e1ed;border-radius:6px;padding:9px 11px;outline-color:#a5c1ff;background:white;color:var(--ink);max-width:100%}
+textarea{resize:vertical;min-height:90px;line-height:1.8}
+.primary{background:var(--blue);border-color:var(--blue);color:white}
+.primary:hover:not(:disabled){background:#174dc3;color:white}
+.danger{color:var(--red)}
+.small{padding:5px 10px;font-size:12px}
+h1{font-size:23px;margin:0 0 7px}h2{font-size:16px;margin:0 0 17px}h3{font-size:14px;margin:0 0 7px}
+p{margin:7px 0 14px}
+.muted{font-size:12px;color:var(--sub)}
+.actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.between{justify-content:space-between}
+.card{background:white;border:1px solid var(--line);border-radius:12px;padding:22px;margin-bottom:18px;box-shadow:0 5px 22px #233d5e05}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:22px}
+.grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(310px,1fr);gap:20px}
+.equal{grid-template-columns:1fr 1fr}
+.sidebar{position:fixed;inset:0 auto 0 0;width:214px;background:var(--nav);color:#b6c5d9;padding:24px 14px;display:flex;flex-direction:column;z-index:10}
+.logo{font-size:21px;font-weight:750;color:white;padding:0 13px 25px;letter-spacing:1px}
+.logo small{display:block;font-size:10px;letter-spacing:2px;color:#829bbd;margin-top:5px}
+.nav{width:100%;text-align:left;border:0;color:#b6c5d9;background:transparent;padding:11px 13px;margin:2px 0}
+.nav.active,.nav:hover:not(:disabled){background:#294565;color:white}
+.sidefoot{margin-top:auto;font-size:11px;padding:20px 12px 0;color:#839ab8}
+.workspace{margin-left:214px}
+.topbar{height:72px;background:#ffffffef;border-bottom:1px solid var(--line);padding:0 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:9;backdrop-filter:blur(10px)}
+main{padding:27px 28px;max-width:1700px;margin:auto}
+.avatar{width:33px;height:33px;border-radius:50%;background:#edf3ff;color:var(--blue);display:grid;place-items:center;font-weight:700}
+.hero{background:linear-gradient(115deg,#1c3c62,#3b6ba2);color:white;padding:29px 31px;border:0}
+.hero p{color:#d0dff0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:20px}
+.stat{background:white;border:1px solid var(--line);border-radius:10px;padding:21px}
+.stat span{font-size:12px;color:var(--sub)}
+.stat strong{display:block;font-size:31px;margin-top:7px}
+.tag{display:inline-block;padding:3px 8px;border-radius:5px;font-size:11px;background:#eef1f6;color:#68778c;white-space:nowrap}
+.blue{background:#edf4ff;color:#2a63c8}.green{background:#eaf7ef;color:#19845e}
+.purple{background:#f3edff;color:#7d56b1}.orange{background:#fff5e3;color:#a57629}
+.red{background:#fff0ee;color:#bc4e4e}
+.tip{padding:12px 15px;border:1px solid #dce8fd;background:#f0f6ff;color:#52719c;border-radius:8px;font-size:12px;margin-bottom:17px}
+.warn{background:#fff8eb;border-color:#f1e0bd;color:#98753b}
+.filters{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.tablebox{overflow:auto;border:1px solid var(--line);border-radius:10px;background:white}
+table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}
+th{background:#f8fafd;padding:13px 15px;text-align:left;color:#718198;font-weight:500}
+td{padding:14px 15px;border-top:1px solid var(--line)}
+tr:hover td{background:#fbfcff}
+.title{font-size:13px;font-weight:600;min-width:175px;max-width:310px;white-space:normal}
+.empty{text-align:center;padding:45px 15px;color:#8a98ab}
+.pagination{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:15px;color:var(--sub);font-size:12px}
+.field{display:block;font-size:12px;color:#62728a;margin-bottom:14px}
+.field input,.field select,.field textarea{width:100%;display:block;margin-top:6px;font-size:13px}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 13px}
+.full{grid-column:1/-1}
+.kv{display:flex;justify-content:space-between;gap:15px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:12px}
+.kv:last-child{border:0}.kv span{color:var(--sub);flex-shrink:0}
+.kv b{font-weight:500;text-align:right;overflow-wrap:anywhere}
+.flow{display:flex;background:white;border:1px solid var(--line);padding:18px 10px;border-radius:10px;overflow:auto;margin-bottom:20px}
+.step{flex:1;min-width:95px;text-align:center;color:#98a3b4;font-size:11px}
+.step i{display:block;margin:0 auto 6px;width:25px;height:25px;line-height:25px;border-radius:50%;background:#edf1f6;font-style:normal}
+.step.active{color:var(--blue);font-weight:600}.step.active i{background:var(--blue);color:white}
+.step.done{color:var(--green)}.step.done i{background:#e7f5ee}
+.tabs{display:flex;gap:20px;border-bottom:1px solid var(--line);margin-bottom:16px;overflow:auto}
+.tab{border:0;border-radius:0;border-bottom:2px solid transparent;background:transparent;color:#8391a4;padding:9px 0;white-space:nowrap}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.doc{background:white;padding:37px 43px;border:1px solid var(--line);border-radius:4px;min-height:520px}
+.doc h2{text-align:center;font-size:22px;margin:10px 0 25px}
+.docmeta{text-align:right;font-size:11px;color:#8996a9;margin-bottom:16px}
+.docbody{white-space:pre-wrap;overflow-wrap:anywhere;font:14px/2.05 "Songti SC","SimSun",serif}
+.signarea{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:35px;padding-top:22px;border-top:1px solid var(--line);font-size:12px}
+.seal{width:135px;height:135px;display:block;margin:8px 0}
+.record{position:relative;border-left:2px solid #e2e8f1;padding:0 0 23px 20px;margin-left:5px}
+.record:before{content:"";position:absolute;width:8px;height:8px;left:-5px;top:5px;background:#819fc8;border-radius:50%}
+.record:last-child{padding-bottom:0}.record p{font-size:12px;color:#65758b;white-space:pre-wrap;overflow-wrap:anywhere}
+.modal{position:fixed;inset:0;background:#17283d88;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
+.modalbox{background:white;border-radius:13px;width:650px;max-width:97vw;max-height:94vh;overflow:auto;padding:24px;box-shadow:0 20px 80px #0002}
+.large{width:1060px}.modalhead{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:20px}
+.modalhead h2{margin:0}.modalfoot{display:flex;justify-content:flex-end;gap:9px;margin-top:20px;flex-wrap:wrap}
+.editor{width:1490px;padding:0;display:flex;flex-direction:column;height:94vh;overflow:hidden}
+.editor>.modalhead{padding:18px 24px;margin:0;border-bottom:1px solid var(--line)}
+.uploadtop{background:#eef5ff;border:1px dashed #8bb0ed;border-radius:10px;margin:15px 20px 0;padding:17px 20px;flex-shrink:0}
+.uploadtop.drag{background:#deecff}.uploadtop input{max-width:360px}
+.uploadtop h3{font-size:16px;margin-bottom:5px}
+.editlayout{display:grid;grid-template-columns:minmax(0,1fr) 440px;min-height:0;flex:1;margin-top:15px}
+.editpreview{overflow:auto;background:#eaf0f7;padding:20px;min-width:0}
+.editpreview .doc{max-width:850px;margin:auto;min-height:800px;box-shadow:0 5px 20px #263f5e0b}
+.editfields{overflow:auto;padding:0 22px;min-width:0}
+.editfields .modalfoot{position:sticky;bottom:0;background:white;padding:15px 0;border-top:1px solid var(--line);z-index:2}
+.recognize{padding:13px;border:1px solid #dae7fc;background:#f5f9ff;border-radius:8px;margin-bottom:16px}
+.recrow{display:grid;grid-template-columns:80px minmax(0,1fr) 45px;gap:7px;font-size:11px;padding:6px 0;align-items:start}
+.recrow strong{font-weight:500;overflow-wrap:anywhere}.recrow button{padding:1px 4px;font-size:10px}
+.diffold,.diffnew{white-space:pre-wrap;overflow-wrap:anywhere;padding:10px;border-radius:6px;margin:5px 0;font-size:12px}
+.diffold{background:#fff0ee;color:#ab4e49}.diffnew{background:#eaf7ef;color:#247b51}
+.pdf{width:100%;height:73vh;min-height:450px;border:0}
+.scanimg{display:block;max-width:100%;margin:0 auto}
+.toast{position:fixed;top:82px;left:50%;transform:translateX(-50%);background:#263b55;color:white;border-radius:8px;padding:12px 20px;z-index:500;max-width:90vw;box-shadow:0 8px 30px #0002}
+.login{min-height:100vh;display:grid;place-items:center;padding:25px;background:radial-gradient(ellipse at 80% 0,#dce8ff,transparent 60%),#f3f6fb}
+.logincard{width:430px;max-width:100%;padding:34px;border:1px solid var(--line);border-radius:18px;background:white;box-shadow:0 20px 60px #28476e12}
+.loginmark{width:55px;height:55px;background:var(--blue);color:white;display:grid;place-items:center;font-size:26px;border-radius:13px;margin-bottom:20px}
+.signheader{background:white;border-bottom:1px solid var(--line);padding:18px 30px;display:flex;justify-content:space-between;align-items:center;gap:15px}
+.signpage{max-width:1000px;margin:24px auto;padding:0 20px}
+.signfooter{position:sticky;bottom:0;background:#ffffffef;border-top:1px solid var(--line);padding:17px 25px;backdrop-filter:blur(10px)}
+.signbrand{font-size:21px;font-weight:750;color:#2451a1}
+@media(max-width:1100px){
+ .sidebar{width:185px}.workspace{margin-left:185px}
+ .grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}
+ .editlayout{grid-template-columns:minmax(0,1fr) 365px}
+ .editfields .formgrid{grid-template-columns:1fr}
+ main{padding:20px}
+}
+@media(max-width:740px){
+ .sidebar{position:static;width:auto;padding:10px;display:block}
+ .sidebar nav{display:flex;overflow:auto}.nav{width:auto;white-space:nowrap}
+ .logo{padding:5px 10px}.logo small,.sidefoot{display:none}
+ .workspace{margin:0}.topbar{position:static;height:auto;padding:14px;flex-wrap:wrap}
+ .equal,.formgrid{grid-template-columns:1fr}
+ .head{flex-wrap:wrap}.editlayout{display:block;overflow:auto}
+ .editpreview,.editfields{overflow:visible}.editpreview .doc{min-height:400px}
+ .doc{padding:25px}.stats{gap:10px}.stat{padding:15px}
+ .uploadtop{margin:10px;padding:12px}.uploadtop input{width:100%}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="modalRoot"></div>
+
+<script>
+"use strict";
+
+/* ---------- 基本配置 ---------- */
+const STORE="qzn-contract-workspace-v7";
+const FILEDB="qzn-contract-files-v7";
+const LIMIT=10;
+const FINANCE="finance";
+const SYSTEM={id:"system",name:"系统",title:"自动流程",role:"system"};
+const USERS=[
+ {id:"biz1",name:"张三",role:"biz",title:"业务经理",dept:"采购部"},
+ {id:"biz2",name:"王五",role:"biz",title:"业务经理",dept:"商务部"},
+ {id:"chief",name:"陈主管",role:"chief",title:"法务主管",dept:"法务部"},
+ {id:"legal1",name:"李四",role:"legal",title:"法务专员",dept:"法务部"},
+ {id:"legal2",name:"赵六",role:"legal",title:"法务专员",dept:"法务部"},
+ {id:FINANCE,name:"孙会计",role:"finance",title:"财务审批人",dept:"财务部"}
+];
+// 仅为本地流程账号，不是服务端安全认证。
+const PASSWORD="123456";
+const PARTIES=[
+ {name:"七只小牛",address:"7",contact:"陈经理",phone:"021-68888888"},
+ {name:"八只小牛",address:"8",contact:"李经理",phone:"021-68888889"},
+ {name:"九只小牛",address:"9",contact:"王经理",phone:"021-68888890"},
+ {name:"十只小牛",address:"10",contact:"赵经理",phone:"021-68888891"}
+];
+const TYPES=["报价单","采购协议","单方函件"];
+const S={
+ draft:["草稿",""],assign:["待主管分派","purple"],
+ legal:["法务审批中","purple"],finance:["财务审批中","orange"],
+ returned:["退回待修改","red"],ready:["待甲方签章","orange"],
+ signed_a:["甲方已签 · 待发送","blue"],pending_b:["对方未完成","orange"],
+ expired:["链接已失效",""],completed:["双方签署完成","green"],
+ unilateral_done:["单方签署完成","green"],terminated:["已终止",""]
+};
+const ENTITY_FIELDS=[
+ ["Name","主体名称"],["Credit","统一社会信用代码"],["Address","地址"],
+ ["Legal","法定代表人"],["Contact","联系人"],["Phone","联系电话"],
+ ["Email","电子邮箱"],["Bank","开户行"],["Account","银行账号"],
+ ["AccountName","账户名称"],["Invoice","开票信息"]
+];
+const LABELS={
+ amount:"合同金额",service:"采购内容",taxRate:"含税说明",
+ deliveryDays:"交付期限",deliveryMethod:"交付方式",
+ settleMethod:"结算方式",projectName:"项目名称"
+};
+for(const [key,label] of ENTITY_FIELDS){
+ LABELS["a"+key]="甲方"+label;LABELS["b"+key]="乙方"+label;
+}
+const COMMON_FIELDS=[
+ {key:"service",label:"采购内容 / 产品服务",type:"textarea",required:true},
+ {key:"amount",label:"合同总金额（元）",type:"number",required:true},
+ {key:"taxRate",label:"含税说明",type:"text",required:true},
+ {key:"deliveryDays",label:"交付期限（自然日）",type:"number",required:true},
+ {key:"deliveryMethod",label:"交付方式",type:"text",required:true},
+ {key:"settleMethod",label:"结算方式",type:"select",options:["预付","后付"],required:true}
+];
+const PURCHASE=`通用采购协议
+
+甲方：{{aName}}
+地址：{{aAddress}}
+联系人：{{aContact}}
+联系电话：{{aPhone}}
+
+乙方：{{bName}}
+地址：{{bAddress}}
+联系人：{{bContact}}
+联系电话：{{bPhone}}
+
+鉴于，甲方有意向乙方购买产品/服务，乙方愿意向甲方提供满足甲方需求的产品/服务。现根据《中华人民共和国民法典》，经双方友好协商，就甲方采购乙方{{service}}产品/服务事宜签订本协议，以资共同遵守。
+
+一、采购内容
+{{service}}
+
+二、交付与验收
+1、本合同签订后{{deliveryDays}}个自然日内，乙方以{{deliveryMethod}}方式向甲方交付本合同约定产品/服务，如涉及包装、运输、安装等，相关费用由乙方承担。
+2、甲方应于收货后三个工作日内进行验收，如有异议，应及时向乙方提出由乙方自费进行退换货等调整。
+3、如乙方未按照本合同约定进行交付，每逾期一日，应按照合同总额万分之五的标准向甲方支付违约金。
+
+三、结算
+1、本合同总金额为人民币{{amount}}元（含税：{{taxRate}}）。
+2、结算方式：{{settleMethod}}。
+3、甲方开票信息：{{aInvoice}}
+4、乙方收款信息：
+账户名称：{{bAccountName}}
+开户行：{{bBank}}
+银行账号：{{bAccount}}
+
+四、双方权利与义务
+1、乙方保证所提供的产品/服务符合国家、行业相关标准以及本附件规定的质量标准。
+
+五、知识产权与保密
+1、乙方保证对其提供的产品/服务具有合法有效知识产权或已获得相关权利人的授权。
+
+六、违约责任
+1、甲方未按本合同约定付款的，每逾期一日，按照合同总金额的千分之一向乙方支付违约金。
+
+七、不可抗力
+1、因不可抗力导致一方不能履行或延迟履行本协议，受影响的一方不承担违约责任。
+
+八、争议管辖
+1、因本合同引起的争议，双方应友好协商解决。协商不成的，任一方均有权将其提交至甲方住所地人民法院诉讼。
+
+九、其他
+1、本合同经双方加盖公章或合同章后生效。
+
+（以下无正文，为签字页）`;
+
+const NDA=`保密承诺函
+
+致：{{bName}}（下称“贵方”或“披露方”）
+
+本司，{{aName}}（下称“本司”或“接收方”），鉴于本司与贵方拟开展的{{projectName}}项目（下称“项目”）中，贵方作为信息披露方将向本司披露若干保密信息。本司作为保密信息接收方，特此就项目保密事宜，向贵方郑重承诺如下：
+
+第一条 保密信息
+1.1 本函件所称保密信息，是指贵方向本司提供的或因项目由本司知悉的与贵方商业秘密有关的所有信息，包括但不限于商业计划、战略及融资计划、交易方案、财务信息、产品信息等。
+1.2 保密信息不论纸质、电子、声像或其他形式。
+
+第二条 保密义务
+2.1 本司对与项目有关的及在开展项目过程中知悉的保密信息负有保密义务，无论项目是否成立均不得泄露。
+
+第三条 保密信息专有权
+3.1 本司理解并同意，保密信息及与之相关的权利均为贵方的专有财产。
+
+第四条 违约责任
+4.1 本司违反本函件约定将给贵方造成重大和不能挽回的损害，本司应赔偿因此给贵方造成的全部损失。
+
+第五条 生效及其他
+5.1 本承诺函自本司加盖公章之日起生效。
+
+特此承诺。
+承诺方：{{aName}}（公章）`;
+
+/* ---------- 工具 ---------- */
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[c]));
+const clone=x=>JSON.parse(JSON.stringify(x));
+const now=()=>new Date().toISOString();
+const uid=p=>p+(crypto.randomUUID?crypto.randomUUID():
+ Date.now().toString(36)+Math.random().toString(36).slice(2));
+const user=id=>USERS.find(u=>u.id===id);
+const userName=id=>user(id)?.name||"—";
+const fmt=v=>v?new Date(v).toLocaleString("zh-CN",{hour12:false}):"—";
+const money=v=>v===""||v==null?"—":Number(v).toLocaleString("zh-CN",{style:"currency",currency:"CNY"});
+function need(ok,message="当前账号无权执行此操作。"){if(!ok)throw Error(message)}
+function B(action,text,id="",cls=""){
+ return `<button type="button" data-action="${action}" data-id="${esc(id)}" class="${cls}">${text}</button>`;
+}
+function KV(k,v){return `<div class="kv"><span>${esc(k)}</span><b>${esc(v??"—")}</b></div>`}
+function H(title,sub,buttons=""){return `<div class="head"><div><h1>${title}</h1><div class="muted">${sub}</div></div><div class="actions">${buttons}</div></div>`}
+function MH(title){return `<div class="modalhead"><h2>${title}</h2>${B("close","关闭","","small")}</div>`}
+let toastTimer;
+function toast(message){
+ document.querySelector(".toast")?.remove();
+ const div=document.createElement("div");div.className="toast";div.textContent=message;
+ document.body.append(div);clearTimeout(toastTimer);
+ toastTimer=setTimeout(()=>div.remove(),4200);
+}
+function fresh(){
+ return {schema:7,revision:0,seq:100000,contracts:[],messages:[],logs:[],templates:[
+  {id:"t1",code:"TPL-001",name:"通用采购协议",type:"采购协议",signType:"bilateral",
+   body:PURCHASE,fields:clone(COMMON_FIELDS),version:1,enabled:true,history:[]},
+  {id:"t2",code:"TPL-002",name:"保密承诺函",type:"单方函件",signType:"unilateral",
+   body:NDA,fields:[{key:"projectName",label:"项目名称",type:"text",required:true}],
+   version:1,enabled:true,history:[]}
+ ]};
+}
+let db,account="",view="home",cid="",tab="document",page=1;
+let filters={q:"",status:"",mode:"",days:""};
+let editor=null,urls=[],filePromise,sealCounter=0;
+let verifiedToken="",sentCodeToken="";
+const route=new URLSearchParams(location.hash.replace(/^#/,""));
+const signingPage=route.get("page")==="sign";
+const me=()=>user(account);
+const get=id=>db.contracts.find(c=>c.id===id);
+try{
+ db=JSON.parse(localStorage.getItem(STORE)||"null")||fresh();
+ need(db.schema===7&&Array.isArray(db.contracts),"存储格式不兼容。");
+ if(!localStorage.getItem(STORE))localStorage.setItem(STORE,JSON.stringify(db));
+}catch(e){
+ db=fresh();setTimeout(()=>toast("本地存储加载失败，请检查浏览器存储权限。"),300);
+}
+function sync(){
+ const value=localStorage.getItem(STORE);if(value)db=JSON.parse(value);
+}
+function closeModal(){
+ urls.forEach(u=>URL.revokeObjectURL(u));urls=[];
+ if(editor?.url)URL.revokeObjectURL(editor.url);
+ editor=null;$("modalRoot").innerHTML="";
+}
+function modal(html,cls=""){
+ closeModal();$("modalRoot").innerHTML=`<div class="modal"><div class="modalbox ${cls}">${html}</div></div>`;
+}
+function tx(fn,close=true){
+ const before=clone(db);
+ try{
+  const latest=JSON.parse(localStorage.getItem(STORE)||"null");
+  if(latest&&latest.revision!==db.revision){
+   db=latest;closeModal();render();toast("其他页面更新了数据，请重新执行本次操作。");return false;
+  }
+  fn();db.revision++;localStorage.setItem(STORE,JSON.stringify(db));
+  if(close)closeModal();render();return true;
+ }catch(e){db=before;toast(e.message||"保存失败。");return false}
+}
+function log(action,detail="",c=null,actor=me()||SYSTEM){
+ db.logs.push({id:uid("log-"),at:now(),actorId:actor.id,name:actor.name,
+  role:actor.title,action,detail,cid:c?.id||"",version:c?.version||null});
+ if(c)c.updatedAt=now();
+}
+function message(to,title,c){
+ db.messages.unshift({id:uid("msg-"),to,title,cid:c.id,at:now(),read:false});
+}
+function versions(c,note){
+ c.versions.push({version:c.version,at:now(),by:me().name,note,
+  body:c.body,data:clone(c.data),file:c.file?clone(c.file):null});
+}
+function eff(c){
+ return c.status==="pending_b"&&c.bInvite?.expiresAt<Date.now()?"expired":c.status;
+}
+function badge(c){
+ const [text,color]=S[eff(c)]||["未知",""];
+ return `<span class="tag ${color}">${text}</span>`;
+}
+function modeTag(c){return `<span class="tag ${c.mode==="standard"?"blue":"purple"}">${c.mode==="standard"?"标准协议":c.mode==="imported"?"纸质扫描件":"非标准协议"}</span>`}
+function archived(c){
+ return c.status==="completed"&&c.signType==="bilateral"&&!!c.signatures?.a&&!!c.signatures?.b&&!!c.archivedAt;
+}
+function hasSummary(){return ["chief","legal","finance"].includes(me()?.role)}
+function visible(c){
+ const u=me();if(!u)return false;
+ if(u.role==="biz")return c.owner===u.id;
+ if(archived(c))return hasSummary();
+ if(c.mode==="standard"||c.mode==="imported"||!c.submittedAt)return false;
+ if(u.role==="chief")return true;
+ if(u.role==="legal")return c.assignee===u.id||(c.participants||[]).includes(u.id);
+ return u.role==="finance"&&c.financeEntered;
+}
+function canEdit(c){return me()?.role==="biz"&&c.owner===account&&["draft","returned"].includes(c.status)}
+function canApprove(c){
+ return c.mode==="nonstandard"&&(
+  me()?.role==="legal"&&c.assignee===account&&c.status==="legal"||
+  me()?.role==="finance"&&c.status==="finance");
+}
+function canSign(c){return me()?.role==="biz"&&c.owner===account&&["ready","signed_a","pending_b"].includes(c.status)}
+function myTask(c){
+ if(me()?.role==="chief")return c.mode==="nonstandard"&&c.status==="assign";
+ if(me()?.role==="biz")return c.owner===account&&["draft","returned","ready","signed_a","pending_b"].includes(c.status);
+ return canApprove(c);
+}
+function handler(c){
+ return c.status==="assign"?"法务主管":c.status==="legal"?userName(c.assignee):
+ c.status==="finance"?userName(FINANCE):c.status==="pending_b"?"乙方签署人":
+ ["draft","returned","ready","signed_a"].includes(c.status)?userName(c.owner):"—";
+}
+function ownLogs(c=null){
+ // 精确按照要求：主管全部，其余只看本人，不混入系统或其他人日志。
+ return db.logs.filter(r=>(!c||r.cid===c.id)&&(me()?.role==="chief"||r.actorId===account));
+}
+
+/* ---------- 原件存储 ---------- */
+function openDB(){
+ if(filePromise)return filePromise;
+ filePromise=new Promise((resolve,reject)=>{
+  need(window.indexedDB,"浏览器不支持附件存储。");
+  const req=indexedDB.open(FILEDB,1);
+  req.onupgradeneeded=()=>req.result.createObjectStore("files",{keyPath:"id"});
+  req.onsuccess=()=>resolve(req.result);
+  req.onerror=()=>{filePromise=null;reject(Error("无法打开附件存储。"))};
+ });
+ return filePromise;
+}
+async function saveFile(blob,name){
+ const database=await openDB(),meta={id:uid("file-"),name:name||blob.name,type:blob.type,size:blob.size};
+ await new Promise((resolve,reject)=>{
+  const t=database.transaction("files","readwrite");
+  t.objectStore("files").put({...meta,blob});
+  t.oncomplete=resolve;t.onerror=()=>reject(Error("附件保存失败。"));
+  t.onabort=()=>reject(Error("附件保存已中止。"));
+ });
+ return meta;
+}
+async function readFile(id){
+ const database=await openDB();
+ return new Promise((resolve,reject)=>{
+  const r=database.transaction("files").objectStore("files").get(id);
+  r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(Error("附件读取失败。"));
+ });
+}
+function download(name,content,type="application/octet-stream"){
+ const blob=content instanceof Blob?content:new Blob([content],{type});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download=name;document.body.append(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),30000);
+}
+async function attachment(c,preview=false){
+ need(visible(c));const actor=account;
+ const stored=await readFile(c.file?.id);
+ need(account===actor&&visible(c),"账号已变化。");need(stored?.blob,"本浏览器未找到对应原件。");
+ if(!tx(()=>log(preview?"预览附件":"下载附件",stored.name,c)))return;
+ if(!preview){download(stored.name,stored.blob);return}
+ if(!/\.(pdf|png|jpe?g)$/i.test(stored.name)){download(stored.name,stored.blob);return}
+ const url=URL.createObjectURL(stored.blob);
+ modal(`${MH(esc(stored.name))}${/\.pdf$/i.test(stored.name)?
+ `<iframe class="pdf" src="${url}"></iframe>`:`<img class="scanimg" src="${url}" alt="合同扫描件">`}`,"large");
+ urls.push(url);
+}
+
+/* ---------- 布局 ---------- */
+function render(){
+ if(signingPage){renderSign();return}
+ if(!me()){login();return}
+ const u=me(),unread=db.messages.filter(m=>m.to===account&&!m.read).length;
+ const nav=[["home","工作台"],
+ ...(u.role==="biz"?[["create","提起签约"],["pending","待签署"],["signed","已签署"]]:
+ [["tasks",u.role==="chief"?"法务分派":"我的审批"],["handled","已处理"]]),
+ ...(hasSummary()?[["summary","合同汇总表"]]:[]),
+ ...(u.role==="chief"?[["templates","合同模板"]]:[]),
+ ["messages","消息通知"],["logs","操作日志"]];
+ $("app").innerHTML=`<aside class="sidebar"><div class="logo">七只小牛<small>CONTRACT WORKSPACE</small></div>
+ <nav>${nav.map(([key,text])=>`<button class="nav ${view===key?"active":""}" data-action="go" data-id="${key}">${text}</button>`).join("")}</nav>
+ <div class="sidefoot">账号分工 · 双重审批<br>签署协同 · 自动归档</div></aside>
+ <section class="workspace"><header class="topbar"><div><b>七只小牛签约系统</b><div class="muted">合同全流程协同工作空间</div></div>
+ <div class="actions">${B("go","消息"+(unread?" · "+unread:""),"messages","small")}
+ <span class="avatar">${esc(u.name.slice(-1))}</span><div><b style="font-size:12px">${u.name}</b><div class="muted">${u.title} · ${u.dept}</div></div>
+ ${B("logout","退出","","small")}</div></header><main id="main"></main></section>`;
+ const pages={home,create:createPage,tasks:listPage,handled:listPage,pending:listPage,signed:listPage,
+ summary:listPage,detail:detailPage,templates:templatesPage,messages:messagesPage,logs:logsPage};
+ $("main").innerHTML=(pages[view]||home)();
+}
+function login(){
+ $("app").innerHTML=`<div class="login"><div class="logincard"><div class="loginmark">七</div>
+ <h1>七只小牛签约系统</h1><p class="muted">选择账号进入对应工作空间</p>
+ <form id="loginForm"><label class="field">账号<select name="account">${USERS.map(u=>`
+ <option value="${u.id}">${u.id} · ${u.name} / ${u.title}</option>`).join("")}</select></label>
+ <label class="field">密码<input name="password" type="password" required autocomplete="current-password"></label>
+ <button class="primary" style="width:100%">登录工作台</button></form>
+ <p class="muted" style="margin-top:17px">初始密码：123456</p></div></div>`;
+}
+function stat(label,value){return `<div class="stat"><span>${label}</span><strong>${value}</strong></div>`}
+function home(){
+ const rows=db.contracts.filter(visible),tasks=rows.filter(myTask);
+ return `<div class="card hero"><div class="actions between"><span>合同协同工作台</span><span>${new Date().toLocaleDateString("zh-CN")}</span></div>
+ <h1 style="margin-top:19px">${me().name}，欢迎回来</h1><p>${{
+ biz:"发起合同、跟踪审批、完成签署。",
+ chief:"分派法务任务，监督处理进度，查看全部操作记录。",
+ legal:"审阅分派给自己的合同，按版本保留审批意见。",
+ finance:"处理法务已通过的合同，核对付款及收款信息。"
+ }[me().role]}</p></div>
+ <div class="stats">${stat("当前待办",tasks.length)}
+ ${stat("审批进行中",rows.filter(c=>["assign","legal","finance"].includes(c.status)).length)}
+ ${stat("签署办理中",rows.filter(c=>["ready","signed_a","pending_b"].includes(c.status)).length)}
+ ${stat(hasSummary()?"汇总表已归档":"本人已签署",rows.filter(c=>hasSummary()?archived(c):["completed","unilateral_done"].includes(c.status)).length)}</div>
+ <div class="grid"><section class="card"><h2>当前待办</h2>${table(tasks.slice(0,6))}</section><section>
+ <div class="card"><h2>办理路径</h2><div class="tip"><b>标准协议</b><br>填写 → 甲方签署 → 发送链接 → 乙方签署 → 自动归档</div>
+ <div class="tip warn" style="margin:0"><b>非标协议</b><br>上传识别 → 主管分派 → 法务审批 → 固定财务审批 → 原签署流程</div></div>
+ ${me().role==="chief"?workload():`<div class="card"><h2>账号分工</h2>${KV("账号",account)}${KV("岗位",me().title)}${KV("日志范围","本人操作")}</div>`}
+ </section></div>`;
+}
+function workload(){
+ return `<div class="card"><h2>法务待办负荷</h2>${USERS.filter(u=>u.role==="legal").map(u=>
+ KV(u.name,db.contracts.filter(c=>c.assignee===u.id&&c.status==="legal").length+" 项")).join("")}</div>`;
+}
+function table(rows,summary=false){
+ if(!rows.length)return `<div class="empty">暂无符合条件的合同</div>`;
+ return `<div class="tablebox"><table><thead><tr><th>合同信息</th><th>甲方 / 乙方</th><th>金额</th>
+ <th>${summary?"归档时间":"状态"}</th><th>${summary?"来源":"当前处理人"}</th><th>操作</th></tr></thead><tbody>
+ ${rows.map(c=>`<tr><td><div class="title">${esc(c.title)}</div><div class="muted">${esc(c.no)} · V${c.version}</div>${modeTag(c)}</td>
+ <td>${esc(c.data.aName)}<div class="muted">${esc(c.data.bName)}</div></td><td>${money(c.data.amount)}</td>
+ <td>${summary?fmt(c.archivedAt):badge(c)}</td><td>${summary?(c.mode==="imported"?"纸质扫描件":"在线模拟签署"):esc(handler(c))}</td>
+ <td><div class="actions">${summary?B("archive-preview","预览",c.id,"small")+B("archive-download","下载",c.id,"small"):B("detail","查看 / 办理",c.id,"small")}</div></td></tr>`).join("")}
+ </tbody></table></div>`;
+}
+function selectedRows(){
+ if(view==="summary")need(hasSummary());
+ return db.contracts.filter(c=>{
+  if(view==="summary"){if(!archived(c))return false}
+  else{
+   if(!visible(c)||c.mode==="imported")return false;
+   if(view==="tasks"&&!myTask(c))return false;
+   if(view==="pending"&&["completed","unilateral_done","terminated"].includes(c.status))return false;
+   if(view==="signed"&&!["completed","unilateral_done"].includes(c.status))return false;
+   if(view==="handled"){
+    if(me().role==="chief"){if(c.mode!=="nonstandard"||!c.assignee)return false}
+    else if(!c.approvals.some(a=>a.byId===account))return false;
+   }
+  }
+  if(filters.status&&eff(c)!==filters.status)return false;
+  if(filters.mode&&c.mode!==filters.mode)return false;
+  if(filters.days&&(Date.now()-Date.parse(view==="summary"?c.archivedAt:c.createdAt))/86400000>Number(filters.days))return false;
+  return !filters.q||[c.no,c.title,c.data.aName,c.data.bName].join(" ").toLowerCase().includes(filters.q.toLowerCase());
+ }).sort((a,b)=>(b.archivedAt||b.updatedAt).localeCompare(a.archivedAt||a.updatedAt));
+}
+function listPage(){
+ const summary=view==="summary",rows=selectedRows();
+ const pages=Math.max(1,Math.ceil(rows.length/LIMIT));page=Math.min(page,pages);
+ const titles={tasks:me().role==="chief"?"法务分派":"我的审批",handled:"已处理",pending:"待签署",signed:"已签署",summary:"合同汇总表"};
+ return H(titles[view],summary?"法务、财务可查看全部双方签署完成的合同；单条记录仅提供预览和下载。":"按当前账号职责展示合同。",
+ summary?B("export-summary","导出当前筛选")+B("import","导入","","primary"):"")+
+ (view==="tasks"&&me().role==="chief"?workload():"")+`
+ <div class="filters"><input id="filterQ" value="${esc(filters.q)}" placeholder="合同名称、编号、甲乙方" style="width:260px">
+ <select id="filterMode"><option value="">全部类型</option>${[["standard","标准协议"],["nonstandard","非标协议"],["imported","纸质扫描件"]].map(([k,v])=>
+ `<option value="${k}" ${filters.mode===k?"selected":""}>${v}</option>`).join("")}</select>
+ ${summary?"":`<select id="filterStatus"><option value="">全部状态</option>${Object.entries(S).map(([k,v])=>`
+ <option value="${k}" ${filters.status===k?"selected":""}>${v[0]}</option>`).join("")}</select>`}
+ <select id="filterDays"><option value="">全部时间</option>${[7,30,90].map(n=>`<option value="${n}" ${filters.days===String(n)?"selected":""}>近 ${n} 天</option>`).join("")}</select>
+ ${B("filter","查询")}${B("clear-filter","重置")}</div>
+ ${table(rows.slice((page-1)*LIMIT,page*LIMIT),summary)}
+ <div class="pagination"><span>共 ${rows.length} 条 · ${page} / ${pages} 页</span>
+ <button data-action="page" data-id="-1" ${page===1?"disabled":""}>上一页</button>
+ <button data-action="page" data-id="1" ${page===pages?"disabled":""}>下一页</button></div>`;
+}
+function createPage(){
+ need(me().role==="biz");
+ return H("提起签约","保留标准模板填写和非标上传两种申请方式。")+`
+ <div class="grid equal"><div class="card"><span class="tag blue">标准协议</span><h2 style="margin-top:15px">选用模板</h2>
+ ${db.templates.filter(t=>t.enabled).map(t=>`<div class="kv"><div><b>${esc(t.name)}</b><div class="muted">${t.code} · V${t.version}</div></div>
+ ${B("new-standard","选用",t.id,"small primary")}</div>`).join("")}</div>
+ <div class="card"><span class="tag purple">非标准协议</span><h2 style="margin-top:15px">上传合同并识别信息</h2>
+ <p class="muted">上传入口置顶；识别甲乙方主体、联系人、电话、地址、税号及收款信息。</p>
+ ${B("new-nonstandard","上传非标协议","","primary")}</div></div>`;
+}
+
+/* ---------- 编辑 ---------- */
+function input(label,key,value="",type="text",attrs=""){
+ return `<label class="field">${esc(label)}<input name="${key}" type="${type}" value="${esc(value)}" ${attrs}></label>`;
+}
+function businessFields(fields,data,required){
+ return fields.map(f=>{
+  const req=required&&f.required?"required":"",label=f.label+(req?" *":"");
+  if(f.type==="textarea")return `<label class="field full">${esc(label)}<textarea name="${f.key}" ${req} maxlength="4000">${esc(data[f.key]||"")}</textarea></label>`;
+  if(f.type==="select")return `<label class="field">${esc(label)}<select name="${f.key}" ${req}><option value="">请选择</option>${(f.options||[]).map(v=>
+   `<option ${data[f.key]===v?"selected":""}>${esc(v)}</option>`).join("")}</select></label>`;
+  return input(label,f.key,data[f.key]||"",f.type==="number"?"number":"text",
+   `${req} ${f.type==="number"?'min="0" max="999999999999" step="0.01"':'maxlength="2000"'}`);
+ }).join("");
+}
+function entityFields(prefix,data){
+ return ENTITY_FIELDS.map(([key,label])=>{
+  const required=["Name","Contact","Phone"].includes(key);
+  return input(label+(required?" *":""),prefix+key,data[prefix+key]||"",
+   key==="Email"?"email":"text",`${required?"required":""} maxlength="${key==="Invoice"?1000:300}"`);
+ }).join("");
+}
+function fill(body,data,preview=false){
+ return String(body).replace(/\{\{(\w+)\}\}/g,(_,k)=>String(data[k]??"").trim()||(preview?`［${LABELS[k]||k}］`:""));
+}
+function seal(name,ghost=false){
+ const path="seal-"+(++sealCounter);
+ return `<svg class="seal" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" style="opacity:${ghost?.45:1}">
+ <circle cx="80" cy="80" r="65" fill="none" stroke="#bf4148" stroke-width="3"/>
+ <defs><path id="${path}" d="M29 85 A51 51 0 1 1 131 85"/></defs>
+ <text font-size="${String(name).length>15?9:12}" fill="#bf4148"><textPath href="#${path}" startOffset="50%" text-anchor="middle">${esc(name)}</textPath></text>
+ <text x="80" y="87" fill="#bf4148" text-anchor="middle" font-size="32">★</text>
+ <text x="80" y="111" fill="#bf4148" text-anchor="middle" font-size="11">合同专用章</text>
+ <text x="80" y="129" fill="#bf4148" text-anchor="middle" font-size="8">${ghost?"印章位置预览":"模拟签署 · 非真实电子印章"}</text></svg>`;
+}
+function docHTML(c,preview=false){
+ const sig=c.signatures||{},single=c.signType==="unilateral";
+ return `<article class="doc"><div class="docmeta">${esc(c.no||"保存后自动编号")} · V${c.version||1}</div>
+ <h2>${esc(c.title||"合同")}</h2><div class="docbody">${esc(c.body||"上传合同后在此预览正文。")}</div>
+ <div class="signarea" style="${single?"grid-template-columns:1fr":""}">
+ <div><b>甲方：${esc(c.data.aName||"待填写")}</b>${sig.a?seal(c.data.aName):preview?seal(c.data.aName||"甲方",true):'<p class="muted">待签署</p>'}
+ <div class="muted">${sig.a?fmt(sig.a.at):""}</div></div>
+ ${single?"":`<div><b>乙方：${esc(c.data.bName||"待填写")}</b>${sig.b?seal(c.data.bName):'<p class="muted">待签署</p>'}
+ <div class="muted">${sig.b?fmt(sig.b.at):""}</div></div>`}</div></article>`;
+}
+function openEditor(id="",tplId=""){
+ need(me().role==="biz");
+ const c=id?get(id):null;if(id)need(c&&canEdit(c));
+ const t=db.templates.find(x=>x.id===(c?.tplId||tplId));
+ if(!c&&tplId)need(t?.enabled);
+ const mode=c?.mode||(tplId?"standard":"nonstandard"),p=PARTIES[0];
+ const data=clone(c?.data||{aName:p.name,aAddress:p.address,aContact:p.contact,aPhone:p.phone});
+ const fields=clone(c?.fields||t?.fields||COMMON_FIELDS);
+ const state={id,baseVersion:c?.version||0,actor:account,mode,fields,
+  template:c?.template||t?.body||"",tplId:c?.tplId||t?.id||"",
+  tplCode:c?.tplCode||t?.code||"非标",tplVersion:c?.tplVersion||t?.version||null,
+  type:c?.type||t?.type||"采购协议",signType:c?.signType||t?.signType||"bilateral",
+  file:c?.file?clone(c.file):null,url:"",recognized:{},busy:false,parseNote:""};
+ modal(`${MH(c?"修改合同 · 保存新版本":"提起签约")}
+ <div id="uploadTop" class="uploadtop">
+ <div class="actions between"><div><h3>上传合同</h3><div class="muted">点击选择或将文件拖入此处，上传后识别甲乙双方信息。</div></div>
+ <input type="file" id="contractUpload" accept=".pdf,.docx,.txt,.md"></div>
+ <div class="muted" id="uploadState" style="margin-top:8px">${state.file?esc(state.file.name):"支持 PDF、DOCX、TXT、MD，最大 15 MB。"}</div></div>
+ <form id="editForm" class="editlayout">
+ <section class="editpreview"><div class="actions between" style="margin-bottom:14px"><span class="muted">合同实时预览</span>
+ ${B("editor-original","查看上传原件","","small")}</div><div id="liveDoc"></div></section>
+ <section class="editfields"><div class="tip" id="editTip"></div><div id="recognizeBox" class="recognize" hidden></div>
+ ${input("合同名称 *","title",c?.title||t?.name||"非标合同","text",'required maxlength="120"')}
+ <div class="formgrid"><label class="field">合同类型<select name="type" id="editType">${TYPES.map(x=>`<option ${x===state.type?"selected":""}>${x}</option>`).join("")}</select></label>
+ <label class="field">签署方式<select name="signType" id="editSignType"><option value="bilateral">双方协议</option><option value="unilateral" ${state.signType==="unilateral"?"selected":""}>单方协议</option></select></label></div>
+ <h2>甲方信息</h2><label class="field">快捷选择主体<select id="partyPick"><option value="">手动填写 / 使用识别信息</option>${PARTIES.map(p=>`<option>${p.name}</option>`).join("")}</select></label>
+ <div class="formgrid">${entityFields("a",data)}</div><h2>乙方信息</h2><div class="formgrid">${entityFields("b",data)}</div>
+ <h2>合同业务信息</h2><div class="formgrid">${businessFields(fields,data,mode==="standard")}</div>
+ <section id="bodySection"><label class="field">审批正文 *<textarea name="body" id="editBody" maxlength="150000" style="min-height:260px">${esc(c?.body||"")}</textarea></label>
+ <div class="tip warn">自动识别结果需核对；字段回填不擅自改写上传正文。扫描 PDF 需要先 OCR 或人工补充正文。</div></section>
+ ${c?input("修改说明 *","note","","text",'required maxlength="1000"'):""}
+ <div class="modalfoot">${B("convert","修改正文，转非标","","small")}${B("close","取消")}<button class="primary" id="saveEditor">保存${c?"新版本":"草稿"}</button></div>
+ </section></form>`,"editor");
+ editor=state;editorMode();livePreview();
+}
+function editorMode(){
+ const std=editor.mode==="standard";
+ $("uploadTop").hidden=std;$("bodySection").hidden=std;$("editBody").required=!std;
+ $("editType").disabled=std;$("editSignType").disabled=std;
+ document.querySelector('[data-action="convert"]').hidden=!std;
+ $("editTip").textContent=std?"标准模板固定正文，免法务及财务审批；原字段填写与实时预览保留。":
+ "上传合同位于顶部。保存并提交后由法务主管分派法务，法务通过后自动进入孙会计审批。";
+}
+function editorValues(){return Object.fromEntries(new FormData($("editForm")))}
+function livePreview(){
+ if(!editor||!$("editForm"))return;
+ const v=editorValues(),std=editor.mode==="standard";
+ $("liveDoc").innerHTML=docHTML({title:v.title,no:editor.id?get(editor.id).no:"",
+ version:editor.id?editor.baseVersion+1:1,data:v,body:std?fill(editor.template,v,true):v.body,
+ signType:std?editor.signType:v.signType,signatures:{}},true);
+}
+function convert(){
+ need(editor?.mode==="standard");
+ $("editBody").value=fill(editor.template,editorValues(),true);
+ editor.mode="nonstandard";editorMode();livePreview();
+}
+function saveEditor(form){
+ const e=editor,v=Object.fromEntries(new FormData(form));
+ need(e&&!e.busy,"文件正在读取，请稍候。");
+ tx(()=>{
+  need(account===e.actor&&me().role==="biz");
+  const old=e.id?get(e.id):null;
+  if(e.id)need(old&&canEdit(old)&&old.version===e.baseVersion,"合同版本或状态已变化。");
+  const data={};for(const key of new Set([...Object.keys(LABELS),...e.fields.map(f=>f.key)]))data[key]=String(v[key]??"").trim();
+  need(data.aName&&data.bName&&data.aContact&&data.bContact,"请补全双方主体与联系人。");
+  need(/^1[3-9]\d{9}$/.test(data.bPhone),"用于发送签约短信的乙方联系电话须为 11 位大陆手机号。");
+  if(data.amount)need(/^\d+(\.\d{1,2})?$/.test(data.amount)&&Number(data.amount)<=999999999999,"金额格式不正确，最多两位小数。");
+  if(data.deliveryDays)need(/^[1-9]\d*$/.test(data.deliveryDays),"交付期限应为正整数。");
+  const std=e.mode==="standard";
+  if(std){
+   need(db.templates.some(t=>t.id===e.tplId&&t.enabled),"模板已停用。");
+   for(const f of e.fields)if(f.required)need(data[f.key],`请填写${f.label}。`);
+  }
+  const body=std?fill(e.template,data):String(v.body||"").trim();
+  need(body&&body.length<=150000,"正文不能为空且不能超过 150000 字符。");
+  need(v.title.trim(),"请填写合同名称。");
+  let c=old;
+  if(c){
+   need(v.note.trim(),"请填写修改说明。");c.version++;
+   Object.assign(c,{title:v.title.trim(),data,body,mode:e.mode,status:"draft",
+    type:std?e.type:v.type,signType:std?e.signType:v.signType,file:e.file,
+    legalVersion:null,financeVersion:null,returnReason:""});
+   versions(c,v.note.trim());log("保存新版本",v.note.trim(),c);
+  }else{
+   c={id:uid("c-"),no:`QN-${new Date().getFullYear()}-${++db.seq}`,title:v.title.trim(),
+    owner:account,dept:me().dept,mode:e.mode,status:"draft",version:1,
+    data,body,type:std?e.type:v.type,signType:std?e.signType:v.signType,
+    template:e.template,fields:e.fields,tplId:e.tplId,tplCode:e.tplCode,tplVersion:e.tplVersion,
+    file:e.file,createdAt:now(),updatedAt:now(),versions:[],approvals:[],participants:[],
+    assignee:null,financeEntered:false,signatures:{},aInvite:null,bInvite:null};
+   db.contracts.unshift(c);versions(c,"初始版本");log("创建合同",std?"选用标准模板。":"创建非标准协议。",c);
+  }
+  if(e.file)log("关联上传原件",`${e.file.name}；${e.parseNote||"保留原件"}`,c);
+  cid=c.id;view="detail";tab="document";
+ });
+}
+
+/* ---------- 文件解析与双主体识别 ---------- */
+async function parseDocx(buffer){
+ const data=new Uint8Array(buffer),view=new DataView(buffer);
+ need(data.length>=22,"DOCX 文件无效。");
+ let end=-1;
+ for(let i=data.length-22;i>=Math.max(0,data.length-65557);i--){
+  if(view.getUint32(i,true)===0x06054b50){end=i;break}
+ }
+ need(end>=0,"未找到 DOCX 压缩目录。");
+ const count=view.getUint16(end+10,true);let p=view.getUint32(end+16,true);
+ for(let n=0;n<count;n++){
+  need(p+46<=data.length&&view.getUint32(p,true)===0x02014b50,"DOCX 目录损坏。");
+  const method=view.getUint16(p+10,true),size=view.getUint32(p+20,true),
+   unpacked=view.getUint32(p+24,true),nl=view.getUint16(p+28,true),
+   el=view.getUint16(p+30,true),cl=view.getUint16(p+32,true),off=view.getUint32(p+42,true);
+  need(p+46+nl+el+cl<=data.length,"DOCX 目录越界。");
+  const name=new TextDecoder().decode(data.subarray(p+46,p+46+nl));
+  if(name==="word/document.xml"){
+   need(unpacked<=8*1024*1024,"DOCX 解压正文过大。");
+   need(off+30<=data.length,"DOCX 数据损坏。");
+   const start=off+30+view.getUint16(off+26,true)+view.getUint16(off+28,true);
+   need(start+size<=data.length,"DOCX 数据不完整。");
+   let bytes=data.subarray(start,start+size);
+   if(method===8){
+    need(typeof DecompressionStream!=="undefined","浏览器不支持 DOCX 解压，请使用新版 Chrome 或 Edge。");
+    const reader=new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw")).getReader();
+    const chunks=[];let total=0;
+    try{while(true){
+     const r=await reader.read();if(r.done)break;
+     total+=r.value.length;need(total<=8*1024*1024,"DOCX 解压体积超限。");chunks.push(r.value);
+    }}catch(e){await reader.cancel();throw e}
+    bytes=new Uint8Array(total);let offset=0;
+    for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length}
+   }else need(method===0,"不支持此 DOCX 压缩方式。");
+   const xml=new DOMParser().parseFromString(new TextDecoder().decode(bytes),"application/xml");
+   need(!xml.getElementsByTagName("parsererror").length,"DOCX 正文解析失败。");
+   return [...xml.getElementsByTagNameNS("*","p")].map(paragraph=>
+    [...paragraph.getElementsByTagNameNS("*","t")].map(t=>t.textContent).join("")).join("\n");
+  }
+  p+=46+nl+el+cl;
+ }
+ throw Error("未找到 DOCX 正文。");
+}
+async function extract(file){
+ const ext=file.name.split(".").pop().toLowerCase();
+ if(["txt","md"].includes(ext))return file.text();
+ if(ext==="docx")return parseDocx(await file.arrayBuffer());
+ if(ext==="pdf"){
+  const lib=await import("https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs");
+  lib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs";
+  const doc=await lib.getDocument({data:new Uint8Array(await file.arrayBuffer()),isEvalSupported:false}).promise;
+  try{
+   need(doc.numPages<=100,"PDF 超过 100 页，请拆分文件。");
+   let text="";
+   for(let n=1;n<=doc.numPages;n++){
+    const page=await doc.getPage(n),content=await page.getTextContent();let y=null;
+    for(const item of content.items){
+     if(!("str" in item))continue;
+     const ny=item.transform?.[5];
+     if(y!==null&&Math.abs(ny-y)>3)text+="\n";
+     text+=item.str+(item.hasEOL?"\n":" ");y=ny;
+    }
+    text+="\n\n";need(text.length<=150000,"提取正文过长。");
+   }return text.trim();
+  }finally{await doc.destroy()}
+ }
+ throw Error("不支持此文件格式。");
+}
+function recognize(text){
+ const t=String(text).replace(/\r/g,"").replace(/\u00a0/g," ");
+ const result={},ambiguous=[];
+ const aliases={
+ Name:"(?:公司名称|企业名称|单位名称|主体名称)",
+ Credit:"(?:统一社会信用代码|社会信用代码|纳税人识别号|税号)",
+ Address:"(?:注册地址|联系地址|通讯地址|住所地|住所|地址)",
+ Legal:"(?:法定代表人|法人代表)",
+ Contact:"(?:联系人|经办人)",
+ Phone:"(?:联系电话|联系手机|手机号码|手机号|电话|手机)",
+ Email:"(?:电子邮箱|电子邮件|邮箱|Email|E-mail)",
+ Bank:"(?:开户银行|开户行)",
+ Account:"(?:银行账号|银行帐号|收款账号|收款帐号|账号|帐号)",
+ AccountName:"(?:银行账户名称|收款账户名称|账户名称|开户名称|开户名|户名)",
+ Invoice:"(?:开票信息|发票信息)"
+ };
+ const trimValue=s=>String(s||"").trim().replace(/[；;，,]+$/,"");
+ const collect=(regex,source)=>{
+  const values=[];for(const m of source.matchAll(regex)){const value=trimValue(m[1]);if(value&&!values.includes(value))values.push(value)}
+  return values;
+ };
+ for(const [party,prefix] of [["甲方","a"],["乙方","b"]]){
+  const other=party==="甲方"?"乙方":"甲方";
+  const block=new RegExp(`${party}\\s*(?:[（(][^\\n）)]{0,25}[）)])?\\s*[:：]([^]*?)(?=\\n\\s*${other}\\s*(?:[（(][^\\n）)]{0,25}[）)])?\\s*[:：]|$)`,"g");
+  const blocks=[...t.matchAll(block)].map(m=>m[1].slice(0,2500));
+  const nameRegex=new RegExp(`(?:^|\\n|[ \\t])${party}\\s*(?:[（(][^\\n）)]{0,25}[）)])?\\s*[:：]\\s*([^\\n]{2,150})`,"g");
+  const names=collect(nameRegex,t).map(v=>v.split(/\s+(?:乙方|甲方|地址|联系人|联系电话)\s*[:：]/)[0].trim());
+  const unique=[...new Set(names.filter(Boolean))];
+  if(unique.length===1)result[prefix+"Name"]=unique[0];
+  else if(unique.length>1)ambiguous.push(LABELS[prefix+"Name"]);
+  for(const [field,label] of Object.entries(aliases)){
+   const explicit=new RegExp(`${party}\\s*(?:的)?\\s*${label}\\s*[:：]\\s*([^\\n;；]{1,200})`,"gi");
+   let values=collect(explicit,t);
+   if(!values.length){
+    const blockValues=[];
+    for(const b of blocks){
+     const regex=new RegExp(`(?:^|\\n|[ \\t])${label}\\s*[:：]\\s*([^\\n;；]{1,200})`,"gi");
+     blockValues.push(...collect(regex,b));
+    }
+    values=[...new Set(blockValues)];
+   }
+   if(field==="Phone")values=values.map(v=>v.match(/(?:\+?86[- ]?)?1[3-9]\d{9}|0\d{2,3}[- ]?\d{7,8}(?:-\d+)?/)?.[0]||"").filter(Boolean);
+   if(field==="Email")values=values.map(v=>v.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i)?.[0]||"").filter(Boolean);
+   if(field==="Credit")values=values.map(v=>v.match(/[A-Z0-9]{18}/i)?.[0]||"").filter(Boolean);
+   if(field==="Account")values=values.map(v=>v.match(/\d[\d -]{6,35}\d/)?.[0]?.replace(/[ -]/g,"")||"").filter(Boolean);
+   values=[...new Set(values)];
+   if(field==="Name"&&result[prefix+"Name"])continue;
+   if(values.length===1)result[prefix+field]=values[0];
+   else if(values.length>1)ambiguous.push(LABELS[prefix+field]);
+  }
+ }
+ const amount=t.match(/(?:合同总金额|合同金额|合同总价|总价款|人民币)\s*(?:为|是|:|：)?\s*(?:人民币)?\s*[¥￥]?\s*([\d,，]+(?:\.\d{1,2})?)\s*(万元|元)/);
+ if(amount){
+  const n=Number(amount[1].replace(/[,，]/g,""))*(amount[2]==="万元"?10000:1);
+  if(Number.isFinite(n))result.amount=n.toFixed(2);
+ }
+ return {values:result,ambiguous:[...new Set(ambiguous)]};
+}
+function adopt(key,overwrite=false){
+ const control=$("editForm")?.elements.namedItem(key),value=editor?.recognized[key];
+ if(!control||value==null||(!overwrite&&String(control.value).trim()))return false;
+ control.value=value;return true;
+}
+function renderRecognition(ambiguous=[]){
+ $("recognizeBox").hidden=false;
+ $("recognizeBox").innerHTML=`<div class="actions between"><b style="font-size:12px">识别结果 · 待核对</b>${B("fill-empty","回填空字段","","small")}</div>
+ ${Object.entries(editor.recognized).map(([k,v])=>`<div class="recrow"><span>${esc(LABELS[k]||k)}</span><strong>${esc(v)}</strong>${B("adopt","采用",k)}</div>`).join("")||
+ '<p class="muted">未识别到足够明确的信息，请根据原件填写。</p>'}
+ ${ambiguous.length?`<p class="muted">存在多个候选值，未自动回填：${esc(ambiguous.join("、"))}</p>`:""}
+ <p class="muted" style="margin-bottom:0">未识别字段保留原值；“采用”覆盖单项。请核对所有信息与原件一致。</p>`;
+}
+async function uploadContract(file){
+ const e=editor;need(e&&e.mode==="nonstandard"&&!e.busy,"正在读取文件，请稍候。");
+ need(/\.(pdf|docx|txt|md)$/i.test(file.name)&&file.size<=15*1024*1024,"仅支持 PDF、DOCX、TXT、MD，最大 15 MB。");
+ if($("editBody").value.trim()&&!confirm("新文件将替换编辑区正文，是否继续？"))return;
+ const before=$("editBody").value;e.busy=true;$("saveEditor").disabled=true;
+ $("uploadState").textContent="正在读取 "+file.name+"……";
+ try{
+  e.file=await saveFile(file);if(editor!==e)return;
+  if(e.url)URL.revokeObjectURL(e.url);e.url=URL.createObjectURL(file);
+  const text=String(await extract(file)).trim();if(editor!==e)return;
+  need(text,"未提取到文本。扫描 PDF 需先 OCR；原件已保存，可人工粘贴正文。");
+  need(text.length<=150000,"正文超过长度限制。");
+  need($("editBody").value===before,"读取期间正文已修改，未覆盖当前内容。");
+  $("editBody").value=text;
+  const recognized=recognize(text);e.recognized=recognized.values;
+  let n=0;for(const key of Object.keys(e.recognized))if(adopt(key))n++;
+  e.parseNote=`识别 ${Object.keys(e.recognized).length} 项，回填 ${n} 个空字段`;
+  $("uploadState").textContent=`${file.name} · ${text.length} 字符 · ${e.parseNote}`;
+  if(["","非标合同"].includes($("editForm").elements.title.value.trim()))
+   $("editForm").elements.title.value=file.name.replace(/\.[^.]+$/,"");
+  renderRecognition(recognized.ambiguous);livePreview();
+ }catch(error){
+  if(editor===e){e.parseNote="文本解析未成功，需人工核对";$("uploadState").textContent=error.message;toast(error.message)}
+ }finally{e.busy=false;if(editor===e)$("saveEditor").disabled=false}
+}
+
+/* ---------- 审批流程 ---------- */
+function enterSigning(c){
+ need(c.mode==="standard"||(c.legalVersion===c.version&&c.financeVersion===c.version),"当前版本尚未审批完成。");
+ c.status="ready";c.signVersion=c.version;c.signatures={};c.aInvite=null;c.bInvite=null;
+ log("进入甲方签署","当前版本进入签署流程。",c,SYSTEM);message(c.owner,"合同可以进行甲方签署",c);
+}
+function submit(c){
+ need(canEdit(c));
+ if(c.mode==="standard")need(db.templates.some(t=>t.id===c.tplId&&t.enabled),"模板已停用。");
+ c.submittedAt=now();c.returnReason="";c.legalVersion=null;c.financeVersion=null;
+ log("提交签约申请",`提交 V${c.version}。`,c);
+ if(c.mode==="standard")enterSigning(c);
+ else{
+  c.status="assign";c.assignee=null;c.financeEntered=false;
+  message("chief","收到非标合同待分派",c);
+  log("进入法务分派","等待法务主管指定法务专员。",c,SYSTEM);
+ }
+}
+function openAssign(c){
+ need(me().role==="chief"&&["assign","legal"].includes(c.status));
+ modal(`${MH(c.status==="assign"?"分派法务":"改派法务")}
+ <form id="assignForm" data-id="${c.id}" data-version="${c.version}">
+ <p>${esc(c.title)} · V${c.version}</p><label class="field">法务专员 *<select name="assignee">${USERS.filter(u=>u.role==="legal").map(u=>
+ `<option value="${u.id}" ${c.assignee===u.id?"selected":""}>${u.name} · 当前待办 ${db.contracts.filter(x=>x.status==="legal"&&x.assignee===u.id).length} 项</option>`).join("")}</select></label>
+ <div class="tip">法务通过后，系统自动提交固定财务审批人“孙会计”，此处无财务分配权限。</div>
+ <label class="field">分派 / 改派说明 *<textarea name="reason" required maxlength="1500"></textarea></label>
+ <div class="modalfoot">${B("close","取消")}<button class="primary">确认分派</button></div></form>`);
+}
+function openReview(c,pass){
+ need(canApprove(c));const financial=me().role==="finance";
+ modal(`${MH((financial?"财务":"法务")+"审批 · "+(pass?"通过":"退回"))}
+ <form id="reviewForm" data-id="${c.id}" data-version="${c.version}" data-pass="${pass?1:0}">
+ <div class="tip">结论绑定当前 V${c.version}。${pass?(financial?"通过后进入甲方签署。":"通过后自动提交孙会计。"):"退回业务修改，重新提交后重新审批。"}</div>
+ ${pass?`<label style="font-size:12px"><input type="checkbox" name="checked" required> 已核对当前正文、原件和${financial?"金额及付款信息":"甲乙方信息与合同条款"}</label>`:""}
+ <label class="field" style="margin-top:15px">审批意见 *<textarea name="opinion" required maxlength="3000"></textarea></label>
+ <div class="modalfoot">${B("close","取消")}<button class="primary">确认${pass?"通过":"退回"}</button></div></form>`);
+}
+function openReason(c,kind){
+ need(me().role==="biz"&&c.owner===account);
+ modal(`${MH(kind==="withdraw"?"撤回申请":"终止流程")}<form id="reasonForm" data-id="${c.id}" data-kind="${kind}">
+ <label class="field">操作原因 *<textarea name="reason" required maxlength="1500"></textarea></label>
+ <div class="modalfoot">${B("close","取消")}<button class="primary">确认</button></div></form>`);
+}
+
+/* ---------- 详情 ---------- */
+function flow(c){
+ const names=c.mode==="standard"?["填写","免审批","甲方签署","乙方签署","完成"]:
+ ["填写","主管分派","法务审批","财务审批","甲方签署","乙方签署","完成"];
+ const map=c.mode==="standard"?{draft:0,returned:0,ready:2,signed_a:3,pending_b:3,completed:4,unilateral_done:4}:
+ {draft:0,returned:0,assign:1,legal:2,finance:3,ready:4,signed_a:5,pending_b:5,completed:6,unilateral_done:6};
+ const active=map[c.status]??0;
+ return `<div class="flow">${names.map((n,i)=>`<div class="step ${i<active?"done":i===active?"active":""}"><i>${i<active?"✓":i+1}</i>${n}</div>`).join("")}</div>`;
+}
+function contractActions(c){
+ let out="";
+ if(canEdit(c))out+=B("edit","修改合同",c.id,"primary")+B("submit","提交申请",c.id);
+ if(me().role==="biz"&&c.owner===account){
+  if(["assign","legal","finance"].includes(c.status))out+=B("withdraw","撤回",c.id);
+  if(canSign(c))out+=B("sign","进入签署中心",c.id,"primary");
+  if(c.status==="pending_b")out+=B("open-b","打开乙方签署页",c.id)+B("resend","重新发送链接",c.id);
+  if(!["completed","unilateral_done","terminated"].includes(c.status))out+=B("terminate","终止",c.id,"danger");
+  if(["completed","unilateral_done"].includes(c.status))out+=B("archive-download","下载合同",c.id);
+ }
+ if(me().role==="chief"&&["assign","legal"].includes(c.status))out+=B("assign",c.status==="assign"?"分派法务":"改派法务",c.id,"primary");
+ if(canApprove(c))out+=B("approve","审批通过",c.id,"primary")+B("reject","退回",c.id,"danger");
+ return out||'<span class="muted">当前节点无需你处理</span>';
+}
+function logHTML(rows){
+ return rows.slice().reverse().map(r=>`<div class="record"><h3>${esc(r.action)} ${r.version?`<span class="tag">V${r.version}</span>`:""}</h3>
+ <div class="muted">${esc(r.name)} · ${esc(r.role)} · ${fmt(r.at)}</div><p>${esc(r.detail)}</p></div>`).join("")||
+ '<div class="empty">暂无你有权查看的操作记录</div>';
+}
+function detailPage(){
+ const c=get(cid);if(!c||!visible(c))return '<div class="empty">无权查看该合同</div>';
+ const tabs=[["document","合同正文"],["approvals","审批结果"],["versions","版本历史"],["logs",me().role==="chief"?"全部操作记录":"我的操作记录"]];
+ let content="";
+ if(tab==="document")content=(c.file?`<div class="card" style="padding:12px"><div class="actions between"><span class="muted">${esc(c.file.name)}</span>
+ <div class="actions">${B("preview-original","预览原件",c.id,"small")}${B("download-original","下载原件",c.id,"small")}</div></div></div>`:"")+docHTML(c);
+ if(tab==="approvals")content=`<div class="card"><h2>审批结果</h2>${c.mode==="standard"?'<div class="tip">标准协议免法务与财务审批。</div>':
+ c.approvals.slice().reverse().map(a=>`<div class="record"><h3>${a.node} · ${a.result} <span class="tag">V${a.version}</span></h3>
+ <div class="muted">${esc(a.by)} · ${fmt(a.at)}</div><p>${esc(a.opinion)}</p></div>`).join("")||'<div class="empty">暂无审批结果</div>'}</div>`;
+ if(tab==="versions")content=`<div class="card"><h2>版本历史</h2>${c.versions.slice().reverse().map(v=>`
+ <div class="kv"><div><b>V${v.version} · ${esc(v.note)}</b><div class="muted">${esc(v.by)} · ${fmt(v.at)}</div></div>
+ <div class="actions"><button class="small" data-action="version" data-id="${c.id}" data-version="${v.version}">查看</button>
+ ${v.version>1?`<button class="small" data-action="diff" data-id="${c.id}" data-version="${v.version}">对比上一版</button>`:""}</div></div>`).join("")}</div>`;
+ if(tab==="logs")content=`<div class="card"><h2>${me().role==="chief"?"全部操作记录":"本人操作记录"}</h2>${logHTML(ownLogs(c))}</div>`;
+ return H(esc(c.title),`${esc(c.no)} · V${c.version} · 申请人 ${userName(c.owner)}`,B("go","返回",me().role==="biz"?"pending":"tasks"))+
+ flow(c)+(c.returnReason?`<div class="tip warn">${esc(c.returnReason)}</div>`:"")+`
+ <div class="grid"><section><div class="tabs">${tabs.map(([k,v])=>`<button class="tab ${tab===k?"active":""}" data-action="tab" data-id="${k}">${v}</button>`).join("")}</div>${content}</section>
+ <aside><div class="card"><h2>当前办理</h2><div class="actions">${badge(c)}${modeTag(c)}</div>
+ ${KV("当前处理人",handler(c))}${KV("法务专员",userName(c.assignee))}${KV("财务审批人",c.mode==="nonstandard"?"孙会计":"无需")}
+ <div class="actions" style="margin-top:18px">${contractActions(c)}</div></div>
+ <div class="card"><h2>合同摘要</h2>${KV("甲方",c.data.aName)}${KV("乙方",c.data.bName)}
+ ${KV("乙方联系电话",c.data.bPhone)}${KV("金额",money(c.data.amount))}
+ ${KV("签署方式",c.signType==="unilateral"?"单方协议":"双方协议")}${KV("创建时间",fmt(c.createdAt))}</div>
+ ${me().role==="finance"?`<div class="card"><h2>财务核对</h2>${KV("含税说明",c.data.taxRate||"未填写")}${KV("结算方式",c.data.settleMethod||"未填写")}
+ ${KV("甲方开票",c.data.aInvoice||"未填写")}${KV("乙方开户行",c.data.bBank||"未填写")}${KV("乙方账号",c.data.bAccount||"未填写")}</div>`:""}
+ </aside></div>`;
+}
+function openVersion(c,n,diff){
+ const v=c.versions.find(v=>v.version===n);need(v);
+ let html=`<div class="docbody">${esc(v.body)}</div>`;
+ if(diff){
+  const prev=c.versions.find(v=>v.version===n-1);need(prev);
+  let fields="",lines="";const keys=new Set([...Object.keys(prev.data),...Object.keys(v.data)]);
+  for(const k of keys)if(prev.data[k]!==v.data[k])fields+=`<h3>${esc(LABELS[k]||k)}</h3>
+  <div class="diffold">− ${esc(prev.data[k]||"（空）")}</div><div class="diffnew">+ ${esc(v.data[k]||"（空）")}</div>`;
+  const a=prev.body.split("\n"),b=v.body.split("\n");
+  for(let i=0;i<Math.max(a.length,b.length);i++)if(a[i]!==b[i])lines+=`<div class="muted">第 ${i+1} 行</div>
+  <div class="diffold">− ${esc(a[i]??"（无）")}</div><div class="diffnew">+ ${esc(b[i]??"（删除）")}</div>`;
+  html=`<div class="tip">逐行对比用于定位变化；插入或删除行可能造成后续行错位，请结合全文审阅。</div>
+  <h2>字段差异</h2>${fields||'<p class="muted">无变化</p>'}<h2 style="margin-top:20px">正文差异</h2>${lines||'<p class="muted">无变化</p>'}`;
+ }
+ if(!tx(()=>log(diff?"查看版本差异":"查看历史版本",`V${n}`,c)))return;
+ modal(`${MH(diff?`V${n-1} → V${n}`:`版本 V${n}`)}${html}`,"large");
+}
+
+/* ---------- 独立模拟法大大页面 ---------- */
+function signLink(c,party){
+ const invite=party==="a"?c.aInvite:c.bInvite;
+ return location.href.split("#")[0]+"#"+new URLSearchParams({
+  page:"sign",id:c.id,party,token:invite.token
+ }).toString();
+}
+function signingContext(){
+ const c=get(route.get("id")),party=route.get("party"),token=route.get("token");
+ need(c&&["a","b"].includes(party),"签署任务不存在。");
+ const invite=party==="a"?c.aInvite:c.bInvite;
+ need(invite&&invite.token===token&&invite.version===c.version&&c.signVersion===c.version,"签署链接无效或版本已变化。");
+ need(c.status!=="terminated","该协议已终止。");
+ if(!c.signatures?.[party])need(invite.expiresAt>Date.now(),"签署链接已失效，请联系业务重新发送。");
+ if(party==="b")need(c.signType==="bilateral"&&c.signatures.a,"甲方尚未完成签署。");
+ return {c,party,token,invite};
+}
+function openSignCenter(c){
+ need(canSign(c));
+ const popup=window.open("about:blank","_blank");need(popup,"请允许浏览器打开新页面。");
+ popup.opener=null;
+ const ok=tx(()=>{
+  if(!c.aInvite||c.aInvite.expiresAt<Date.now()){
+   c.aInvite={token:uid("a-"),version:c.version,expiresAt:Date.now()+3*86400000,actorId:account};
+  }
+  log("进入签署中心","打开独立模拟法大大页面。",c);
+ });
+ if(ok)popup.location.href=signLink(get(c.id),"a");else popup.close();
+}
+function simulateSend(c,actor){
+ need(c.signatures.a&&c.signType==="bilateral"&&["signed_a","pending_b"].includes(c.status),"当前合同不能发送乙方签署链接。");
+ need(/^1[3-9]\d{9}$/.test(c.data.bPhone),"乙方手机号不正确。");
+ c.bInvite={token:uid("b-"),version:c.version,expiresAt:Date.now()+3*86400000,phone:c.data.bPhone};
+ c.status="pending_b";c.sentAt=now();
+ log("模拟发送乙方签署链接",`模拟短信收件号码：${c.data.bPhone}；有效期 3 天，未实际发送短信。`,c,actor);
+ message(c.owner,"甲方已签署，乙方签署链接已模拟发送",c);
+}
+function archive(c){
+ need(c.signatures.a&&c.signatures.b&&c.signType==="bilateral");
+ c.status="completed";c.archivedAt=now();c.archiveNo="ARC-"+c.no;
+ log("自动归档","双方已完成模拟签署，自动进入合同汇总表。",c,SYSTEM);
+ message(c.owner,"双方签署完成，合同已自动归档",c);
+ for(const u of USERS.filter(u=>["chief","legal","finance"].includes(u.role)))message(u.id,"新增已归档合同："+c.title,c);
+}
+function renderSign(){
+ try{
+  const {c,party,token,invite}=signingContext();
+  const done=!!c.signatures[party],phone=party==="a"?c.data.aPhone:c.data.bPhone;
+  const verified=verifiedToken===token;
+  $("app").innerHTML=`<header class="signheader"><div><span class="signbrand">法大大</span>
+   <span class="tag blue" style="margin-left:10px">模拟签署平台</span></div>
+   <span class="muted">${party==="a"?"甲方签章":"乙方签署"} · V${c.version}</span></header>
+   <div class="signpage">
+   <div class="tip">当前为本地模拟签署流程，验证码、短信和印章不具有真实平台签名能力。</div>
+   ${done?`<div class="card"><h1>${party==="a"?"甲方签署已完成":"乙方签署已完成"}</h1>
+    ${party==="a"&&c.signType==="bilateral"?
+     `<p>已向乙方联系电话 <b>${esc(c.data.bPhone)}</b> 模拟发送签署链接。</p>
+      <div class="actions">${B("sign-open-b","打开乙方签署页面","","primary")}${B("sign-copy-b","复制乙方签署链接")}
+      ${c.status!=="completed"?B("sign-resend","重新模拟发送"):""}</div>
+      <p class="muted" style="margin-top:12px">同一浏览器中打开链接即可继续乙方签署。</p>`:
+     `<p>${c.signType==="unilateral"?"单方协议办理完成，保留在业务“已签署”；按汇总表双签规则，不进入合同汇总表。":
+      "甲乙双方均已签署完成，系统已自动归档至合同汇总表。"}</p>`}
+    ${c.archivedAt?KV("归档编号",c.archiveNo):""}</div>`:
+    !verified?`<div class="card" style="max-width:480px;margin:30px auto"><h1>签署身份验证</h1>
+     <p class="muted">${party==="a"?"甲方":"乙方"}：${esc(party==="a"?c.data.aName:c.data.bName)}</p>
+     ${KV("联系人",party==="a"?c.data.aContact:c.data.bContact)}${KV("联系电话",phone)}
+     <div class="actions" style="margin-top:18px">${B("sign-code","获取模拟验证码")}
+     <input id="verifyCode" placeholder="6 位验证码" maxlength="6" inputmode="numeric" style="width:140px"></div>
+     <div class="tip" style="margin-top:15px">点击获取后，页面会显示本次模拟验证码。</div>
+     ${B("sign-verify","验证并查看合同","","primary")}</div>`:""}
+   ${done||verified?docHTML(c):""}
+   </div>
+   ${!done&&verified?`<footer class="signfooter"><div class="actions between" style="max-width:960px;margin:auto">
+   <label><input type="checkbox" id="agreeSign"> 我已阅读并确认当前版本合同内容</label>
+   <div class="actions"><span class="muted">${esc(party==="a"?c.data.aName:c.data.bName)}</span>
+   ${B("sign-confirm",party==="a"?"确认甲方签章":"确认乙方签署","","primary")}</div></div></footer>`:""}`;
+ }catch(e){
+  $("app").innerHTML=`<div class="login"><div class="logincard"><h1>签署链接不可用</h1><p>${esc(e.message)}</p>
+  <p class="muted">请联系发起业务重新发送有效链接。</p></div></div>`;
+ }
+}
+async function signingAction(action){
+ const {c,party,token,invite}=signingContext();
+ const actor=party==="a"?(user(invite.actorId)||SYSTEM):{
+  id:"external:"+c.id,name:c.data.bContact||c.data.bName,title:"乙方签署人",role:"external"
+ };
+ if(action==="sign-code"){
+  sentCodeToken=token;
+  tx(()=>log("获取模拟签署验证码",`签署方：${party==="a"?"甲方":"乙方"}；验证码未通过真实短信发送。`,c,actor));
+  toast("本次模拟验证码：123456");return;
+ }
+ if(action==="sign-verify"){
+  need(sentCodeToken===token&&$("verifyCode").value==="123456","请先获取模拟验证码，再填写 123456。");
+  tx(()=>{verifiedToken=token;log("通过模拟身份验证",party==="a"?"甲方验证通过。":"乙方验证通过。",c,actor)});
+  return;
+ }
+ if(action==="sign-confirm"){
+  need(verifiedToken===token&&$("agreeSign")?.checked,"请先验证身份并勾选合同确认。");
+  tx(()=>{
+   const current=signingContext().c;
+   need(!current.signatures[party],"当前签署方已完成签署。");
+   if(party==="a")need(current.status==="ready","合同不在甲方签署阶段。");
+   else need(current.status==="pending_b"&&current.signatures.a,"合同不在乙方签署阶段。");
+   current.signatures[party]={at:now(),by:actor.name,actorId:actor.id,version:current.version,source:"simulation"};
+   log(party==="a"?"甲方模拟签章完成":"乙方模拟签署完成",`已确认 V${current.version}。`,current,actor);
+   if(party==="a"){
+    if(current.signType==="unilateral"){
+     current.status="unilateral_done";
+     message(current.owner,"单方协议已完成签署",current);
+     log("单方协议办理完成","按双签归档规则，不进入合同汇总表。",current,SYSTEM);
+    }else{current.status="signed_a";simulateSend(current,SYSTEM)}
+   }else archive(current);
+  });return;
+ }
+ if(action==="sign-open-b"){
+  need(party==="a"&&c.bInvite);
+  window.open(signLink(c,"b"),"_blank","noopener,noreferrer");return;
+ }
+ if(action==="sign-resend"){
+  need(party==="a");
+  tx(()=>simulateSend(c,actor));return;
+ }
+ if(action==="sign-copy-b"){
+  need(party==="a"&&c.bInvite);
+  await copyLink(signLink(c,"b"));return;
+ }
+}
+async function copyLink(value){
+ try{
+  need(navigator.clipboard);await navigator.clipboard.writeText(value);toast("签署链接已复制。");
+ }catch{
+  modal(`${MH("复制签署链接")}<label class="field">选择并复制下方链接<textarea id="copyText" readonly>${esc(value)}</textarea></label>`);
+  $("copyText").select();
+ }
+}
+
+/* ---------- 汇总表：仅预览、下载，及顶部导入导出 ---------- */
+async function archivePreview(c){
+ need(hasSummary()&&archived(c));
+ if(c.mode==="imported"){await attachment(c,true);return}
+ if(!tx(()=>log("预览归档合同","通过合同汇总表预览。",c)))return;
+ modal(`${MH(esc(c.title))}${docHTML(c)}`,"large");
+}
+async function archiveDownload(c){
+ need(visible(c)&&(["completed","unilateral_done"].includes(c.status)));
+ if(c.mode==="imported"){await attachment(c,false);return}
+ if(!tx(()=>log("下载已签署合同","下载模拟签署合同 HTML，包含双方签章展示。",c)))return;
+ const html=`<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>${esc(c.title)}</title>
+ <style>body{max-width:850px;margin:40px auto;padding:25px;font:14px/1.8 sans-serif}h2{text-align:center}
+ .docmeta{text-align:right;color:#8996a9;font-size:12px}.docbody{white-space:pre-wrap;overflow-wrap:anywhere;font:15px/2 serif}
+ .signarea{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:40px}.seal{width:135px;height:135px;display:block}
+ .muted{font-size:12px;color:#888}</style></head><body>
+ <p class="muted">本文件为本地模拟签署记录，不是真实平台电子签名文件。</p>${docHTML(c)}
+ ${c.archiveNo?`<p class="muted">归档编号：${esc(c.archiveNo)}</p>`:""}</body></html>`;
+ download(c.no+"-已签署合同.html",html,"text/html;charset=utf-8");
+}
+function csvCell(v){
+ let text=String(v??"");if(/^\s*[=+\-@]/.test(text))text="'"+text;
+ return '"'+text.replace(/"/g,'""')+'"';
+}
+function exportSummary(){
+ need(hasSummary()&&view==="summary");
+ const rows=selectedRows();
+ const out=[["合同编号","合同名称","甲方","乙方","金额","来源","甲方签署时间","乙方签署时间","归档时间"]];
+ rows.forEach(c=>out.push([c.no,c.title,c.data.aName,c.data.bName,c.data.amount,
+ c.mode==="imported"?"纸质扫描件":"在线模拟签署",fmt(c.signatures.a.at),fmt(c.signatures.b.at),fmt(c.archivedAt)]));
+ if(!tx(()=>log("导出合同汇总表",`按当前筛选导出 ${rows.length} 条。`)))return;
+ download("合同汇总表.csv","\uFEFF"+out.map(r=>r.map(csvCell).join(",")).join("\r\n"),"text/csv;charset=utf-8");
+}
+function openImport(){
+ need(hasSummary());
+ modal(`${MH("导入双方已盖章的纸质协议")}
+ <form id="importForm">
+ <div class="tip">上传 PDF 或 JPG / PNG 扫描件。系统不会自动判定印章真实性，请由导入人核对双方已盖章。</div>
+ <label class="field">扫描件 *<input type="file" name="file" accept=".pdf,.jpg,.jpeg,.png" required><span class="muted">最大 30 MB，多页协议建议合并为 PDF。</span></label>
+ ${input("合同名称 *","title","","text",'required maxlength="120"')}
+ <div class="formgrid">${input("甲方主体 *","aName","","text",'required maxlength="200"')}
+ ${input("乙方主体 *","bName","","text",'required maxlength="200"')}
+ ${input("合同金额（元）","amount","","number",'min="0" step="0.01" max="999999999999"')}
+ ${input("双方签署完成日期 *","signedDate","","date",'required')}
+ </div>
+ <label class="field">核对说明 *<textarea name="note" required maxlength="2000" placeholder="例如：已核对双方盖章、签署日期及扫描件页码完整性"></textarea></label>
+ <label style="font-size:12px"><input type="checkbox" name="confirmed" required> 我已确认扫描件中甲乙双方均已盖章，文件完整、清晰</label>
+ <div class="modalfoot">${B("close","取消")}<button class="primary" id="importSave">确认导入并归档</button></div>
+ </form>`);
+}
+async function validateScan(file){
+ need(file instanceof Blob&&file.size>0&&file.size<=30*1024*1024,"请选择不超过 30 MB 的扫描件。");
+ need(/\.(pdf|jpe?g|png)$/i.test(file.name),"仅支持 PDF、JPG、PNG。");
+ const bytes=new Uint8Array(await file.slice(0,1024).arrayBuffer());
+ if(/\.pdf$/i.test(file.name))need(new TextDecoder().decode(bytes).includes("%PDF-"),"PDF 文件头无效。");
+ else if(/\.png$/i.test(file.name))need(bytes[0]===137&&bytes[1]===80&&bytes[2]===78&&bytes[3]===71,"PNG 文件头无效。");
+ else need(bytes[0]===255&&bytes[1]===216,"JPEG 文件头无效。");
+}
+
+/* ---------- 模板、消息、日志 ---------- */
+function templatesPage(){
+ need(me().role==="chief");
+ return H("合同模板","保留模板选择、模板版本和自定义字段。",B("template-new","新增模板","","primary"))+
+ db.templates.map(t=>`<div class="card"><div class="actions between"><div><h2 style="margin:0">${esc(t.name)}
+ <span class="tag">${t.code} · V${t.version}</span><span class="tag ${t.enabled?"green":""}">${t.enabled?"启用中":"已停用"}</span></h2>
+ <div class="muted">${esc(t.type)} · ${t.signType==="unilateral"?"单方协议":"双方协议"}</div></div>
+ <div class="actions">${B("template-edit","编辑发布",t.id)}${B("template-toggle",t.enabled?"停用":"启用",t.id)}</div></div></div>`).join("");
+}
+function templateEditor(id=""){
+ need(me().role==="chief");const t=db.templates.find(x=>x.id===id);
+ modal(`${MH(t?"编辑模板":"新增模板")}
+ <form id="templateForm" data-id="${id}" data-version="${t?.version||0}">
+ <div class="formgrid">${input("模板名称 *","name",t?.name||"","text",'required maxlength="100"')}
+ <label class="field">合同类型<select name="type">${TYPES.map(v=>`<option ${t?.type===v?"selected":""}>${v}</option>`).join("")}</select></label>
+ <label class="field">签署方式<select name="signType"><option value="bilateral">双方协议</option><option value="unilateral" ${t?.signType==="unilateral"?"selected":""}>单方协议</option></select></label>
+ <label class="field">上传模板正文<input type="file" id="templateUpload" accept=".docx,.txt,.md"></label></div>
+ <label class="field">正文 *<textarea id="templateBody" name="body" required maxlength="150000" style="min-height:260px">${esc(t?.body||"")}</textarea></label>
+ <div class="tip">甲乙方字段使用 {{aName}}、{{aAddress}}、{{aContact}}、{{aPhone}}、{{bName}} 等；业务字段按下方定义。</div>
+ <label class="field">业务字段 JSON *<textarea name="fields" required style="min-height:170px;font-family:monospace">${esc(JSON.stringify(t?.fields||COMMON_FIELDS,null,2))}</textarea>
+ <span class="muted">type 支持 text、textarea、number、select；select 的 options 为字符串数组。</span></label>
+ ${input("发布说明 *","note","","text",'required maxlength="1000"')}
+ <div class="modalfoot">${B("close","取消")}<button class="primary">发布</button></div></form>`,"large");
+}
+function messagesPage(){
+ const rows=db.messages.filter(m=>m.to===account);
+ return H("消息通知","分派、审批、退回与签署完成提醒。",B("read-all","全部已读"))+
+ `<div class="card">${rows.map(m=>`<div class="kv"><div><b>${!m.read?"● ":""}${esc(m.title)}</b><div class="muted">${fmt(m.at)}</div></div>
+ ${B("open-message","查看",m.id,"small")}</div>`).join("")||'<div class="empty">暂无消息</div>'}</div>`;
+}
+function logsPage(){
+ const rows=ownLogs();
+ return H("操作日志",me().role==="chief"?"法务主管可查看全部账号、乙方签署人及系统操作记录。":"仅展示当前账号自己的操作记录。",
+ B("export-logs","导出日志"))+`<div class="card">${logHTML(rows.slice(-150))}
+ ${rows.length>150?'<p class="muted">页面展示最近 150 条，导出包含全部有权限查看的记录。</p>':""}</div>`;
+}
+
+/* ---------- 表单 ---------- */
+document.addEventListener("submit",async event=>{
+ event.preventDefault();const form=event.target;
+ if(!(form instanceof HTMLFormElement)||!form.reportValidity())return;
+ const values=Object.fromEntries(new FormData(form));
+ try{
+  if(form.id==="loginForm"){
+   need(user(values.account)&&values.password===PASSWORD,"账号或密码错误。");
+   const id=values.account;
+   if(tx(()=>log("登录系统","进入账号工作区。",null,user(id)))){account=id;view="home";render()}
+   return;
+  }
+  need(me(),"请先登录。");
+  if(form.id==="editForm"){saveEditor(form);return}
+  if(form.id==="assignForm"){
+   tx(()=>{
+    const c=get(form.dataset.id);need(c&&me().role==="chief"&&["assign","legal"].includes(c.status)&&c.version===Number(form.dataset.version));
+    need(user(values.assignee)?.role==="legal"&&values.reason.trim(),"请选择法务并填写说明。");
+    const old=c.assignee;need(c.status==="assign"||old!==values.assignee,"请选择不同的承办法务。");
+    c.assignee=values.assignee;c.status="legal";c.participants=[...new Set([...c.participants,c.assignee])];
+    log(old?"改派法务":"分派法务",`${userName(old)} → ${userName(c.assignee)}；${values.reason.trim()}`,c);
+    if(old&&old!==c.assignee)message(old,"合同已改派其他法务",c);
+    message(c.assignee,"收到新的法务审批任务",c);message(c.owner,"合同已分派给 "+userName(c.assignee),c);
+   });return;
+  }
+  if(form.id==="reviewForm"){
+   tx(()=>{
+    const c=get(form.dataset.id);need(c&&canApprove(c)&&c.version===Number(form.dataset.version));
+    const legal=me().role==="legal",pass=form.dataset.pass==="1";
+    need(values.opinion.trim(),"请填写审批意见。");if(pass)need(values.checked,"请完成核对确认。");
+    if(!legal)need(c.legalVersion===c.version,"当前版本未完成法务审批。");
+    c.approvals.push({node:legal?"法务审批":"财务审批",by:me().name,byId:account,at:now(),
+     version:c.version,result:pass?"通过":"退回",opinion:values.opinion.trim()});
+    log((legal?"法务":"财务")+"审批"+(pass?"通过":"退回"),values.opinion.trim(),c);
+    if(!pass){
+     c.status="returned";c.returnReason=(legal?"法务":"财务")+"退回："+values.opinion.trim();
+     message(c.owner,c.returnReason,c);
+    }else if(legal){
+     c.legalVersion=c.version;c.status="finance";c.financeEntered=true;
+     log("自动提交财务","固定财务审批人：孙会计。",c,SYSTEM);
+     message(FINANCE,"收到法务已通过的财务审批任务",c);message(c.owner,"法务已通过，进入财务审批",c);
+    }else{c.financeVersion=c.version;enterSigning(c)}
+   });return;
+  }
+  if(form.id==="reasonForm"){
+   tx(()=>{
+    const c=get(form.dataset.id);need(c&&c.owner===account&&me().role==="biz");
+    need(values.reason.trim(),"请填写原因。");
+    if(form.dataset.kind==="withdraw"){
+     need(["assign","legal","finance"].includes(c.status));c.status="draft";
+     c.legalVersion=null;c.financeVersion=null;log("撤回申请",values.reason.trim(),c);
+    }else{
+     need(!["completed","unilateral_done","terminated"].includes(c.status));
+     c.status="terminated";log("终止流程",values.reason.trim(),c);
+    }
+    if(c.assignee)message(c.assignee,"合同已撤回或终止",c);
+    if(c.financeEntered)message(FINANCE,"合同已撤回或终止",c);
+    if(c.mode==="nonstandard")message("chief","合同已撤回或终止",c);
+   });return;
+  }
+  if(form.id==="importForm"){
+   need(hasSummary()&&!form.dataset.busy);form.dataset.busy="1";
+   const actor=account;$("importSave").disabled=true;
+   try{
+    need(values.confirmed&&values.note.trim(),"请确认双方盖章并填写核对说明。");
+    need(values.aName.trim()&&values.bName.trim()&&values.title.trim(),"请填写合同及双方名称。");
+    const date=new Date(values.signedDate+"T12:00:00");need(Number.isFinite(date.getTime())&&date.getTime()<=Date.now()+86400000,"签署日期无效。");
+    const today=new Date();const day=today.getFullYear()+"-"+String(today.getMonth()+1).padStart(2,"0")+"-"+String(today.getDate()).padStart(2,"0");
+    need(values.signedDate<=day,"签署日期不能晚于今天。");
+    if(values.amount)need(/^\d+(\.\d{1,2})?$/.test(values.amount),"金额最多两位小数。");
+    await validateScan(values.file);const file=await saveFile(values.file);
+    need(actor===account&&hasSummary()&&$("importForm")===form,"账号或导入窗口已变化。");
+    tx(()=>{
+     need(account===actor&&hasSummary());
+     const c={id:uid("c-"),no:`QN-${new Date().getFullYear()}-${++db.seq}`,title:values.title.trim(),
+      owner:account,dept:me().dept,mode:"imported",status:"completed",version:1,
+      type:"采购协议",signType:"bilateral",data:{aName:values.aName.trim(),bName:values.bName.trim(),amount:values.amount},
+      body:"纸质已签署合同以导入扫描件为准。",file,createdAt:now(),updatedAt:now(),
+      versions:[],approvals:[],participants:[],signatures:{
+       a:{at:date.toISOString(),source:"paper",by:values.aName.trim()},
+       b:{at:date.toISOString(),source:"paper",by:values.bName.trim()}
+      },archivedAt:now(),importedBy:account,importNote:values.note.trim()};
+     c.archiveNo="ARC-"+c.no;db.contracts.unshift(c);
+     log("导入纸质双签合同",`${file.name}；双方盖章由导入人核对；${values.note.trim()}`,c);
+     log("纸质协议归档","双方签署状态来源：导入人确认扫描件，不进行印章真实性自动判断。",c,SYSTEM);
+     view="summary";filters={q:"",status:"",mode:"",days:""};page=1;
+    });
+   }finally{if(form.isConnected){form.dataset.busy="";$("importSave").disabled=false}}
+   return;
+  }
+  if(form.id==="templateForm"){
+   need(me().role==="chief"&&!form.dataset.loading,"模板文件正在读取。");
+   const fields=JSON.parse(values.fields);
+   need(Array.isArray(fields)&&fields.length<=40,"字段须为数组，最多 40 项。");
+   const entityKeys=ENTITY_FIELDS.flatMap(([k])=>["a"+k,"b"+k]),seen=new Set();
+   const reserved=["title","body","type","signType","note","__proto__","constructor","prototype",...entityKeys];
+   for(const f of fields){
+    need(f&&typeof f.key==="string"&&/^[A-Za-z][A-Za-z0-9_]{0,39}$/.test(f.key)&&!reserved.includes(f.key)&&!seen.has(f.key),"字段 key 重复或无效。");
+    need(typeof f.label==="string"&&f.label.trim()&&["text","textarea","number","select"].includes(f.type),"字段定义不完整。");
+    if(f.type==="select")need(Array.isArray(f.options)&&f.options.length&&f.options.every(x=>typeof x==="string"),"select 需要字符串 options。");
+    seen.add(f.key);
+   }
+   const allowed=new Set([...entityKeys,...seen]);
+   need([...values.body.matchAll(/\{\{([^{}]+)\}\}/g)].every(m=>allowed.has(m[1])),"正文存在未定义的字段占位符。");
+   tx(()=>{
+    need(me().role==="chief"&&values.name.trim()&&values.body.trim()&&values.note.trim());
+    let t=db.templates.find(t=>t.id===form.dataset.id);
+    if(form.dataset.id){
+     need(t&&t.version===Number(form.dataset.version),"模板版本已变化。");
+     t.history.push({version:t.version,body:t.body,fields:clone(t.fields),at:now()});t.version++;
+    }else{
+     const n=Math.max(0,...db.templates.map(t=>Number(t.code.replace(/\D/g,""))||0))+1;
+     t={id:uid("t-"),code:"TPL-"+String(n).padStart(3,"0"),version:1,enabled:true,history:[]};db.templates.push(t);
+    }
+    Object.assign(t,{name:values.name.trim(),type:values.type,signType:values.signType,body:values.body.trim(),fields});
+    log("发布模板",`${t.code} ${t.name} V${t.version}；${values.note.trim()}`);
+   });return;
+  }
+ }catch(e){toast(e.message||"操作失败。")}
+});
+
+/* ---------- 点击事件 ---------- */
+document.addEventListener("click",async event=>{
+ const el=event.target.closest("[data-action]");if(!el)return;
+ event.preventDefault();const action=el.dataset.action,id=el.dataset.id;
+ try{
+  if(action==="close"){closeModal();return}
+  if(signingPage){await signingAction(action);return}
+  need(me(),"请先登录。");
+  if(action==="logout"){
+   if(tx(()=>log("退出系统","退出当前账号工作区。"))){account="";view="home";closeModal();render()}return;
+  }
+  if(action==="go"){
+   if(id==="summary")need(hasSummary());
+   if(id==="templates")need(me().role==="chief");
+   if(id==="create")need(me().role==="biz");
+   view=id;page=1;filters={q:"",status:"",mode:"",days:""};closeModal();render();return;
+  }
+  if(action==="filter"){
+   filters={q:$("filterQ").value.trim(),mode:$("filterMode").value,status:$("filterStatus")?.value||"",days:$("filterDays").value};
+   page=1;render();return;
+  }
+  if(action==="clear-filter"){filters={q:"",status:"",mode:"",days:""};page=1;render();return}
+  if(action==="page"){page+=Number(id);render();return}
+  if(action==="new-standard"){openEditor("",id);return}
+  if(action==="new-nonstandard"){openEditor();return}
+  if(action==="convert"){convert();return}
+  if(action==="adopt"){if(adopt(id,true))livePreview();return}
+  if(action==="fill-empty"){
+   let n=0;for(const k of Object.keys(editor?.recognized||{}))if(adopt(k))n++;
+   livePreview();toast(`已回填 ${n} 个空字段。`);return;
+  }
+  if(action==="editor-original"){
+   const e=editor;need(e?.file,"请先上传合同。");
+   if(e.url){window.open(e.url,"_blank","noopener,noreferrer");return}
+   const f=await readFile(e.file.id);need(editor===e&&f?.blob,"原件未找到或窗口已变化。");
+   download(f.name,f.blob);return;
+  }
+  if(action==="tab"){tab=id;render();return}
+  if(action==="import"){openImport();return}
+  if(action==="export-summary"){exportSummary();return}
+  if(action==="template-new"){templateEditor();return}
+  if(action==="template-edit"){templateEditor(id);return}
+  if(action==="template-toggle"){
+   tx(()=>{need(me().role==="chief");const t=db.templates.find(t=>t.id===id);need(t);
+    t.enabled=!t.enabled;log("启停模板",`${t.enabled?"启用":"停用"} ${t.code} ${t.name}`)});return;
+  }
+  if(action==="read-all"){
+   tx(()=>{db.messages.filter(m=>m.to===account).forEach(m=>m.read=true);log("消息全部已读")});return;
+  }
+  if(action==="open-message"){
+   const m=db.messages.find(m=>m.id===id&&m.to===account);need(m);
+   const c=get(m.cid);
+   if(c&&archived(c)&&hasSummary()){
+    tx(()=>{m.read=true});await archivePreview(get(c.id));return;
+   }
+   tx(()=>{m.read=true;if(c&&visible(c)){cid=c.id;view="detail";tab="document";log("查看合同","从通知进入。",c)}});
+   if(!c||!visible(c))toast("该合同不在当前账号可见范围。");return;
+  }
+  if(action==="export-logs"){
+   if(!tx(()=>log("导出操作日志",me().role==="chief"?"导出全部日志。":"导出本人日志。")))return;
+   download("操作日志.json",JSON.stringify(ownLogs(),null,2),"application/json;charset=utf-8");return;
+  }
+  const c=get(id);need(c&&visible(c),"合同不存在或无权访问。");
+  if(action==="detail"){
+   if(c.mode==="imported"){await archivePreview(c);return}
+   tx(()=>{cid=c.id;view="detail";tab="document";log("查看合同","打开合同详情。",c)});return;
+  }
+  if(action==="edit"){openEditor(id);return}
+  if(action==="submit"){
+   need(canEdit(c));
+   if(confirm(c.mode==="standard"?"标准协议将进入甲方签署，是否提交？":"提交后由法务主管分派法务，是否继续？"))tx(()=>submit(c));
+   return;
+  }
+  if(action==="assign"){openAssign(c);return}
+  if(action==="approve"){openReview(c,true);return}
+  if(action==="reject"){openReview(c,false);return}
+  if(action==="withdraw"||action==="terminate"){openReason(c,action);return}
+  if(action==="sign"){openSignCenter(c);return}
+  if(action==="open-b"){
+   need(c.owner===account&&me().role==="biz"&&c.bInvite);
+   window.open(signLink(c,"b"),"_blank","noopener,noreferrer");
+   tx(()=>log("打开乙方模拟签署页面","用于演示乙方签署流程。",c));return;
+  }
+  if(action==="resend"){
+   need(canSign(c)&&c.status==="pending_b");
+   tx(()=>simulateSend(c,me()));toast("签署链接已重新模拟发送，旧乙方链接已失效。");return;
+  }
+  if(action==="archive-preview"){await archivePreview(c);return}
+  if(action==="archive-download"){await archiveDownload(c);return}
+  if(action==="preview-original"){await attachment(c,true);return}
+  if(action==="download-original"){await attachment(c,false);return}
+  if(action==="version"||action==="diff"){openVersion(c,Number(el.dataset.version),action==="diff");return}
+ }catch(e){toast(e.message||"操作失败。")}
+});
+
+document.addEventListener("input",event=>{
+ if(event.target.closest("#editForm"))livePreview();
+});
+document.addEventListener("change",async event=>{
+ try{
+  if(event.target.id==="partyPick"){
+   const p=PARTIES.find(p=>p.name===event.target.value);if(!p)return;
+   const f=$("editForm");
+   f.elements.aName.value=p.name;f.elements.aAddress.value=p.address;
+   f.elements.aContact.value=p.contact;f.elements.aPhone.value=p.phone;livePreview();return;
+  }
+  if(event.target.id==="contractUpload"){
+   if(event.target.files[0])await uploadContract(event.target.files[0]);return;
+  }
+  if(event.target.id==="templateUpload"){
+   const file=event.target.files[0],form=$("templateForm");if(!file)return;
+   need(/\.(docx|txt|md)$/i.test(file.name)&&file.size<=15*1024*1024,"模板支持 DOCX、TXT、MD，最大 15 MB。");
+   if($("templateBody").value.trim()&&!confirm("将替换模板正文，是否继续？"))return;
+   const before=$("templateBody").value;form.dataset.loading="1";
+   try{
+    const text=await extract(file);
+    need($("templateForm")===form&&$("templateBody").value===before,"窗口或正文已变化，未覆盖。");
+    need(text.trim()&&text.length<=150000,"模板正文为空或过长。");
+    $("templateBody").value=text;toast("正文已读取，请核对字段定义后发布。");
+   }finally{if(form.isConnected)form.dataset.loading=""}
+   return;
+  }
+  if(event.target.closest("#editForm"))livePreview();
+ }catch(e){toast(e.message)}
+});
+document.addEventListener("dragover",event=>{
+ const zone=event.target.closest("#uploadTop");if(zone){event.preventDefault();zone.classList.add("drag")}
+});
+document.addEventListener("dragleave",event=>event.target.closest("#uploadTop")?.classList.remove("drag"));
+document.addEventListener("drop",async event=>{
+ const zone=event.target.closest("#uploadTop");if(!zone)return;
+ event.preventDefault();zone.classList.remove("drag");
+ try{if(event.dataTransfer.files[0])await uploadContract(event.dataTransfer.files[0])}catch(e){toast(e.message)}
+});
+window.addEventListener("storage",event=>{
+ if(event.key!==STORE||!event.newValue)return;
+ try{
+  const incoming=JSON.parse(event.newValue);
+  if(incoming.schema!==7||incoming.revision===db.revision)return;
+  db=incoming;
+  if(!signingPage)closeModal();
+  render();
+ }catch(e){toast("数据同步失败，请刷新页面。")}
+});
+window.addEventListener("focus",()=>{
+ try{
+  const old=db.revision;sync();
+  if(old!==db.revision){if(!signingPage)closeModal();render()}
+ }catch{}
+});
+render();
+</script>
+<!-- 七只小牛签约系统：六项定向优化 -->
+<style>
+/* 部门负荷：仅优化展示，不改变审批流程 */
+.department-load-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px dashed var(--line);
+}
+.department-load-row:last-child {
+  border-bottom: none;
+}
+.department-load-person {
+  min-width: 94px;
+}
+.department-load-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+.department-load-role {
+  font-size: 11px;
+  color: var(--sub);
+}
+.department-load-track {
+  flex: 1;
+  height: 8px;
+  border-radius: 6px;
+  background: #edf1f7;
+  overflow: hidden;
+}
+.department-load-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width .25s ease;
+}
+.department-load-fill.low {
+  background: linear-gradient(90deg, #28a57c, #7bcfae);
+}
+.department-load-fill.medium {
+  background: linear-gradient(90deg, #e2a13b, #f0cd7f);
+}
+.department-load-fill.high {
+  background: linear-gradient(90deg, #d95c62, #eda0a5);
+}
+.department-load-count {
+  min-width: 66px;
+  text-align: right;
+}
+.account-subject-note {
+  font-size: 11px;
+  color: var(--sub);
+  margin-top: 5px;
+}
+.nda-simple-fields h2 {
+  margin-top: 4px;
+}
+.nda-simple-fields textarea {
+  min-height: 180px;
+}
+</style>
+
+<script>
+(function installTargetedOptimizations() {
+  "use strict";
+
+  /* ======================================================
+     1. 登录账号不绑定甲方主体
+     业务可自行选择甲方主体。
+     账号角色、部门和发起权限保持不变。
+     ====================================================== */
+
+  const DEMO_SESSION_KEY = STORE + ":current-account";
+  let returnTimer = null;
+
+  const originalRender = render;
+  const originalRenderSign = renderSign;
+  const originalOpenEditor = openEditor;
+  const originalSaveEditor = saveEditor;
+  const originalAdopt = adopt;
+  const originalLog = log;
+  const originalTable = table;
+  const originalContractActions = contractActions;
+
+  function saveDemoSession(id) {
+    try {
+      if (id) {
+        sessionStorage.setItem(DEMO_SESSION_KEY, id);
+      } else {
+        sessionStorage.removeItem(DEMO_SESSION_KEY);
+      }
+    } catch (error) {
+      // 会话存储不可用不影响原有页面操作。
+    }
+  }
+
+  function restoreDemoSession() {
+    try {
+      const storedAccount = sessionStorage.getItem(DEMO_SESSION_KEY);
+      if (user(storedAccount)) {
+        account = storedAccount;
+      }
+    } catch (error) {
+      // 无法恢复时继续使用原登录页。
+    }
+  }
+
+  function isNDATemplate(template) {
+    return !!template && (
+      template.id === "t2" ||
+      template.code === "TPL-002" ||
+      template.name === "保密承诺函"
+    );
+  }
+
+  function isNDAContract(contract) {
+    return !!contract &&
+      contract.mode === "standard" &&
+      contract.signType === "unilateral" &&
+      (
+        contract.tplId === "t2" ||
+        contract.tplCode === "TPL-002" ||
+        contract.title === "保密承诺函"
+      );
+  }
+
+  function isNDAEditor() {
+    return !!editor &&
+      editor.mode === "standard" &&
+      editor.signType === "unilateral" &&
+      (
+        editor.tplId === "t2" ||
+        editor.tplCode === "TPL-002"
+      );
+  }
+
+  /* ======================================================
+     2. 保密承诺函正文
+     五项填写内容均落入合同正文。
+     保留原承诺函的主要条款，不增加填写项目。
+     ====================================================== */
+
+  const SIMPLIFIED_NDA_BODY = `保密承诺函
+
+甲方（承诺方）：{{aName}}
+甲方联系人：{{aContact}}
+
+乙方（披露方）：{{bName}}
+乙方联系人：{{bContact}}
+
+保密事项：
+{{projectName}}
+
+本司，{{aName}}（下称“本司”或“接收方”），就上述保密事项，向{{bName}}（下称“贵方”或“披露方”）郑重承诺如下：
+
+第一条 保密信息
+1.1 本函件所称保密信息，是指贵方向本司提供的或因上述保密事项由本司知悉的与贵方商业秘密有关的所有信息，包括但不限于商业计划、战略及融资计划、交易方案、财务信息、产品信息等。
+1.2 保密信息不论纸质、电子、声像或其他形式。
+
+第二条 保密义务
+2.1 本司对与上述保密事项有关的及在开展相关工作过程中知悉的保密信息负有保密义务，不得泄露。
+
+第三条 保密信息专有权
+3.1 本司理解并同意，保密信息及与之相关的权利均为贵方的专有财产。
+
+第四条 违约责任
+4.1 本司违反本函件约定将给贵方造成重大和不能挽回的损害，本司应赔偿因此给贵方造成的全部损失。
+
+第五条 生效及其他
+5.1 本承诺函自本司加盖公章之日起生效。
+
+特此承诺。
+承诺方：{{aName}}（公章）`;
+
+  const NDA_FIELDS = [{
+    key: "projectName",
+    label: "保密事项",
+    type: "textarea",
+    required: true
+  }];
+
+  function preparePartySelection() {
+    if (!editor || !$("editForm")) return;
+
+    const form = $("editForm");
+    const picker = $("partyPick");
+    const nameControl = form.elements.namedItem("aName");
+
+    if (picker) {
+      picker.disabled = false;
+
+      const currentName = String(nameControl?.value || "");
+      const exists = [...picker.options].some(
+        option => option.value === currentName
+      );
+
+      picker.value = exists ? currentName : "";
+    }
+
+    livePreview();
+  }
+
+  openEditor = function patchedOpenEditor(id = "", tplId = "") {
+    originalOpenEditor(id, tplId);
+
+    if (!editor || !$("editForm")) return;
+
+    if (isNDAEditor()) {
+      const existing = id ? get(id) : null;
+      const oldData = existing?.data || {};
+      const defaultParty = PARTIES[0] || {
+        name: "",
+        contact: ""
+      };
+
+      const selectedParty = existing
+        ? String(oldData.aName || "")
+        : defaultParty.name;
+
+      const selectedContact = existing
+        ? String(oldData.aContact || "")
+        : defaultParty.contact;
+
+      const partyNames = [...new Set([
+        ...PARTIES.map(party => party.name),
+        ...(selectedParty ? [selectedParty] : [])
+      ])];
+
+      editor.template = SIMPLIFIED_NDA_BODY;
+      editor.fields = clone(NDA_FIELDS);
+      editor.signType = "unilateral";
+      editor.type = "单方函件";
+      editor.ndaSimplified = true;
+
+      const panel = document.querySelector(".editfields");
+
+      panel.classList.add("nda-simple-fields");
+      panel.innerHTML = `
+        <div class="tip">
+          本函件仅需填写以下五项。甲方主体通过下拉选择，甲方联系人可修改。
+          甲方完成签章后，自动进入“已签署”并归档至合同汇总表。
+        </div>
+
+        <h2>保密承诺函</h2>
+
+        <label class="field">
+          甲方主体 *
+          <select name="aName" id="qznFreeNdaPartyPick" required>
+            <option value="">请选择甲方主体</option>
+            ${partyNames.map(name => `
+              <option
+                value="${esc(name)}"
+                ${name === selectedParty ? "selected" : ""}
+              >${esc(name)}</option>
+            `).join("")}
+          </select>
+        </label>
+
+        ${input(
+          "乙方主体 *",
+          "bName",
+          oldData.bName || "",
+          "text",
+          'required maxlength="200"'
+        )}
+
+        ${input(
+          "甲方联系人 *",
+          "aContact",
+          selectedContact,
+          "text",
+          'required maxlength="100"'
+        )}
+
+        ${input(
+          "乙方联系人 *",
+          "bContact",
+          oldData.bContact || "",
+          "text",
+          'required maxlength="100"'
+        )}
+
+        <label class="field">
+          保密事项 *
+          <textarea
+            name="projectName"
+            required
+            maxlength="10000"
+            placeholder="请填写本次承诺函涉及的保密事项"
+          >${esc(oldData.projectName || oldData.confidentialMatter || "")}</textarea>
+        </label>
+
+        <div class="modalfoot">
+          ${B("close", "取消")}
+          <button class="primary" id="saveEditor">
+            ${existing ? "保存新版本" : "保存草稿"}
+          </button>
+        </div>
+      `;
+
+      const uploadTop = $("uploadTop");
+      if (uploadTop) uploadTop.hidden = true;
+
+      const originalButton = document.querySelector(
+        '[data-action="editor-original"]'
+      );
+
+      if (originalButton) originalButton.hidden = true;
+    }
+
+    preparePartySelection();
+
+    const ndaPicker = $("qznFreeNdaPartyPick");
+    if (ndaPicker) {
+      ndaPicker.addEventListener("change", function () {
+        const form = $("editForm");
+        if (!editor || !form) return;
+
+        const party = PARTIES.find(
+          item => item.name === ndaPicker.value
+        );
+
+        const contact = form.elements.namedItem("aContact");
+
+        if (party && contact) {
+          contact.value = party.contact || "";
+        }
+
+        livePreview();
+      });
+    }
+  };
+
+  /* ======================================================
+     3. 保存校验
+     普通合同沿用原保存逻辑。
+     保密承诺函单独执行五项校验，不要求隐藏电话或银行字段。
+     ====================================================== */
+
+  saveEditor = function patchedSaveEditor(form) {
+    need(editor && me(), "请先登录并打开合同编辑页面。");
+
+    const formData = Object.fromEntries(new FormData(form));
+
+    if (!isNDAEditor()) {
+      return originalSaveEditor(form);
+    }
+
+    const e = editor;
+    need(!e.busy, "请等待当前操作完成。");
+
+    tx(() => {
+      need(account === e.actor && me().role === "biz");
+
+      const existing = e.id ? get(e.id) : null;
+
+      if (e.id) {
+        need(
+          existing &&
+          canEdit(existing) &&
+          existing.version === e.baseVersion,
+          "合同版本或状态已变化，请重新打开。"
+        );
+      }
+
+      const values = {
+        aName: String(formData.aName || "").trim(),
+        bName: String(formData.bName || "").trim(),
+        aContact: String(formData.aContact || "").trim(),
+        bContact: String(formData.bContact || "").trim(),
+        projectName: String(formData.projectName || "").trim()
+      };
+
+      need(values.aName, "请确认甲方主体。");
+      need(values.bName, "请填写乙方主体。");
+      need(values.aContact, "请确认甲方联系人。");
+      need(values.bContact, "请填写乙方联系人。");
+      need(values.projectName, "请填写保密事项。");
+
+      need(
+        values.projectName.length <= 10000,
+        "保密事项不能超过 10000 字符。"
+      );
+
+      need(
+        db.templates.some(t => t.id === e.tplId && t.enabled),
+        "该模板已停用，不能继续生成合同。"
+      );
+
+      const body = fill(SIMPLIFIED_NDA_BODY, values);
+      let c = existing;
+
+      if (c) {
+        c.version++;
+
+        Object.assign(c, {
+          title: "保密承诺函",
+          data: values,
+          body,
+          template: SIMPLIFIED_NDA_BODY,
+          fields: clone(NDA_FIELDS),
+          mode: "standard",
+          status: "draft",
+          type: "单方函件",
+          signType: "unilateral",
+          legalVersion: null,
+          financeVersion: null,
+          returnReason: "",
+          file: null
+        });
+
+        versions(c, "更新保密承诺函五项信息");
+
+        log(
+          "保存新版本",
+          "修改保密承诺函主体、联系人或保密事项。",
+          c
+        );
+      } else {
+        c = {
+          id: uid("c-"),
+          no: `QN-${new Date().getFullYear()}-${++db.seq}`,
+          title: "保密承诺函",
+          owner: account,
+          dept: me().dept,
+          mode: "standard",
+          status: "draft",
+          version: 1,
+
+          data: values,
+          body,
+          type: "单方函件",
+          signType: "unilateral",
+
+          template: SIMPLIFIED_NDA_BODY,
+          fields: clone(NDA_FIELDS),
+
+          tplId: e.tplId,
+          tplCode: e.tplCode,
+          tplVersion: e.tplVersion,
+
+          file: null,
+          createdAt: now(),
+          updatedAt: now(),
+
+          versions: [],
+          approvals: [],
+          participants: [],
+
+          assignee: null,
+          financeEntered: false,
+          signatures: {},
+          aInvite: null,
+          bInvite: null
+        };
+
+        db.contracts.unshift(c);
+        versions(c, "保密承诺函初始版本");
+
+        log(
+          "创建合同",
+          "填写甲方主体、乙方主体、甲方联系人、乙方联系人、保密事项。",
+          c
+        );
+      }
+
+      cid = c.id;
+      view = "detail";
+      tab = "document";
+    });
+  };
+
+  /*
+   * 甲方字段不再受账号绑定限制。
+   * 保留原规则：默认只回填空字段；
+   * 用户点击“采用”时才覆盖对应字段。
+   */
+  adopt = function patchedAdopt(key, overwrite = false) {
+    const applied = originalAdopt(key, overwrite);
+
+    if (applied && key === "aName") {
+      const picker = $("partyPick");
+      const nameControl = $("editForm")?.elements.namedItem("aName");
+
+      if (picker && nameControl) {
+        const exists = [...picker.options].some(
+          option => option.value === nameControl.value
+        );
+        picker.value = exists ? nameControl.value : "";
+      }
+    }
+
+    return applied;
+  };
+
+  /* ======================================================
+     4. 单方函件也归档
+     不改变单方完成状态，仅补充归档信息。
+     ====================================================== */
+
+  archived = function patchedArchived(c) {
+    if (!c || !c.archivedAt || !c.signatures?.a) return false;
+
+    if (c.signType === "unilateral") {
+      return ["unilateral_done", "completed"].includes(c.status);
+    }
+
+    return (
+      c.signType === "bilateral" &&
+      c.status === "completed" &&
+      !!c.signatures?.b
+    );
+  };
+
+  log = function patchedLog(
+    action,
+    detail = "",
+    c = null,
+    actor = me() || SYSTEM
+  ) {
+    if (
+      action === "单方协议办理完成" &&
+      c?.signType === "unilateral" &&
+      c.signatures?.a
+    ) {
+      detail = "甲方完成单方签章，自动进入已签署并归档至合同汇总表。";
+
+      if (!c.archivedAt) {
+        c.archivedAt = now();
+        c.archiveNo = "ARC-" + c.no;
+
+        originalLog(action, detail, c, actor);
+
+        originalLog(
+          "自动归档",
+          "单方函件已完成所需签章，自动归档至合同汇总表。",
+          c,
+          SYSTEM
+        );
+
+        for (const u of USERS.filter(u =>
+          ["chief", "legal", "finance"].includes(u.role)
+        )) {
+          message(
+            u.id,
+            "新增已归档单方函件：" + c.title,
+            c
+          );
+        }
+
+        return;
+      }
+    }
+
+    return originalLog(action, detail, c, actor);
+  };
+
+  /* ======================================================
+     5. 法务主管自行处理
+     可处理待分派与法务审批节点。
+     不允许跳过财务，也不改变业务撤回、退回、重提路径。
+     ====================================================== */
+
+  canApprove = function patchedCanApprove(c) {
+    if (!c || c.mode !== "nonstandard" || !me()) return false;
+
+    if (me().role === "chief") {
+      return ["assign", "legal"].includes(c.status);
+    }
+
+    if (me().role === "legal") {
+      return c.assignee === account && c.status === "legal";
+    }
+
+    return me().role === "finance" && c.status === "finance";
+  };
+
+  myTask = function patchedMyTask(c) {
+    if (!me()) return false;
+
+    if (me().role === "chief") {
+      return (
+        c.mode === "nonstandard" &&
+        ["assign", "legal"].includes(c.status)
+      );
+    }
+
+    if (me().role === "biz") {
+      return (
+        c.owner === account &&
+        ["draft", "returned", "ready", "signed_a", "pending_b"]
+          .includes(c.status)
+      );
+    }
+
+    return canApprove(c);
+  };
+
+  contractActions = function patchedContractActions(c) {
+    let html = originalContractActions(c);
+
+    if (
+      me()?.role === "chief" &&
+      c?.mode === "nonstandard" &&
+      ["assign", "legal"].includes(c.status)
+    ) {
+      html = html.replace(
+        /(<button[^>]*data-action="approve"[^>]*>)[\s\S]*?(<\/button>)/,
+        "$1审批通过$2"
+      );
+    }
+
+    return html;
+  };
+
+  workload = function patchedWorkload() {
+    const people = USERS.filter(u =>
+      ["chief", "legal"].includes(u.role)
+    );
+
+    const unassigned = db.contracts.filter(c =>
+      c.mode === "nonstandard" && c.status === "assign"
+    ).length;
+
+    const rows = people.map(u => {
+      const count = db.contracts.filter(c =>
+        c.mode === "nonstandard" &&
+        c.status === "legal" &&
+        c.assignee === u.id
+      ).length;
+
+      const level = count >= 6 ? "high" : count >= 3 ? "medium" : "low";
+      const tag = count >= 6 ? "red" : count >= 3 ? "orange" : "green";
+
+      return `
+        <div class="department-load-row">
+          <div class="department-load-person">
+            <div class="department-load-name">${esc(u.name)}</div>
+            <div class="department-load-role">${esc(u.title)}</div>
+          </div>
+
+          <div class="department-load-track">
+            <div
+              class="department-load-fill ${level}"
+              style="width:${count ? Math.min(100, 12 + count * 12) : 0}%"
+            ></div>
+          </div>
+
+          <div class="department-load-count">
+            <span class="tag ${tag}">${count} 项</span>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    return `
+      <div class="card">
+        <div class="actions between" style="margin-bottom:14px">
+          <h2 style="margin:0">法务待办负荷</h2>
+          <span class="tag purple">待调度 ${unassigned} 项</span>
+        </div>
+
+        ${rows}
+
+        <div class="actions" style="margin-top:15px">
+          <span class="tag green">0–2 项 · 低负荷</span>
+          <span class="tag orange">3–5 项 · 中负荷</span>
+          <span class="tag red">6 项及以上 · 高负荷</span>
+        </div>
+
+        <p class="muted" style="margin:12px 0 0">
+          主管可分派给法务专员，也可直接审批待调度或法务审批中的合同。
+        </p>
+      </div>
+    `;
+  };
+
+  /*
+   * 捕获主管审批表单，防止原表单逻辑将主管误判为财务。
+   * 法务专员、财务表单继续走原有逻辑。
+   */
+  document.addEventListener("submit", function handleChiefReview(event) {
+    const form = event.target;
+
+    if (
+      !(form instanceof HTMLFormElement) ||
+      form.id !== "reviewForm" ||
+      me()?.role !== "chief"
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    if (!form.reportValidity()) return;
+
+    try {
+      const values = Object.fromEntries(new FormData(form));
+
+      tx(() => {
+        const c = get(form.dataset.id);
+
+        need(
+          c &&
+          c.mode === "nonstandard" &&
+          ["assign", "legal"].includes(c.status) &&
+          c.version === Number(form.dataset.version),
+          "合同当前节点或版本已变化。"
+        );
+
+        const pass = form.dataset.pass === "1";
+        const opinion = String(values.opinion || "").trim();
+
+        need(opinion, "请填写审批意见。");
+        if (pass) need(values.checked, "请完成合同核对确认。");
+
+        const previousAssignee = c.assignee;
+
+        if (previousAssignee !== account) {
+          c.assignee = account;
+
+          c.participants = [
+            ...new Set([...(c.participants || []), account])
+          ];
+
+          log(
+            "主管自行处理",
+            previousAssignee
+              ? `主管接手处理，原承办法务：${userName(previousAssignee)}。`
+              : "主管直接处理待调度合同。",
+            c
+          );
+
+          if (previousAssignee) {
+            message(
+              previousAssignee,
+              "合同已由法务主管自行处理",
+              c
+            );
+          }
+        }
+
+        c.approvals.push({
+          node: "法务审批",
+          by: me().name,
+          byId: account,
+          at: now(),
+          version: c.version,
+          result: pass ? "通过" : "退回",
+          opinion
+        });
+
+        log(
+          pass ? "主管法务审批通过" : "主管法务审批退回",
+          opinion,
+          c
+        );
+
+        if (!pass) {
+          c.status = "returned";
+          c.returnReason = "法务主管退回：" + opinion;
+
+          message(c.owner, c.returnReason, c);
+          return;
+        }
+
+        c.legalVersion = c.version;
+        c.status = "finance";
+        c.financeEntered = true;
+
+        log(
+          "自动提交财务",
+          "法务主管审批通过，自动提交固定财务审批人：孙会计。",
+          c,
+          SYSTEM
+        );
+
+        message(
+          FINANCE,
+          "收到法务主管已通过的财务审批任务",
+          c
+        );
+
+        message(
+          c.owner,
+          "法务主管审批通过，已进入财务审批",
+          c
+        );
+      });
+    } catch (error) {
+      toast(error.message || "审批操作失败。");
+    }
+  }, true);
+
+  /* ======================================================
+     6. 合同汇总表增加提交人
+     普通合同取业务申请人；扫描件取导入人。
+     ====================================================== */
+
+  table = function patchedTable(rows, summary = false) {
+    if (!summary) return originalTable(rows, false);
+
+    if (!rows.length) {
+      return '<div class="empty">暂无符合条件的合同</div>';
+    }
+
+    return `
+      <div class="tablebox">
+        <table>
+          <thead>
+            <tr>
+              <th>合同信息</th>
+              <th>甲方 / 乙方</th>
+              <th>提交人</th>
+              <th>金额</th>
+              <th>签署方式</th>
+              <th>归档时间</th>
+              <th>来源</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            ${rows.map(c => {
+              const submitterId = c.importedBy || c.owner;
+              const submitter = user(submitterId);
+
+              return `
+                <tr>
+                  <td>
+                    <div class="title">${esc(c.title)}</div>
+                    <div class="muted">
+                      ${esc(c.no)} · V${c.version}
+                    </div>
+                    ${modeTag(c)}
+                  </td>
+
+                  <td>
+                    ${esc(c.data.aName)}
+                    <div class="muted">${esc(c.data.bName)}</div>
+                  </td>
+
+                  <td>
+                    ${esc(submitter?.name || userName(submitterId))}
+                    <div class="muted">
+                      ${esc(submitter?.dept || c.dept || "")}
+                    </div>
+                  </td>
+
+                  <td>${money(c.data.amount)}</td>
+
+                  <td>
+                    <span class="tag ${
+                      c.signType === "unilateral" ? "purple" : "blue"
+                    }">
+                      ${
+                        c.signType === "unilateral"
+                          ? "单方签章"
+                          : "双方签署"
+                      }
+                    </span>
+                  </td>
+
+                  <td>${fmt(c.archivedAt)}</td>
+
+                  <td>
+                    ${
+                      c.mode === "imported"
+                        ? "纸质扫描件"
+                        : "在线模拟签署"
+                    }
+                  </td>
+
+                  <td>
+                    <div class="actions">
+                      ${B("archive-preview", "预览", c.id, "small")}
+                      ${B("archive-download", "下载", c.id, "small")}
+                    </div>
+                  </td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
+  };
+
+  exportSummary = function patchedExportSummary() {
+    need(hasSummary() && view === "summary");
+
+    const rows = selectedRows();
+
+    const output = [[
+      "合同编号",
+      "合同名称",
+      "甲方",
+      "乙方",
+      "提交人",
+      "提交部门",
+      "金额",
+      "签署方式",
+      "来源",
+      "甲方签署时间",
+      "乙方签署时间",
+      "归档时间"
+    ]];
+
+    rows.forEach(c => {
+      const submitter = user(c.importedBy || c.owner);
+
+      output.push([
+        c.no,
+        c.title,
+        c.data.aName,
+        c.data.bName,
+        submitter?.name || "—",
+        submitter?.dept || c.dept || "",
+        c.data.amount || "",
+        c.signType === "unilateral" ? "单方签章" : "双方签署",
+        c.mode === "imported" ? "纸质扫描件" : "在线模拟签署",
+        fmt(c.signatures?.a?.at),
+        c.signType === "unilateral"
+          ? "无需乙方签署"
+          : fmt(c.signatures?.b?.at),
+        fmt(c.archivedAt)
+      ]);
+    });
+
+    if (!tx(() => {
+      log(
+        "导出合同汇总表",
+        `按当前筛选导出 ${rows.length} 条，包含提交人及单方签章函件。`
+      );
+    })) {
+      return;
+    }
+
+    download(
+      "合同汇总表.csv",
+      "\uFEFF" + output
+        .map(row => row.map(csvCell).join(","))
+        .join("\r\n"),
+      "text/csv;charset=utf-8"
+    );
+  };
+
+  /* ======================================================
+     7. 签署全部完成后自动返回“已签署”
+     本地模拟页面回到合同所属业务账号。
+     双方协议仅甲方完成时不会跳回。
+     ====================================================== */
+
+  renderSign = function patchedRenderSign() {
+    originalRenderSign();
+
+    let context;
+
+    try {
+      context = signingContext();
+    } catch (error) {
+      return;
+    }
+
+    const c = context.c;
+
+    const finished =
+      (
+        c.signType === "unilateral" &&
+        c.signatures?.a &&
+        ["unilateral_done", "completed"].includes(c.status)
+      ) ||
+      (
+        c.signType === "bilateral" &&
+        c.status === "completed" &&
+        c.signatures?.a &&
+        c.signatures?.b
+      );
+
+    if (!finished) return;
+
+    const firstCard = document.querySelector(".signpage .card");
+
+    if (firstCard) {
+      firstCard.innerHTML = `
+        <h1>签署已完成</h1>
+
+        <p>
+          ${
+            c.signType === "unilateral"
+              ? "甲方已完成单方签章。"
+              : "甲乙双方均已完成签署。"
+          }
+          合同已自动归档至合同汇总表。
+        </p>
+
+        ${KV("归档编号", c.archiveNo || "—")}
+
+        <div class="tip" style="margin-top:16px;margin-bottom:0">
+          即将自动返回业务“已签署”界面。
+        </div>
+      `;
+    }
+
+    if (returnTimer) return;
+
+    returnTimer = setTimeout(() => {
+      try {
+        sync();
+
+        const current = get(c.id);
+
+        const stillFinished = current && (
+          (
+            current.signType === "unilateral" &&
+            current.signatures?.a &&
+            ["unilateral_done", "completed"].includes(current.status)
+          ) ||
+          (
+            current.signType === "bilateral" &&
+            current.status === "completed" &&
+            current.signatures?.a &&
+            current.signatures?.b
+          )
+        );
+
+        if (!stillFinished) {
+          returnTimer = null;
+          renderSign();
+          return;
+        }
+
+        /*
+         * 仅用于本地模拟闭环：
+         * 签署窗口回到该合同所属业务账号。
+         * 正式对外乙方页面不能使用此方式恢复内部账号。
+         */
+        saveDemoSession(current.owner);
+
+        const returnURL = location.href.split("#")[0] +
+          "#view=signed";
+
+        location.replace(returnURL);
+
+        // 原文件把 signingPage 定义为常量，变更 hash 后需重载，
+        // 才能切回普通工作区，而不是继续停留在签署分支。
+        location.reload();
+      } catch (error) {
+        returnTimer = null;
+        toast("签署已完成，请返回系统查看“已签署”。");
+      }
+    }, 1200);
+  };
+
+  /* ======================================================
+     8. 菜单、说明及账号展示
+     不修改底层页面 key，避免破坏原有跳转。
+     ====================================================== */
+
+  render = function patchedRender() {
+    originalRender();
+
+    if (signingPage) return;
+
+    saveDemoSession(account || "");
+
+    if (!me()) {
+      return;
+    }
+
+    if (me().role === "chief") {
+      const nav = document.querySelector(
+        '.sidebar [data-action="go"][data-id="tasks"]'
+      );
+
+      if (nav) nav.textContent = "部门调度";
+
+      if (view === "tasks") {
+        const heading = document.querySelector("#main .head h1");
+        if (heading) heading.textContent = "部门调度";
+
+        const sub = document.querySelector("#main .head .muted");
+        if (sub) {
+          sub.textContent =
+            "查看部门合同需求，分派法务专员或由主管自行审批；通过后自动提交财务。";
+        }
+      }
+    }
+
+    if (view === "summary") {
+      const description = document.querySelector("#main .head .muted");
+
+      if (description) {
+        description.textContent =
+          "法务、财务可查看全部已完成签署的协议及单方函件；显示提交人，仅提供预览和下载。";
+      }
+    }
+  };
+
+  /* ======================================================
+     9. 恢复本地模拟账号和签署返回入口
+     ====================================================== */
+
+  if (!signingPage) {
+    restoreDemoSession();
+
+    if (route.get("view") === "signed" && me()?.role === "biz") {
+      view = "signed";
+      page = 1;
+      filters = {
+        q: "",
+        status: "",
+        mode: "",
+        days: ""
+      };
+    }
+  }
+
+  /*
+   * 对补丁安装前已完成的单方函件，补充归档信息。
+   * 不修改历史正文、签署时间和历史版本。
+   */
+  const legacyUnilateral = db.contracts.filter(c =>
+    c.signType === "unilateral" &&
+    c.status === "unilateral_done" &&
+    c.signatures?.a &&
+    !c.archivedAt
+  );
+
+  if (legacyUnilateral.length) {
+    tx(() => {
+      for (const c of legacyUnilateral) {
+        c.archivedAt = now();
+        c.archiveNo = "ARC-" + c.no;
+
+        originalLog(
+          "补充单方函件归档",
+          "按照更新后的归档规则，将已完成单方签章的函件纳入合同汇总表；历史正文与签署时间保持不变。",
+          c,
+          SYSTEM
+        );
+      }
+    });
+  } else {
+    render();
+  }
+
+})();
+</script>
+<!-- 导航 / 统一视觉 / 文档读取与识别优化 -->
+<style>
+:root{
+  --bg:#f4f6fa;
+  --white:#ffffff;
+  --line:#e5eaf2;
+  --ink:#24344c;
+  --sub:#7a879b;
+  --blue:#3867e8;
+  --nav:#142239;
+  --green:#21856c;
+  --red:#c45662;
+  --orange:#b28436;
+}
+body{
+  background:var(--bg);
+  letter-spacing:.12px;
+}
+button{
+  border-radius:8px;
+  transition:background .16s,border-color .16s,box-shadow .16s;
+}
+button:focus-visible,
+summary:focus-visible{
+  outline:3px solid #bdd0ff;
+  outline-offset:3px;
+}
+.primary{
+  background:#3867e8;
+  border-color:#3867e8;
+  box-shadow:0 4px 10px #3867e81b;
+}
+.primary:hover:not(:disabled){
+  background:#2e57c7;
+  border-color:#2e57c7;
+}
+input,select,textarea{
+  border-radius:8px;
+  border-color:#dfe5ef;
+  transition:border-color .16s,box-shadow .16s;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:#90aef5;
+  box-shadow:0 0 0 3px #3867e80b;
+}
+input[readonly]{
+  background:#f5f7fb;
+  color:#64738a;
+}
+.sidebar{
+  width:232px;
+  background:linear-gradient(175deg,#192c47,#111e32);
+  padding:27px 16px 18px;
+  border-right:1px solid #23364f;
+}
+.logo{
+  font-size:22px;
+  letter-spacing:2px;
+  padding:0 14px 27px;
+}
+.logo small{
+  letter-spacing:2.6px;
+  font-size:9px;
+}
+.workspace{
+  margin-left:232px;
+}
+.sidebar nav{
+  overflow-y:auto;
+  flex:1;
+  padding-right:3px;
+}
+.nav{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border-radius:9px;
+  min-height:43px;
+  margin:4px 0;
+  font-size:13px;
+}
+.nav.active{
+  background:#365fa5;
+  box-shadow:0 5px 15px #00000012;
+  color:#fff;
+}
+.nav:hover:not(:disabled){
+  background:#ffffff0d;
+}
+.nav.active:hover:not(:disabled){
+  background:#365fa5;
+}
+.nav-icon{
+  width:18px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color:#94acd1;
+  flex-shrink:0;
+}
+.nav.active .nav-icon{
+  color:#fff;
+}
+.nav-icon svg{
+  width:17px;
+  height:17px;
+}
+.nav-section-label{
+  font-size:10px;
+  letter-spacing:2px;
+  color:#8498b6;
+  padding:20px 14px 8px;
+}
+.nav-folder{
+  margin:4px 0 10px;
+}
+.nav-folder summary{
+  list-style:none;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-height:43px;
+  padding:10px 13px;
+  cursor:pointer;
+  color:#cfdaec;
+  border-radius:9px;
+  font-size:13px;
+}
+.nav-folder summary::-webkit-details-marker{
+  display:none;
+}
+.nav-folder summary::after{
+  content:"›";
+  margin-left:auto;
+  color:#8da4c5;
+  transform:rotate(0deg);
+  transition:transform .18s;
+}
+.nav-folder[open] summary::after{
+  transform:rotate(90deg);
+}
+.nav-folder summary:hover{
+  background:#ffffff08;
+}
+.nav-children{
+  margin:3px 0 8px 21px;
+  padding-left:12px;
+  border-left:1px solid #ffffff17;
+}
+.nav-children .nav{
+  min-height:37px;
+  font-size:12px;
+  padding:8px 12px;
+}
+.nav-divider{
+  height:1px;
+  background:#ffffff0b;
+  margin:17px 10px;
+}
+.topbar{
+  height:76px;
+  padding:0 32px;
+  background:#ffffffed;
+  border-bottom:1px solid var(--line);
+}
+main{
+  padding:30px 32px;
+}
+.head{
+  margin-bottom:25px;
+}
+.head h1{
+  font-size:24px;
+  letter-spacing:.4px;
+}
+.card{
+  border:1px solid #e5eaf1;
+  border-radius:14px;
+  padding:23px;
+  box-shadow:0 5px 22px #24395104;
+}
+.hero{
+  border:0;
+  background:linear-gradient(115deg,#203958,#345b88);
+  padding:30px;
+  box-shadow:0 9px 25px #294b7514;
+}
+.stat{
+  border-radius:13px;
+  border-color:#e5eaf1;
+  padding:23px;
+  position:relative;
+  overflow:hidden;
+}
+.stat:before{
+  content:"";
+  position:absolute;
+  top:23px;
+  right:20px;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#8aa7e6;
+}
+.stat strong{
+  font-size:32px;
+  font-weight:650;
+  color:#294870;
+}
+.tablebox{
+  border-radius:12px;
+}
+th{
+  background:#f7f9fc;
+  color:#7b8799;
+  padding:15px 17px;
+}
+td{
+  padding:17px;
+}
+.title{
+  color:#2c405f;
+}
+.tag{
+  border-radius:6px;
+  padding:3px 9px;
+}
+.tabs{
+  gap:25px;
+}
+.tab.active{
+  font-weight:600;
+}
+.modalbox{
+  border-radius:16px;
+  box-shadow:0 26px 90px #14233d30;
+}
+.uploadtop{
+  background:linear-gradient(115deg,#f0f5ff,#f8faff);
+  border:1px dashed #a6bceb;
+  padding:20px 23px;
+  border-radius:12px;
+}
+.uploadtop h3{
+  color:#2a4978;
+}
+.editpreview{
+  background:#edf1f7;
+}
+.recognize{
+  border-radius:10px;
+  background:#f8faff;
+}
+.recognition-item{
+  background:#fff;
+  border:1px solid #e7edf6;
+  border-radius:8px;
+  padding:10px;
+  margin:8px 0;
+}
+.recognition-label{
+  font-size:11px;
+  color:#74829a;
+}
+.recognition-value{
+  font-size:12px;
+  color:#304762;
+  overflow-wrap:anywhere;
+  margin:4px 0;
+}
+.recognition-evidence{
+  font-size:10px;
+  color:#8d99aa;
+  overflow-wrap:anywhere;
+  white-space:pre-wrap;
+}
+.recognition-warning{
+  background:#fff8ed;
+  border:1px solid #f0e0c2;
+  border-radius:8px;
+  padding:10px 12px;
+  font-size:11px;
+  color:#97753e;
+  margin-top:9px;
+}
+.doc{
+  border-color:#e5e9f0;
+}
+.signheader{
+  box-shadow:0 3px 16px #24395104;
+}
+@media(max-width:1100px){
+  .sidebar{width:205px}
+  .workspace{margin-left:205px}
+  main{padding:23px}
+}
+@media(max-width:740px){
+  .sidebar{
+    position:static;
+    width:auto;
+    padding:12px;
+  }
+  .workspace{margin:0}
+  .sidebar nav{
+    display:block;
+    max-height:310px;
+    overflow:auto;
+  }
+  .sidebar .nav{
+    width:100%;
+  }
+  .nav-folder{
+    margin:0;
+  }
+  .nav-section-label{
+    padding-top:10px;
+  }
+  .logo{
+    padding:4px 12px 10px;
+  }
+  .nav-divider{
+    margin:9px;
+  }
+  .topbar{
+    height:auto;
+    padding:15px;
+  }
+  main{
+    padding:18px 14px;
+  }
+}
+</style>
+
+<script>
+(function installNavigationAndRecognitionUpgrade(){
+  "use strict";
+
+  if(window.__qznNavigationRecognitionInstalled) return;
+  window.__qznNavigationRecognitionInstalled = true;
+
+  const previousRender = render;
+  const previousExtract = extract;
+
+  let chiefQueue = false;
+  let folderOpen = true;
+  let lastRecognition = null;
+
+  /* =========================
+     一、导航
+     不改原页面 key 和审批状态
+     ========================= */
+
+  const PATHS = {
+    home:"M3 10 12 3l9 7M5 9v12h14V9M9 21v-7h6v7",
+    folder:"M3 7h7l2 2h9v11H3zM3 7V4h7l2 3",
+    grid:"M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z",
+    file:"M5 3h10l4 4v14H5zM14 3v5h5M8 12h8M8 16h8",
+    bell:"M5 17h14l-2-3V9a5 5 0 0 0-10 0v5zM10 21h4",
+    log:"M5 3h14v18H5zM8 8h8M8 12h8M8 16h5"
+  };
+
+  function icon(name){
+    return `<span class="nav-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="1.6"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="${PATHS[name] || PATHS.file}"/>
+      </svg>
+    </span>`;
+  }
+
+  function navItem(key,label,symbol="file",special=""){
+    const active = special === "queue"
+      ? view === "tasks" && chiefQueue
+      : key === "tasks" && me()?.role === "chief"
+        ? view === "tasks" && !chiefQueue
+        : view === key;
+
+    return `<button
+      type="button"
+      class="nav ${active ? "active" : ""}"
+      data-action="go"
+      data-id="${key}"
+      ${special ? `data-navigation-kind="${special}"` : ""}
+      ${active ? 'aria-current="page"' : ""}
+    >${icon(symbol)}<span>${label}</span></button>`;
+  }
+
+  function folder(children){
+    return `<details class="nav-folder" id="contractNavFolder"
+      ${folderOpen ? "open" : ""}>
+      <summary>${icon("folder")}<span>签约管理</span></summary>
+      <div class="nav-children">${children}</div>
+    </details>`;
+  }
+
+  function updateNavigation(){
+    if(signingPage || !me()) return;
+
+    const nav = document.querySelector(".sidebar nav");
+    if(!nav) return;
+
+    const role = me().role;
+    let html = navItem("home","工作台","home");
+
+    if(role === "biz"){
+      html += '<div class="nav-section-label">签约申请</div>';
+      html += folder(
+        navItem("create","提起签约") +
+        navItem("pending","待签署") +
+        navItem("signed","已签署")
+      );
+    }else if(role === "chief"){
+      html += navItem("tasks","部门调度","grid","department");
+      html += folder(
+        navItem("tasks","待处理","file","queue") +
+        navItem("handled","已处理")
+      );
+    }else{
+      html += navItem("tasks","我的审批");
+      html += navItem("handled","已处理");
+    }
+
+    html += '<div class="nav-divider"></div>';
+
+    if(hasSummary()){
+      html += navItem("summary","合同汇总表","grid");
+    }
+
+    if(role === "chief"){
+      html += navItem("templates","模板管理","folder");
+    }
+
+    html += navItem("messages","消息通知","bell");
+    html += navItem("logs","操作日志","log");
+
+    nav.innerHTML = html;
+
+    const details = $("contractNavFolder");
+    if(details){
+      details.addEventListener("toggle",()=>{
+        folderOpen = details.open;
+      });
+    }
+
+    if(role === "chief" && view === "tasks" && chiefQueue){
+  const title = document.querySelector("#main .head h1");
+  const description = document.querySelector("#main .head .muted");
+
+  if(title) title.textContent = "待处理";
+
+  if(description){
+    description.textContent =
+      "与工作台待办使用同一规则，展示当前可分派或由主管自行审批的合同。";
+  }
+
+  // 仅移除当前“待处理”页面中的负荷展示卡片。
+  // 不修改负荷计算、合同列表、审批权限或部门调度页面。
+  const loadRow = document.querySelector(
+    "#main .department-load-row"
+  );
+
+  const loadCard = loadRow?.closest(".card");
+
+  if(loadCard){
+    loadCard.remove();
+  }
+}
+
+    if(role === "chief" && view === "templates"){
+      const title = document.querySelector("#main .head h1");
+      if(title) title.textContent = "模板管理";
+    }
+  }
+
+  render = function(){
+    previousRender();
+    updateNavigation();
+  };
+
+  /*
+   * 只设置菜单展示状态。
+   * 原有 go 事件继续执行原页面跳转。
+   */
+  document.addEventListener("click",event=>{
+    const button = event.target.closest('[data-action="go"]');
+    if(!button || signingPage) return;
+
+    if(me()?.role === "chief" && button.dataset.id === "tasks"){
+      chiefQueue = button.dataset.navigationKind === "queue";
+    }
+
+    if(["create","pending","signed","handled"].includes(button.dataset.id)){
+      folderOpen = true;
+    }
+  },true);
+
+  /* =========================
+     二、文档读取
+     ========================= */
+
+  function decodeText(buffer){
+    const bytes = new Uint8Array(buffer);
+
+    if(bytes[0] === 0xff && bytes[1] === 0xfe){
+      return new TextDecoder("utf-16le").decode(bytes);
+    }
+
+    if(bytes[0] === 0xfe && bytes[1] === 0xff){
+      return new TextDecoder("utf-16be").decode(bytes);
+    }
+
+    try{
+      return new TextDecoder("utf-8",{fatal:true}).decode(bytes);
+    }catch{
+      return new TextDecoder("gb18030").decode(bytes);
+    }
+  }
+
+  function cleanText(text){
+    return String(text || "")
+      .replace(/^\uFEFF/,"")
+      .replace(/\r\n?/g,"\n")
+      .replace(/\u00a0/g," ")
+      .replace(/[\u200B\u200C\u200D]/g,"")
+      .replace(/[ \t]+\n/g,"\n")
+      .replace(/\n{4,}/g,"\n\n\n")
+      .trim();
+  }
+
+  /*
+   * 依据纵向位置聚合行，同一行再按横坐标排列。
+   * 对复杂双栏、旋转文字不能保证恢复排版，保留原件核对。
+   */
+  function pdfPageText(items){
+    const tokens = items
+      .filter(item => typeof item.str === "string" && item.str.trim())
+      .map(item => ({
+        text:item.str,
+        x:item.transform?.[4] || 0,
+        y:item.transform?.[5] || 0,
+        width:Math.abs(item.width || 0),
+        height:Math.max(
+          5,
+          Math.abs(item.height || item.transform?.[3] || 10)
+        )
+      }))
+      .sort((a,b)=>b.y-a.y || a.x-b.x);
+
+    const lines = [];
+
+    for(const token of tokens){
+      const tolerance = Math.max(2,Math.min(5,token.height * .3));
+
+      let line = lines
+        .slice(-4)
+        .find(row => Math.abs(row.y-token.y) <= tolerance);
+
+      if(!line){
+        line = {y:token.y,tokens:[]};
+        lines.push(line);
+      }
+
+      line.tokens.push(token);
+    }
+
+    lines.sort((a,b)=>b.y-a.y);
+
+    return lines.map(line=>{
+      const parts = line.tokens.sort((a,b)=>a.x-b.x);
+
+      let output = "";
+      let previous = null;
+
+      for(const part of parts){
+        if(previous){
+          const gap = part.x-(previous.x+previous.width);
+          const scale = Math.max(previous.height,part.height);
+
+          if(gap > scale * 1.8){
+            output += "\t";
+          }else if(
+            gap > scale * .2 &&
+            !/\s$/.test(output) &&
+            !/^\s/.test(part.text)
+          ){
+            output += " ";
+          }
+        }
+
+        output += part.text;
+        previous = part;
+      }
+
+      return output.trim();
+    }).join("\n");
+  }
+
+  extract = async function enhancedExtract(file){
+    need(
+      file instanceof Blob &&
+      file.size > 0 &&
+      file.size <= 15 * 1024 * 1024,
+      "请选择不超过 15 MB 的有效文档。"
+    );
+
+    const extension = file.name.split(".").pop().toLowerCase();
+
+    if(["txt","md"].includes(extension)){
+      const text = cleanText(decodeText(await file.arrayBuffer()));
+      need(text.length <= 150000,"正文超过 150000 字符，请拆分文档。");
+      return text;
+    }
+
+    if(extension !== "pdf"){
+      // DOCX 保留原有解析器和解压大小限制，不改变原件处理方式。
+      return cleanText(await previousExtract(file));
+    }
+
+    const pdfjs = await import(
+      "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs"
+    );
+
+    pdfjs.GlobalWorkerOptions.workerSrc =
+      "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs";
+
+    const task = pdfjs.getDocument({
+      data:new Uint8Array(await file.arrayBuffer()),
+      isEvalSupported:false
+    });
+
+    task.onPassword = (_updatePassword,reason)=>{
+      task.destroy();
+      toast("该 PDF 需要密码，请先上传已解除密码保护的副本。");
+    };
+
+    let pdf;
+
+    try{
+      pdf = await task.promise;
+
+      need(pdf.numPages <= 100,"PDF 超过 100 页，请拆分后上传。");
+
+      const pages = [];
+      const noTextPages = [];
+      let total = 0;
+
+      for(let n=1;n<=pdf.numPages;n++){
+        const pageObject = await pdf.getPage(n);
+        const content = await pageObject.getTextContent();
+        const text = cleanText(pdfPageText(content.items));
+
+        if(!text) noTextPages.push(n);
+
+        pages.push(text);
+        total += text.length;
+
+        need(total <= 150000,"PDF 提取正文过长，请拆分后上传。");
+
+        pageObject.cleanup();
+      }
+
+      /*
+       * 不默默丢弃无文本页。
+       * 原件仍可保留，但本次自动正文提取不视为完整成功。
+       */
+      need(
+        noTextPages.length === 0,
+        "PDF 第 " + noTextPages.join("、") +
+        " 页未提取到文字，可能是扫描页或空白页。" +
+        "为避免漏读，本次不自动替换正文；请核对原件，必要时先进行 OCR。"
+      );
+
+      return cleanText(pages.join("\n\n"));
+    }finally{
+      if(pdf) await pdf.destroy();
+      else await task.destroy();
+    }
+  };
+
+  /* =========================
+     三、甲乙方区域识别
+     使用候选值和证据，不伪造置信度百分比
+     ========================= */
+
+  const fieldAliases = {
+    Name:[
+      "公司名称","企业名称","单位名称","主体名称"
+    ],
+    Credit:[
+      "统一社会信用代码","社会信用代码","纳税人识别号","税号"
+    ],
+    Address:[
+      "注册地址","联系地址","通讯地址","住所地","住所","地址"
+    ],
+    Legal:[
+      "法定代表人","法人代表"
+    ],
+    Contact:[
+      "联系人","联系人员","经办人"
+    ],
+    Phone:[
+      "联系电话","联系手机","手机号码","电话号码","手机号","电话","手机"
+    ],
+    Email:[
+      "电子邮箱","电子邮件","邮箱","E-mail","Email"
+    ],
+    Bank:[
+      "开户银行","开户行"
+    ],
+    Account:[
+      "银行账号","银行帐号","收款账号","收款帐号","账号","帐号"
+    ],
+    AccountName:[
+      "银行账户名称","收款账户名称","账户名称","开户名称","开户名","户名"
+    ],
+    Invoice:[
+      "开票信息","发票信息"
+    ]
+  };
+
+  const aliasMap = new Map();
+
+  for(const [field,aliases] of Object.entries(fieldAliases)){
+    for(const alias of aliases){
+      aliasMap.set(alias.toLowerCase(),field);
+    }
+  }
+
+  const escapedAliases = [...aliasMap.keys()]
+    .sort((a,b)=>b.length-a.length)
+    .map(value=>value.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"));
+
+  const labelPattern =
+    "(?:(甲方|乙方)\\s*(?:的\\s*)?)(" +
+    escapedAliases.join("|") +
+    ")\\s*[:：]";
+
+  function normalizeField(field,value){
+    let text = String(value || "")
+      .replace(/^[ \t:：]+|[ \t;；，,]+$/g,"")
+      .trim();
+
+    if(!text || /^[_—\-.\s]+$/.test(text)) return "";
+
+    if(field === "Phone"){
+      const hits = text.match(
+        /(?:\+?86[- ]?)?1[3-9]\d{9}|0\d{2,3}[- ]?\d{7,8}(?:-\d{1,6})?/g
+      ) || [];
+
+      const unique = [...new Set(hits.map(item=>
+        item.replace(/^\+?86[- ]?(?=1[3-9]\d{9}$)/,"")
+            .replace(/ /g,"")
+      ))];
+
+      return unique.length === 1 ? unique[0] : "";
+    }
+
+    if(field === "Credit"){
+      text = text.replace(/\s/g,"").toUpperCase();
+      return /^[0-9A-Z]{18}$/.test(text) ? text : "";
+    }
+
+    if(field === "Account"){
+      text = text.replace(/[\s-]/g,"");
+      return /^\d{8,32}$/.test(text) ? text : "";
+    }
+
+    if(field === "Email"){
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text) ? text : "";
+    }
+
+    if(text.length > (field === "Invoice" ? 1000 : 300)) return "";
+
+    return text;
+  }
+
+  recognize = function enhancedRecognize(source){
+    const text = cleanText(source);
+    const candidates = {};
+    const unresolved = new Set();
+
+    function add(key,value,evidence){
+      if(!value) return;
+
+      if(!candidates[key]) candidates[key] = [];
+
+      if(!candidates[key].some(item=>item.value === value)){
+        candidates[key].push({
+          value,
+          evidence:String(evidence || "").slice(0,220)
+        });
+      }
+    }
+
+    let activeParty = "";
+    let regionLines = 0;
+
+    for(const originalLine of text.split("\n")){
+      const line = originalLine.trim();
+
+      if(!line) continue;
+
+      if(
+        /^(?:第[一二三四五六七八九十\d]+[条章节]|[一二三四五六七八九十]+[、．.])/.test(line) ||
+        /^(?:鉴于|双方约定|经双方|本合同)/.test(line)
+      ){
+        activeParty = "";
+        regionLines = 0;
+      }
+
+      const partyPattern =
+        /(甲方|乙方)\s*(?:[（(][^）)\n]{0,30}[）)])?\s*[:：]/g;
+
+      const markers = [...line.matchAll(partyPattern)];
+
+      function parseFields(segment,party,evidence){
+        const matches = [...segment.matchAll(new RegExp(labelPattern,"gi"))];
+
+        for(let index=0;index<matches.length;index++){
+          const match = matches[index];
+          const field = aliasMap.get(match[2].toLowerCase());
+          const explicitParty = match[1];
+
+          const resolvedParty = explicitParty || party;
+          if(!resolvedParty) continue;
+
+          const start = match.index + match[0].length;
+          const end = index+1 < matches.length
+            ? matches[index+1].index
+            : segment.length;
+
+          const raw = segment.slice(start,end).trim();
+          const normalized = normalizeField(field,raw);
+
+          const key = (resolvedParty === "甲方" ? "a" : "b") + field;
+
+          if(normalized){
+            add(key,normalized,evidence);
+          }else if(raw && !/^[_—\-.\s]+$/.test(raw)){
+            unresolved.add(key);
+          }
+        }
+      }
+
+      if(markers.length){
+        for(let i=0;i<markers.length;i++){
+          const marker = markers[i];
+          const party = marker[1];
+          const start = marker.index + marker[0].length;
+          const end = i+1 < markers.length
+            ? markers[i+1].index
+            : line.length;
+
+          const segment = line.slice(start,end).trim();
+          const firstLabel = new RegExp(labelPattern,"i").exec(segment);
+
+          const rawName = firstLabel
+            ? segment.slice(0,firstLabel.index)
+            : segment;
+
+          const name = normalizeField("Name",rawName);
+
+          if(name){
+            add(
+              (party === "甲方" ? "a" : "b") + "Name",
+              name,
+              originalLine
+            );
+          }
+
+          parseFields(segment,party,originalLine);
+        }
+
+        /*
+         * 同一行同时出现甲乙方时，后续无归属字段不推测归属，
+         * 避免把双列表格全部判给最后一个主体。
+         */
+        activeParty = markers.length === 1 ? markers[0][1] : "";
+        regionLines = 0;
+      }else{
+        parseFields(line,activeParty,originalLine);
+
+        regionLines++;
+
+        if(regionLines > 24){
+          activeParty = "";
+        }
+      }
+    }
+
+    const amountPattern =
+      /(?:合同总金额|合同总价|合同金额|总价款)\s*(?:为|是)?\s*[:：]?\s*(?:人民币)?\s*[¥￥]?\s*([\d,，]+(?:\.\d{1,2})?)\s*(万元|元)/g;
+
+    for(const match of text.matchAll(amountPattern)){
+      const number = Number(match[1].replace(/[,，]/g,"")) *
+        (match[2] === "万元" ? 10000 : 1);
+
+      if(Number.isFinite(number) && number >= 0){
+        add("amount",number.toFixed(2),match[0]);
+      }
+    }
+
+    const values = {};
+    const ambiguous = [];
+
+    for(const [key,items] of Object.entries(candidates)){
+      if(items.length === 1 && !unresolved.has(key)){
+        values[key] = items[0].value;
+      }else{
+        ambiguous.push(LABELS[key] || key);
+      }
+    }
+
+    for(const key of unresolved){
+      if(!ambiguous.includes(LABELS[key] || key)){
+        ambiguous.push(LABELS[key] || key);
+      }
+      delete values[key];
+    }
+
+    lastRecognition = {values,ambiguous,candidates};
+    return lastRecognition;
+  };
+
+  /* =========================
+     四、识别结果展示
+     ========================= */
+
+  renderRecognition = function enhancedRecognitionView(ambiguous=[]){
+    if(!editor || !$("recognizeBox")) return;
+
+    const result = editor.recognitionDetails;
+    const box = $("recognizeBox");
+
+    box.hidden = false;
+
+    const entries = Object.entries(editor.recognized || {});
+
+    box.innerHTML = `
+      <div class="actions between">
+        <b style="font-size:12px">信息识别 · 请核对</b>
+        ${B("fill-empty","回填空字段","","small")}
+      </div>
+
+      ${entries.map(([key,value])=>{
+        const evidence = result?.candidates?.[key]?.[0]?.evidence || "";
+
+        return `
+          <div class="recognition-item">
+            <div class="actions between">
+              <span class="recognition-label">
+                ${esc(LABELS[key] || key)}
+              </span>
+              ${B("adopt","采用",key,"small")}
+            </div>
+            <div class="recognition-value">${esc(value)}</div>
+            ${
+              evidence
+                ? `<div class="recognition-evidence">
+                    原文依据：${esc(evidence)}
+                  </div>`
+                : ""
+            }
+          </div>
+        `;
+      }).join("") || `
+        <p class="muted">
+          未找到可明确归属的字段，请按原件填写。
+        </p>
+      `}
+
+      ${ambiguous.length ? `
+        <div class="recognition-warning">
+          以下字段存在多个候选值或格式疑点，未自动回填：
+          ${esc(ambiguous.join("、"))}
+        </div>
+      ` : ""}
+
+      <p class="muted" style="margin:12px 0 0">
+        默认不覆盖已填写内容；甲方主体可通过下拉选择。
+        自动提取结果不等于原件完整性或真实性验证。
+      </p>
+    `;
+  };
+
+  /* =========================
+     五、上传原子化处理
+     解析期间不提前覆盖正文或识别结果
+     ========================= */
+
+  uploadContract = async function enhancedUpload(file){
+    const state = editor;
+
+    need(
+      state &&
+      state.mode === "nonstandard" &&
+      !state.busy,
+      "正在读取文件，请稍候。"
+    );
+
+    need(
+      /\.(pdf|docx|txt|md)$/i.test(file.name) &&
+      file.size > 0 &&
+      file.size <= 15*1024*1024,
+      "仅支持 PDF、DOCX、TXT、MD，最大 15 MB。"
+    );
+
+    const textarea = $("editBody");
+    const before = textarea.value;
+
+    if(
+      before.trim() &&
+      !confirm("读取成功后将替换编辑区正文，是否继续？")
+    ){
+      return;
+    }
+
+    const oldFile = state.file;
+    let storedFile = null;
+    let committed = false;
+
+    state.busy = true;
+    $("saveEditor").disabled = true;
+
+    const uploadInput = $("contractUpload");
+    if(uploadInput) uploadInput.disabled = true;
+
+    $("uploadState").textContent =
+      "正在读取文档并分析甲乙方信息，请稍候……";
+
+    try{
+      const extracted = cleanText(await extract(file));
+
+      need(extracted,"未读取到可识别正文，请核对原件。");
+
+      need(
+        editor === state &&
+        account === state.actor &&
+        $("editBody") === textarea,
+        "编辑窗口或当前账号已变化，本次读取未应用。"
+      );
+
+      need(
+        textarea.value === before,
+        "读取期间正文已被修改，本次不会覆盖当前内容。"
+      );
+
+      storedFile = await saveFile(file);
+
+      need(
+        editor === state &&
+        account === state.actor &&
+        textarea.value === before,
+        "页面或正文已变化，本次读取未应用。"
+      );
+
+      const result = recognize(extracted);
+      const newURL = URL.createObjectURL(file);
+
+      if(state.url) URL.revokeObjectURL(state.url);
+
+      state.file = storedFile;
+      state.url = newURL;
+      state.recognized = result.values;
+      state.recognitionDetails = result;
+
+      textarea.value = extracted;
+
+      let filled = 0;
+
+      for(const key of Object.keys(result.values)){
+        if(adopt(key,false)) filled++;
+      }
+
+      state.parseNote =
+        `提取 ${extracted.length} 字符；` +
+        `明确候选 ${Object.keys(result.values).length} 项；` +
+        `回填 ${filled} 个空字段；` +
+        `待核对 ${result.ambiguous.length} 项`;
+
+      const titleControl = $("editForm").elements.namedItem("title");
+
+      if(
+        titleControl &&
+        ["","非标合同"].includes(titleControl.value.trim())
+      ){
+        titleControl.value = file.name.replace(/\.[^.]+$/,"");
+      }
+
+      committed = true;
+
+      $("uploadState").textContent =
+        file.name + " · " + state.parseNote;
+
+      renderRecognition(result.ambiguous);
+      livePreview();
+
+      toast("文档已读取，请核对原件、正文和双方信息。");
+    }catch(error){
+      if(editor === state){
+        /*
+         * 只有新建且尚无原件、正文为空时，保留失败文档供人工核对。
+         * 已有合同不替换旧原件，避免新原件与旧正文混淆。
+         */
+        if(!oldFile && !before.trim() && !committed){
+          try{
+            const metadata = storedFile || await saveFile(file);
+
+            if(editor === state){
+              state.file = metadata;
+
+              if(state.url) URL.revokeObjectURL(state.url);
+
+              state.url = URL.createObjectURL(file);
+              state.parseNote =
+                "自动提取未完成，原件仅供人工核对，正文需人工补充。";
+            }
+          }catch{
+            // 附件存储失败时仍保留原错误反馈。
+          }
+        }
+
+        if($("uploadState")){
+          $("uploadState").textContent =
+            "未自动替换正文：" + error.message +
+            (state.file && !oldFile
+              ? " 原件已保留，请打开原件核对并补充正文。"
+              : " 原有正文和附件保持不变。");
+        }
+
+        toast(error.message || "文档读取失败，请核对文件。");
+      }
+    }finally{
+      state.busy = false;
+
+      if(editor === state){
+        if($("saveEditor")) $("saveEditor").disabled = false;
+        if($("contractUpload")) $("contractUpload").disabled = false;
+      }
+    }
+  };
+
+  render();
+})();
+</script>
+<!-- 七只小牛：审批退回、审批附件及乙方信息识别增强 -->
+<style id="qzn-enhancement-style">
+.qzn-review-layout{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:0 14px;
+}
+.qzn-review-layout .full{grid-column:1/-1}
+.qzn-attachment-card{
+ border:1px solid #dce8fd;
+ background:#f6f9ff;
+ padding:13px;
+ border-radius:8px;
+ margin:12px 0;
+}
+.qzn-attachment-card .actions{margin-top:8px}
+.qzn-party-recognition{
+ border:1px solid #dce8fd;
+ background:#f6f9ff;
+ border-radius:9px;
+ padding:14px;
+ margin:0 0 16px;
+}
+.qzn-party-recognition textarea{
+ width:100%;
+ min-height:140px;
+}
+.qzn-party-recognition .field{margin-bottom:10px}
+.qzn-recognition-result{
+ margin-top:10px;
+ font-size:12px;
+ white-space:pre-wrap;
+ overflow-wrap:anywhere;
+ color:#52719c;
+}
+.qzn-review-note{
+ white-space:pre-wrap;
+ overflow-wrap:anywhere;
+}
+@media(max-width:740px){
+ .qzn-review-layout{grid-template-columns:1fr}
+}
+</style>
+
+<script>
+(function(){
+"use strict";
+
+if(window.__QZN_APPROVAL_ENHANCEMENT__)return;
+window.__QZN_APPROVAL_ENHANCEMENT__=true;
+
+/* =========================================================
+ * 1. 节点与权限
+ * 不改变账号、合同归属、签署和归档权限。
+ * ========================================================= */
+
+function qznSubmitter(c){
+ return userName(c.owner);
+}
+
+function qznCurrentApprover(c){
+ if(c.status==="assign")return userName("chief");
+ if(c.status==="legal")return userName(c.assignee);
+ if(c.status==="finance")return userName(FINANCE);
+ if(c.status==="returned")return "—（待提交人修改）";
+ if(c.status==="draft")return "—（尚未提交）";
+ return "—（非审批阶段）";
+}
+
+function qznCanReturn(c){
+ if(!c||c.mode!=="nonstandard"||!me())return false;
+
+ if(c.status==="assign"){
+  return me().role==="chief";
+ }
+
+ return canApprove(c);
+}
+
+function qznPreviousNode(c){
+ if(c.status==="finance"){
+  return {
+   status:"legal",
+   actorId:c.assignee,
+   label:"法务审批",
+   name:userName(c.assignee)
+  };
+ }
+
+ if(c.status==="legal"){
+  return {
+   status:"assign",
+   actorId:"chief",
+   label:"主管分派",
+   name:userName("chief")
+  };
+ }
+
+ return {
+  status:"returned",
+  actorId:c.owner,
+  label:"提交人",
+  name:qznSubmitter(c)
+ };
+}
+
+function qznNodeLabel(status){
+ return {
+  assign:"主管分派",
+  legal:"法务审批",
+  finance:"财务审批"
+ }[status]||"审批";
+}
+
+/* =========================================================
+ * 2. 列表显示提交人及当前审批人
+ * 保留原表格内容、操作和分页。
+ * ========================================================= */
+
+const originalTable=table;
+
+table=function(rows,summary=false){
+ const html=originalTable(rows,summary);
+ if(!rows.length)return html;
+
+ const holder=document.createElement("template");
+ holder.innerHTML=html;
+
+ const header=holder.content.querySelector("thead tr");
+ if(!header)return html;
+
+ // 汇总表已有“提交人”，不重复添加；其他列表保持原有增强。
+ const columns = [
+  {title:"提交人", value:c=>qznSubmitter(c)},
+  {title:"当前审批人", value:c=>qznCurrentApprover(c)}
+ ].filter(column =>
+  !Array.from(header.children).some(
+   th => th.textContent.trim() === column.title
+  )
+ );
+
+ for(const column of columns){
+  const th=document.createElement("th");
+  th.textContent=column.title;
+  header.insertBefore(th,header.lastElementChild);
+ }
+
+ const trs=holder.content.querySelectorAll("tbody tr");
+
+ trs.forEach((tr,index)=>{
+  const c=rows[index];
+  if(!c)return;
+
+  for(const column of columns){
+   const td=document.createElement("td");
+   td.textContent=column.value(c);
+   tr.insertBefore(td,tr.lastElementChild);
+  }
+ });
+
+ return holder.innerHTML;
+};
+
+/* =========================================================
+ * 3. 当前主管也可退回
+ * 主管仍使用原分派按钮，不新增“主管审批通过”节点。
+ * ========================================================= */
+
+const originalContractActions=contractActions;
+
+contractActions=function(c){
+ // 原操作区已经提供退回按钮，不再追加重复入口。
+ return originalContractActions(c);
+};
+
+/* =========================================================
+ * 4. 审批弹窗
+ * 原来的 approve / reject 按钮继续调用 openReview。
+ * 使用独立表单 ID，避免执行原审批提交分支。
+ * ========================================================= */
+
+openReview=function(c,pass){
+ if(pass){
+  need(canApprove(c));
+ }else{
+  need(qznCanReturn(c));
+ }
+
+ const previous=qznPreviousNode(c);
+ const node=qznNodeLabel(c.status);
+ const initialOpinion=pass?"同意":"待修订后重新提交";
+
+ modal(`
+ ${MH(node+" · "+(pass?"通过":"退回"))}
+
+ <form
+  id="qznReviewForm"
+  data-id="${esc(c.id)}"
+  data-version="${c.version}"
+  data-status="${esc(c.status)}"
+  data-assignee="${esc(c.assignee||"")}"
+  data-actor="${esc(account)}"
+  data-pass="${pass?"1":"0"}">
+
+  <div class="tip">
+   本次审批绑定当前合同 V${c.version}。
+   ${
+    pass
+     ? c.status==="finance"
+       ? "通过后进入甲方签署。"
+       : "通过后进入固定财务审批。"
+     : "退回后由所选目标环节继续处理。"
+   }
+  </div>
+
+  ${KV("合同名称",c.title)}
+  ${KV("提交人",qznSubmitter(c))}
+  ${KV("当前审批人",qznCurrentApprover(c))}
+
+  <div class="qzn-review-layout" style="margin-top:16px">
+
+   ${
+    pass
+     ? `
+      <label class="full" style="font-size:12px;margin-bottom:15px">
+       <input type="checkbox" name="checked" required>
+       已核对当前合同正文、相关附件和
+       ${c.status==="finance"?"金额及付款信息":"主体信息与合同条款"}
+      </label>`
+     : `
+      <label class="field full">
+       退回位置 *
+       <select name="returnTarget" required>
+        <option value="submitter">
+         退回提交人：${esc(qznSubmitter(c))}
+        </option>
+        <option value="previous">
+         退回上一环节：${esc(previous.label)}
+         / ${esc(previous.name)}
+        </option>
+       </select>
+      </label>
+      ${
+       c.status==="assign"
+        ? '<div class="tip full">主管分派的上一环节就是业务提交人，因此两个选项均退回业务修改。</div>'
+        : ""
+      }`
+   }
+
+   <label class="field full">
+    快捷审批意见
+    <select id="qznOpinionPreset">
+     <option value="">手动填写</option>
+     <option value="同意" ${pass?"selected":""}>同意</option>
+     <option value="待修订后重新提交" ${pass?"":"selected"}>
+      待修订后重新提交
+     </option>
+    </select>
+   </label>
+
+   <label class="field full">
+    审批意见 *
+    <textarea
+     id="qznOpinion"
+     name="opinion"
+     required
+     maxlength="3000"
+     placeholder="可选择快捷意见，也可手动填写或补充"
+    >${initialOpinion}</textarea>
+   </label>
+
+   ${
+    !pass
+     ? `
+      <label class="field full">
+       上传本人修改后的附件（可选）
+       <input
+        type="file"
+        name="reviewFile"
+        accept=".pdf,.doc,.docx,.txt,.md,.jpg,.jpeg,.png">
+       <span class="muted">
+        支持 PDF、DOC、DOCX、TXT、MD、JPG、PNG，
+        最大 30 MB。附件随本次退回意见保存，
+        不覆盖原合同原件。
+       </span>
+      </label>`
+     : ""
+   }
+  </div>
+
+  <div class="modalfoot">
+   ${B("close","取消")}
+   <button class="primary" id="qznReviewSave">
+    确认${pass?"通过":"退回"}
+   </button>
+  </div>
+ </form>`);
+};
+
+/* =========================================================
+ * 5. 附件校验与保存
+ * 附件保存在原 IndexedDB 文件库，审批记录存元数据。
+ * ========================================================= */
+
+function qznValidateReviewFile(file){
+ if(!(file instanceof Blob)||!file.size)return false;
+
+ need(
+  file.size<=30*1024*1024,
+  "审批附件不能超过 30 MB。"
+ );
+
+ need(
+  /\.(pdf|doc|docx|txt|md|jpe?g|png)$/i.test(file.name||""),
+  "审批附件仅支持 PDF、DOC、DOCX、TXT、MD、JPG、PNG。"
+ );
+
+ return true;
+}
+
+function qznNotifyReturn(c,approval){
+ const recipients=new Set([
+  c.owner,
+  approval.returnToActor
+ ]);
+
+ for(const recipient of recipients){
+  if(!recipient||recipient===account)continue;
+
+  message(
+   recipient,
+   `${approval.node}退回至${approval.returnToLabel}：${c.title}`,
+   c
+  );
+ }
+}
+
+async function qznSaveReview(form){
+ if(form.dataset.busy==="1")return;
+ if(!form.reportValidity())return;
+
+ const values=Object.fromEntries(new FormData(form));
+ const pass=form.dataset.pass==="1";
+ const actor=form.dataset.actor;
+
+ need(account===actor&&me(),"当前账号已变化，请重新打开审批窗口。");
+
+ const c=get(form.dataset.id);
+
+ need(c,"合同不存在。");
+ need(pass?canApprove(c):qznCanReturn(c),"当前账号已不是本环节处理人。");
+ need(String(values.opinion||"").trim(),"请填写审批意见。");
+
+ if(pass)need(values.checked,"请先确认已完成核对。");
+ else need(
+  ["submitter","previous"].includes(values.returnTarget),
+  "请选择退回位置。"
+ );
+
+ const button=$("qznReviewSave");
+ form.dataset.busy="1";
+ if(button)button.disabled=true;
+
+ // 用于检查附件上传期间是否发生了其他数据变更。
+ const startingRevision=db.revision;
+ let attachment=null;
+
+ try{
+  if(!pass&&qznValidateReviewFile(values.reviewFile)){
+   attachment=await saveFile(values.reviewFile);
+  }
+
+  need(
+   $("qznReviewForm")===form&&account===actor,
+   "审批窗口或账号已变化，本次未提交。"
+  );
+
+  need(
+   db.revision===startingRevision,
+   "附件处理期间数据已更新，请重新打开审批窗口后提交。"
+  );
+
+  const ok=tx(()=>{
+   const current=get(form.dataset.id);
+
+   need(current,"合同不存在。");
+   need(account===actor,"账号已变化。");
+
+   need(
+    current.version===Number(form.dataset.version)&&
+    current.status===form.dataset.status&&
+    String(current.assignee||"")===form.dataset.assignee,
+    "合同版本、审批节点或承办法务已变化，请重新打开审批窗口。"
+   );
+
+   need(
+    pass?canApprove(current):qznCanReturn(current),
+    "当前账号已无权处理此审批。"
+   );
+
+   const status=current.status;
+
+   const chiefLegalPass=
+    pass&&
+    me().role==="chief"&&
+    ["assign","legal"].includes(status);
+
+   if(chiefLegalPass){
+    const previousAssignee=current.assignee;
+
+    current.assignee=account;
+    current.participants=[
+     ...new Set([
+      ...(current.participants||[]),
+      account
+     ])
+    ];
+
+    if(previousAssignee!==account){
+     log(
+      "主管自行处理",
+      previousAssignee
+       ? "主管接手处理，原承办法务："+userName(previousAssignee)+"。"
+       : "主管直接处理待调度合同。",
+      current
+     );
+
+     if(previousAssignee){
+      message(
+       previousAssignee,
+       "合同已由法务主管自行处理",
+       current
+      );
+     }
+    }
+   }
+
+   const node=chiefLegalPass
+    ? "法务审批"
+    : qznNodeLabel(status);
+
+   const approval={
+    id:uid("approval-"),
+    version:current.version,
+    node,
+    result:pass?"通过":"退回",
+    byId:account,
+    by:me().name,
+    at:now(),
+    opinion:String(values.opinion).trim(),
+    attachment,
+    fromStatus:status
+   };
+
+   if(!Array.isArray(current.approvals))current.approvals=[];
+
+   if(pass){
+    current.approvals.push(approval);
+    current.returnReason="";
+
+    log(node+"通过",approval.opinion,current);
+
+    if(status==="legal"||chiefLegalPass){
+     current.legalVersion=current.version;
+     current.financeVersion=null;
+     current.status="finance";
+     current.financeEntered=true;
+
+     message(
+      FINANCE,
+      "收到待财务审批合同："+current.title,
+      current
+     );
+
+     log(
+      "进入财务审批",
+      chiefLegalPass
+       ? "法务主管审批通过，自动提交固定财务审批人：孙会计。"
+       : "法务已通过，自动提交固定财务审批人。",
+      current,
+      SYSTEM
+     );
+
+     if(chiefLegalPass){
+      message(
+       current.owner,
+       "法务主管审批通过，已进入财务审批",
+       current
+      );
+     }
+    }else{
+     // 保留原有法务与财务版本一致性检查。
+     need(
+      current.legalVersion===current.version,
+      "当前版本尚未通过法务审批。"
+     );
+
+     current.financeVersion=current.version;
+     enterSigning(current);
+    }
+
+    return;
+   }
+
+   const target=values.returnTarget==="submitter"
+    ? {
+       status:"returned",
+       actorId:current.owner,
+       label:"提交人",
+       name:qznSubmitter(current)
+      }
+    : qznPreviousNode(current);
+
+   if(target.status==="legal"){
+    need(
+     ["legal","chief"].includes(user(target.actorId)?.role),
+     "未找到原承办法务或主管，请选择退回提交人。"
+    );
+   }
+
+   approval.returnTarget=values.returnTarget;
+   approval.returnToStatus=target.status;
+   approval.returnToActor=target.actorId;
+   approval.returnToLabel=target.label;
+   approval.returnToName=target.name;
+
+   current.approvals.push(approval);
+
+   /*
+    * 退回即取消当前版本已有的审批通过标记。
+    * 财务退回法务后，需要法务、财务重新通过。
+    */
+   current.legalVersion=null;
+   current.financeVersion=null;
+
+   current.status=target.status;
+
+   if(target.status==="assign"){
+    // 回到主管，由主管重新选择承办法务。
+    // 历史参与人仍保留，方便查看此前处理过的合同。
+    current.assignee=null;
+   }
+
+   if(target.status==="legal"){
+    current.assignee=target.actorId;
+    current.participants=[
+     ...new Set([
+      ...(current.participants||[]),
+      target.actorId
+     ])
+    ];
+   }
+
+   current.returnReason=
+    `${node}退回至${target.label}（${target.name}）：`+
+    approval.opinion;
+
+   log(
+    node+"退回",
+    [
+     `退回位置：${target.label} / ${target.name}`,
+     `审批意见：${approval.opinion}`,
+     attachment?`修改附件：${attachment.name}`:""
+    ].filter(Boolean).join("\n"),
+    current
+   );
+
+   qznNotifyReturn(current,approval);
+  });
+
+  if(ok)toast(pass?"审批已通过。":"已退回至所选环节。");
+
+ }finally{
+  if($("qznReviewForm")===form){
+   form.dataset.busy="0";
+   if(button)button.disabled=false;
+  }
+ }
+}
+
+/*
+ * 捕获阶段拦截增强审批表单。
+ * 原有表单处理仍负责登录、合同编辑、分派、模板等。
+ */
+document.addEventListener("submit",event=>{
+ const form=event.target;
+
+ if(!(form instanceof HTMLFormElement))return;
+ if(form.id!=="qznReviewForm")return;
+
+ event.preventDefault();
+ event.stopImmediatePropagation();
+
+ qznSaveReview(form).catch(error=>{
+  toast(error.message||"审批提交失败。");
+ });
+},true);
+
+/* =========================================================
+ * 6. 详情中展示提交人、当前审批人及退回附件
+ * 原有审批结果仍保留；增加附件和退回去向展示。
+ * ========================================================= */
+
+function qznReviewAttachmentCards(c){
+ const rows=(c.approvals||[])
+  .filter(a=>a.attachment||a.returnToLabel)
+  .slice()
+  .reverse();
+
+ if(!rows.length)return "";
+
+ return `
+ <div class="card">
+  <h2>退回记录与修改附件</h2>
+  ${rows.map(a=>`
+   <div class="qzn-attachment-card">
+    <b>${esc(a.node)} · ${esc(a.result)}
+     <span class="tag">V${a.version}</span>
+    </b>
+
+    <div class="muted">
+     ${esc(a.by)} · ${fmt(a.at)}
+    </div>
+
+    ${
+     a.returnToLabel
+      ? `<div class="muted">
+          退回至：${esc(a.returnToLabel)}
+          / ${esc(a.returnToName||userName(a.returnToActor))}
+         </div>`
+      : ""
+    }
+
+    <p class="qzn-review-note">${esc(a.opinion)}</p>
+
+    ${
+     a.attachment
+      ? `
+       <div class="muted">
+        修改附件：${esc(a.attachment.name)}
+       </div>
+
+       <div class="actions">
+        ${
+         /\.(pdf|jpe?g|png)$/i.test(a.attachment.name)
+          ? `
+           <button
+            type="button"
+            class="small"
+            data-qzn-action="review-file-preview"
+            data-id="${esc(c.id)}"
+            data-approval="${esc(a.id)}">
+            预览附件
+           </button>`
+          : ""
+        }
+
+        <button
+         type="button"
+         class="small"
+         data-qzn-action="review-file-download"
+         data-id="${esc(c.id)}"
+         data-approval="${esc(a.id)}">
+         下载附件
+        </button>
+       </div>`
+      : ""
+    }
+   </div>
+  `).join("")}
+ </div>`;
+}
+
+const originalDetailPage=detailPage;
+
+detailPage=function(){
+ const html=originalDetailPage();
+ const c=get(cid);
+
+ if(!c||!visible(c))return html;
+
+ const summary=`
+ <div class="card">
+  <div class="actions between">
+   <div>
+    <b>提交人：</b>${esc(qznSubmitter(c))}
+   </div>
+   <div>
+    <b>当前审批人：</b>${esc(qznCurrentApprover(c))}
+   </div>
+  </div>
+ </div>`;
+
+ const attachments=
+  ["document","approvals"].includes(tab)
+   ? qznReviewAttachmentCards(c)
+   : "";
+
+ return summary+html+attachments;
+};
+
+async function qznReadReviewAttachment(contractId,approvalId,preview){
+ let c=get(contractId);
+ need(c&&visible(c),"无权查看该合同。");
+
+ let approval=(c.approvals||[]).find(a=>a.id===approvalId);
+ need(approval?.attachment?.id,"未找到审批附件。");
+
+ const actor=account;
+ const fileId=approval.attachment.id;
+ const stored=await readFile(fileId);
+
+ c=get(contractId);
+ approval=(c?.approvals||[]).find(a=>a.id===approvalId);
+
+ need(
+  account===actor&&
+  c&&visible(c)&&
+  approval?.attachment?.id===fileId,
+  "账号、权限或附件信息已变化。"
+ );
+
+ need(stored?.blob,"本浏览器未找到此审批附件。");
+
+ if(!tx(()=>{
+  log(
+   preview?"预览审批修改附件":"下载审批修改附件",
+   stored.name,
+   get(contractId)
+  );
+ }))return;
+
+ if(!preview||!/\.(pdf|jpe?g|png)$/i.test(stored.name)){
+  download(stored.name,stored.blob);
+  return;
+ }
+
+ const url=URL.createObjectURL(stored.blob);
+
+ modal(`
+  ${MH(esc(stored.name))}
+  ${
+   /\.pdf$/i.test(stored.name)
+    ? `<iframe class="pdf" src="${url}"></iframe>`
+    : `<img class="scanimg" src="${url}" alt="审批修改附件">`
+  }
+ `,"large");
+
+ urls.push(url);
+}
+
+/* =========================================================
+ * 7. 乙方文本信息识别
+ * 本地规则识别，不向外部服务发送粘贴信息。
+ * 支持带标签文本、部分无标签公司名称和手机号。
+ * ========================================================= */
+
+const qznFieldDefinitions=[
+ {
+  key:"bName",
+  label:"主体名称",
+  aliases:[
+   "乙方主体名称","乙方公司名称","乙方名称",
+   "公司名称","企业名称","单位名称","主体名称",
+   "企业全称","公司全称","名称","乙方"
+  ]
+ },
+ {
+  key:"bCredit",
+  label:"统一社会信用代码",
+  aliases:[
+   "统一社会信用代码","统一信用代码",
+   "社会信用代码","纳税人识别号","税号"
+  ]
+ },
+ {
+  key:"bAddress",
+  label:"地址",
+  aliases:[
+   "公司注册地址","注册地址","联系地址",
+   "通讯地址","公司地址","经营地址","住所地","住所","地址"
+  ]
+ },
+ {
+  key:"bLegal",
+  label:"法定代表人",
+  aliases:["法定代表人","法人代表","法人"]
+ },
+ {
+  key:"bContact",
+  label:"联系人",
+  aliases:["业务联系人","联系人员","联系人","经办人","对接人"]
+ },
+ {
+  key:"bPhone",
+  label:"联系电话",
+  aliases:[
+   "联系人手机号","联系人电话","联系电话",
+   "手机号码","手机电话","手机号","电话","手机"
+  ]
+ },
+ {
+  key:"bEmail",
+  label:"电子邮箱",
+  aliases:["电子邮箱","电子邮件","联系邮箱","邮箱","E-mail","Email"]
+ },
+ {
+  key:"bBank",
+  label:"开户行",
+  aliases:["开户银行","开户行"]
+ },
+ {
+  key:"bAccount",
+  label:"银行账号",
+  aliases:["银行账号","银行帐号","收款账号","收款帐号","账号","帐号"]
+ },
+ {
+  key:"bAccountName",
+  label:"账户名称",
+  aliases:["银行账户名称","收款账户名称","账户名称","开户名称","开户名","户名"]
+ }
+];
+
+function qznEscapeRegex(value){
+ return String(value).replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+}
+
+function qznUnique(values){
+ return [...new Set(values.map(v=>String(v).trim()).filter(Boolean))];
+}
+
+function qznCleanValue(value){
+ return String(value||"")
+  .replace(/^[\s:：=，,；;、|]+/,"")
+  .replace(/[\s，,；;、|]+$/,"")
+  .trim();
+}
+
+function qznPhoneCandidates(text){
+ return qznUnique(
+  (String(text).match(
+   /(?:\+?86[- ]?)?1[3-9]\d{9}|0\d{2,3}[- ]?\d{7,8}(?:-\d{1,6})?/g
+  )||[]).map(phone=>{
+   const compact=phone.replace(/\s/g,"");
+
+   // 大陆手机号去掉国家区号，保持原保存校验兼容。
+   if(/^(?:\+86|86)1[3-9]\d{9}$/.test(compact)){
+    return compact.replace(/^(?:\+86|86)/,"");
+   }
+   return compact;
+  })
+ );
+}
+
+function qznParsePartyText(raw){
+ const text=String(raw||"")
+  .replace(/\r\n?/g,"\n")
+  .replace(/\u00a0/g," ")
+  .trim();
+
+ const values={};
+ const ambiguous=[];
+ const candidates={};
+
+ const aliasToKey=new Map();
+
+ for(const field of qznFieldDefinitions){
+  candidates[field.key]=[];
+
+  for(const alias of field.aliases){
+   aliasToKey.set(alias.toLowerCase(),field.key);
+  }
+ }
+
+ const aliases=[...aliasToKey.keys()]
+  .sort((a,b)=>b.length-a.length);
+
+ /*
+  * 有冒号/等号时允许识别单行连续标签：
+  * 公司名称：... 税号：... 地址：...
+  * 无冒号时要求标签出现在行首或分隔符之后。
+  */
+ const labelPattern=aliases.map(qznEscapeRegex).join("|");
+
+ const regex=new RegExp(
+  `(${labelPattern})\\s*[:：=]\\s*`+
+  `|(?:^|[\\n，,；;|])\\s*(${labelPattern})[ \\t]+`,
+  "gim"
+ );
+
+ const hits=[];
+
+ for(const match of text.matchAll(regex)){
+  const alias=(match[1]||match[2]).toLowerCase();
+
+  hits.push({
+   key:aliasToKey.get(alias),
+   start:match.index,
+   valueStart:match.index+match[0].length
+  });
+ }
+
+ for(let i=0;i<hits.length;i++){
+  const hit=hits[i];
+  let value=text.slice(
+   hit.valueStart,
+   i+1<hits.length?hits[i+1].start:text.length
+  );
+
+  value=qznCleanValue(value);
+
+  if(hit.key!=="bAddress"){
+   value=qznCleanValue(value.split(/\n/)[0]);
+  }else{
+   value=value.replace(/\n+/g," ");
+  }
+
+  if(!value)continue;
+
+  if(hit.key==="bPhone"){
+   candidates[hit.key].push(...qznPhoneCandidates(value));
+  }else if(hit.key==="bCredit"){
+   candidates[hit.key].push(
+    ...(value.toUpperCase().match(/\b[0-9A-Z]{18}\b/g)||[])
+   );
+  }else if(hit.key==="bEmail"){
+   candidates[hit.key].push(
+    ...(value.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi)||[])
+   );
+  }else if(hit.key==="bAccount"){
+   const account=value.match(/\d[\d -]{6,35}\d/);
+   if(account)candidates[hit.key].push(account[0].replace(/[ -]/g,""));
+  }else{
+   candidates[hit.key].push(value);
+  }
+ }
+
+ // 未提供明确名称标签时，尝试从独立行中识别公司名称。
+ if(!candidates.bName.length){
+  const lines=text.split(/[\n，,；;|]/)
+   .map(qznCleanValue)
+   .filter(Boolean);
+
+  for(const line of lines){
+   if(/[:：=]/.test(line))continue;
+
+   if(
+    line.length<=150&&
+    /(?:有限责任公司|股份有限公司|有限公司|合伙企业|个体工商户)$/.test(line)
+   ){
+    candidates.bName.push(line);
+   }
+  }
+ }
+
+ // 只有一个明确候选值时才自动采用。
+ if(!candidates.bCredit.length){
+  candidates.bCredit.push(
+   ...(text.toUpperCase().match(/\b[0-9A-Z]{18}\b/g)||[])
+  );
+ }
+
+ if(!candidates.bPhone.length){
+  candidates.bPhone.push(...qznPhoneCandidates(text));
+ }
+
+ if(!candidates.bEmail.length){
+  candidates.bEmail.push(
+   ...(text.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi)||[])
+  );
+ }
+
+ for(const field of qznFieldDefinitions){
+  const list=qznUnique(candidates[field.key]);
+
+  if(list.length===1){
+   values[field.key]=list[0];
+  }else if(list.length>1){
+   ambiguous.push(field.label);
+  }
+ }
+
+ return {values,ambiguous};
+}
+
+/* =========================================================
+ * 8. 将识别输入框加入乙方信息区域
+ * 不修改合同正文，不在打开历史合同时自动覆盖数据。
+ * ========================================================= */
+
+const originalOpenEditor=openEditor;
+let qznRecognitionTimer=null;
+
+function qznMountPartyRecognition(){
+ const form=$("editForm");
+ if(!editor||!form||$("qznPartyText"))return;
+
+ const bName=form.elements.namedItem("bName");
+ const grid=bName?.closest(".formgrid");
+ if(!grid)return;
+
+ const box=document.createElement("section");
+ box.className="qzn-party-recognition";
+
+ box.innerHTML=`
+  <h3>粘贴乙方信息，自动识别填写</h3>
+
+  <label class="field">
+   乙方整段资料
+   <textarea
+    id="qznPartyText"
+    maxlength="20000"
+    placeholder="例如：
+公司名称：某某科技有限公司
+统一社会信用代码：请粘贴实际代码
+地址：某省某市某区某路
+联系人：张经理
+电话：请粘贴实际联系电话
+邮箱：请粘贴实际邮箱"></textarea>
+  </label>
+
+  <label style="display:block;font-size:12px;margin-bottom:10px">
+   <input type="checkbox" id="qznPartyAutoFill" checked>
+   粘贴后自动识别并填入空字段
+  </label>
+
+  <div class="actions">
+   <button
+    type="button"
+    class="small primary"
+    data-qzn-action="party-fill-empty">
+    识别并填写空字段
+   </button>
+
+   <button
+    type="button"
+    class="small"
+    data-qzn-action="party-fill-overwrite">
+    识别并覆盖已有字段
+   </button>
+  </div>
+
+  <div class="muted" style="margin-top:9px">
+   默认不覆盖已填写内容；多个候选值不自动选择。
+   识别结果请人工核对。乙方电话仍遵循原有签约手机号要求。
+  </div>
+
+  <div
+   id="qznPartyResult"
+   class="qzn-recognition-result"
+   aria-live="polite"></div>
+ `;
+
+ grid.before(box);
+}
+
+openEditor=function(...args){
+ const result=originalOpenEditor.apply(this,args);
+ qznMountPartyRecognition();
+ return result;
+};
+
+function qznFillParty(overwrite=false,quiet=false){
+ const form=$("editForm");
+ const source=$("qznPartyText");
+ const resultBox=$("qznPartyResult");
+
+ if(!editor||!form||!source||!resultBox)return;
+
+ const text=source.value.trim();
+
+ if(!text){
+  resultBox.textContent="";
+  if(!quiet)toast("请先粘贴乙方信息。");
+  return;
+ }
+
+ const result=qznParsePartyText(text);
+ const entries=Object.entries(result.values);
+
+ if(!entries.length){
+  resultBox.textContent=
+   "未识别到明确字段。建议保留“公司名称：”“地址：”“联系人：”“电话：”等标签。";
+  return;
+ }
+
+ if(overwrite&&!confirm("将覆盖本次识别到的对应乙方字段，是否继续？")){
+  return;
+ }
+
+ const filled=[];
+ const skipped=[];
+
+ for(const [key,value] of entries){
+  const control=form.elements.namedItem(key);
+  if(!control)continue;
+
+  const label=LABELS[key]||key;
+
+  if(!overwrite&&String(control.value||"").trim()){
+   skipped.push(label);
+   continue;
+  }
+
+  control.value=value;
+  filled.push(label);
+ }
+
+ // 继续使用原来的实时预览逻辑。
+ livePreview();
+
+ const lines=[
+  `识别到 ${entries.length} 项，已填写 ${filled.length} 项。`
+ ];
+
+ if(filled.length)lines.push("已填写："+filled.join("、"));
+ if(skipped.length)lines.push("保留已有值："+skipped.join("、"));
+
+ if(result.ambiguous.length){
+  lines.push("多个候选值，未自动填写："+result.ambiguous.join("、"));
+ }
+
+ lines.push("");
+ lines.push("识别结果：");
+
+ for(const [key,value] of entries){
+  lines.push(`${LABELS[key]||key}：${value}`);
+ }
+
+ resultBox.textContent=lines.join("\n");
+}
+
+/* =========================================================
+ * 9. 增强模块事件
+ * 使用独立 data-qzn-action，不干扰原按钮分派。
+ * ========================================================= */
+
+document.addEventListener("click",event=>{
+ const button=event.target.closest?.("button[data-qzn-action]");
+ if(!button)return;
+
+ event.preventDefault();
+ event.stopImmediatePropagation();
+
+ const action=button.dataset.qznAction;
+
+ Promise.resolve().then(async()=>{
+  need(me(),"请先登录。");
+
+  if(action==="return"){
+   const c=get(button.dataset.id);
+   need(c&&visible(c)&&qznCanReturn(c));
+   openReview(c,false);
+   return;
+  }
+
+  if(action==="party-fill-empty"){
+   qznFillParty(false);
+   return;
+  }
+
+  if(action==="party-fill-overwrite"){
+   qznFillParty(true);
+   return;
+  }
+
+  if(
+   action==="review-file-preview"||
+   action==="review-file-download"
+  ){
+   await qznReadReviewAttachment(
+    button.dataset.id,
+    button.dataset.approval,
+    action==="review-file-preview"
+   );
+  }
+ }).catch(error=>{
+  toast(error.message||"操作失败。");
+ });
+},true);
+
+document.addEventListener("change",event=>{
+ if(event.target.id==="qznOpinionPreset"){
+  const selected=event.target.value;
+  const textarea=$("qznOpinion");
+
+  if(selected&&textarea){
+   textarea.value=selected;
+  }
+ }
+
+ if(
+  event.target.id==="qznPartyAutoFill"&&
+  event.target.checked
+ ){
+  qznFillParty(false,true);
+ }
+});
+
+document.addEventListener("input",event=>{
+ if(event.target.id!=="qznPartyText")return;
+
+ clearTimeout(qznRecognitionTimer);
+
+ const currentEditor=editor;
+
+ qznRecognitionTimer=setTimeout(()=>{
+  if(editor!==currentEditor)return;
+  if(!$("qznPartyAutoFill")?.checked)return;
+
+  try{
+   qznFillParty(false,true);
+  }catch(error){
+   toast(error.message||"信息识别失败。");
+  }
+ },500);
+});
+
+/*
+ * 不改存储名称，不迁移或清空历史合同。
+ * 若页面已初始化，则刷新页面展示，使新增列立即生效。
+ */
+if(typeof render==="function"){
+ render();
+}
+})();
+</script>
+
+<!-- QZN_FREE_PARTY_CHIEF_FIX_V1：取消主体绑定并修复主管审批流转 -->
+</body>
+</html>
