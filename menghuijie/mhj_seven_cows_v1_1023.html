@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>七七七合同管理系统</title>
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@500;600;700&display=swap">
+<style>
+
+:root{
+  --brand:#2067E8; --brand-2:#1B57CE; --brand-3:#4D8DF2; --brand-deep:#1443A8; --brand-soft:#EAF2FE; --brand-line:#D4E4FB;
+  --ink:#1F3A66; --ink-2:#2067E8; --ink-3:#4D8DF2; --ink-dark:#173C78; --ink-soft:#A9C6EE;
+  --red:#C0392B; --red-deep:#A93226; --red-bg:#FBE9E5;
+  --paper:#FFFFFF; --card:#FFFFFF; --line:#E4EDFB; --line-strong:#C9DCF6;
+  --text:#22303E; --muted:#5B6E8C; --faint:#9AA9C0;
+  --green:#2E8B63; --green-bg:#E6F4ED;
+  --amber:#B97A24; --amber-bg:#F9EFDC;
+  --fill:#FFF3D2; --fill-line:#D9A93C;
+  --radius:10px; --shadow:0 1px 2px rgba(32,103,232,.06),0 4px 16px rgba(32,103,232,.07);
+  --font-ui:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+  --font-doc:"Noto Serif SC","Songti SC","SimSun",serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{font-family:var(--font-ui);color:var(--text);background:var(--paper);font-size:14px;-webkit-font-smoothing:antialiased}
+#app{min-width:1180px;height:100vh;display:flex}
+button{font-family:var(--font-ui);cursor:pointer}
+input,select,textarea{font-family:var(--font-ui)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#BFD4F2;border-radius:6px;border:2px solid var(--paper)}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ===== 侧边栏 ===== */
+.sidebar{width:236px;flex:0 0 236px;background:linear-gradient(180deg,#2E7CF0 0%,#1C5FD2 100%);color:#D5E6FB;display:flex;flex-direction:column;position:relative;z-index:10}
+.side-logo{display:flex;align-items:center;gap:11px;padding:20px 18px 16px}
+.logo-tile{width:40px;height:40px;border-radius:10px;background:#FFF;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(13,43,94,.25);flex:0 0 40px;overflow:hidden}
+.logo-tile img{width:34px;height:auto;display:block}
+.logo-cow{font-size:15px;font-weight:800;color:#165DFF;letter-spacing:1px;line-height:1;font-style:italic}
+.side-logo .name{font-size:14.5px;font-weight:700;color:#FFF;letter-spacing:.3px;line-height:1.35}
+.side-logo .sub{font-size:10px;color:#B4CCF2;margin-top:2px;letter-spacing:1.2px}
+.side-nav{flex:1;padding:8px 12px}
+.nav-item{display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:8px;color:#C0D6F5;font-size:13.5px;cursor:pointer;margin-bottom:3px;border-left:3px solid transparent;transition:background .15s,color .15s;user-select:none}
+.nav-item svg{flex:0 0 18px}
+.nav-item:hover{background:rgba(255,255,255,.1);color:#FFF}
+.nav-item.active{background:rgba(255,255,255,.18);color:#FFF;border-left-color:#FFF;font-weight:600}
+.nav-group{font-size:11px;color:#8FB4EA;padding:16px 13px 7px;letter-spacing:2px}
+.side-foot{padding:14px 18px;border-top:1px solid rgba(255,255,255,.18);font-size:11px;color:#A9C6EE;line-height:1.7}
+.side-foot .badge{display:inline-block;background:rgba(255,255,255,.18);color:#FFF;padding:2px 8px;border-radius:10px;font-size:10px;margin-bottom:6px;letter-spacing:1px}
+
+/* ===== 主区域 ===== */
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.topbar{height:64px;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:18px;padding:0 28px;flex:0 0 64px}
+.topbar .crumb{display:flex;align-items:baseline;gap:10px;min-width:0}
+.crumb h1{font-size:17px;font-weight:700;color:var(--ink);white-space:nowrap}
+.crumb .desc{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-search{flex:1;max-width:360px;position:relative;margin-left:auto}
+.top-search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--faint)}
+.top-search input{width:100%;height:36px;border:1px solid var(--line-strong);border-radius:8px;background:#F5F9FF;padding:0 12px 0 36px;font-size:13px;color:var(--text);outline:none;transition:border .15s,box-shadow .15s}
+.top-search input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(32,103,232,.12);background:#FFF}
+.top-user{display:flex;align-items:center;gap:12px;margin-left:8px}
+.bell{position:relative;width:36px;height:36px;border-radius:8px;border:1px solid var(--line-strong);background:var(--card);display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.bell:hover{color:var(--brand);border-color:var(--brand-3)}
+.bell .dot{position:absolute;top:7px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--red);border:1.5px solid #FFF}
+.user-chip{display:flex;align-items:center;gap:10px}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#3E87F4,#1B57CE);color:#FFF;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
+.user-chip .u-name{font-size:13px;font-weight:600;color:var(--text)}
+.user-chip .u-role{font-size:11px;color:var(--muted)}
+.content{flex:1;overflow-y:auto;padding:26px 28px 40px}
+
+/* ===== 通用组件 ===== */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:36px;padding:0 16px;border-radius:8px;border:1px solid transparent;font-size:13px;font-weight:500;transition:all .15s;white-space:nowrap}
+.btn svg{flex:0 0 16px}
+.btn-primary{background:var(--brand-2);color:#FFF}
+.btn-primary:hover{background:var(--brand-deep)}
+.btn-red{background:var(--red);color:#FFF}
+.btn-red:hover{background:var(--red-deep)}
+.btn-ghost{background:var(--card);border-color:var(--line-strong);color:var(--text)}
+.btn-ghost:hover{border-color:var(--brand-3);color:var(--brand-2)}
+.btn-sm{height:30px;padding:0 12px;font-size:12.5px;border-radius:7px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:2.5px 9px;border-radius:20px;font-size:11.5px;font-weight:500;white-space:nowrap}
+.chip::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}
+.chip-green{background:var(--green-bg);color:var(--green)}
+.chip-red{background:var(--red-bg);color:var(--red-deep)}
+.chip-amber{background:var(--amber-bg);color:var(--amber)}
+.chip-blue{background:var(--brand-soft);color:var(--brand-deep)}
+.chip-gray{background:#EDF1F6;color:#5B6B7D}
+.tag{display:inline-block;padding:2px 8px;border-radius:5px;background:#EDF1F6;color:#55667B;font-size:11px;margin-right:6px}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:12px;color:var(--muted);font-weight:600;text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);background:#F3F8FF;white-space:nowrap}
+.tbl td{padding:12px 14px;border-bottom:1px solid #EDF3FC;font-size:13px;vertical-align:middle}
+.tbl tbody tr{transition:background .12s}
+.tbl tbody tr:hover{background:#F7FAFF}
+.tbl .cell-main{font-weight:600;color:var(--ink);cursor:pointer}
+.tbl .cell-sub{font-size:11.5px;color:var(--muted);margin-top:2px}
+.tbl .mono{font-family:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;font-size:12.5px;color:#3D5A8C}
+.empty{padding:56px 20px;text-align:center;color:var(--muted)}
+.empty svg{margin:0 auto 12px;color:#BFD3EF;display:block}
+.empty .e-title{font-size:14px;font-weight:600;color:#5B6E8C;margin-bottom:4px}
+.empty .e-sub{font-size:12.5px}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 20px;position:relative;overflow:hidden}
+.kpi::after{content:"";position:absolute;right:-18px;top:-18px;width:74px;height:74px;border-radius:50%;background:radial-gradient(circle,rgba(32,103,232,.07),transparent 70%)}
+.kpi .k-label{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}
+.kpi .k-label svg{color:var(--brand)}
+.kpi .k-num{font-size:30px;font-weight:700;color:var(--ink);margin:8px 0 4px;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+.kpi .k-foot{font-size:11.5px;color:var(--muted)}
+.kpi .k-foot .up{color:var(--green);font-weight:600}
+.section-title{display:flex;align-items:center;justify-content:space-between;margin:26px 0 14px}
+.section-title h2{font-size:15px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:9px}
+.section-title h2::before{content:"";width:4px;height:15px;border-radius:2px;background:var(--brand)}
+.section-title .more{font-size:12px;color:var(--brand);cursor:pointer}
+.section-title .more:hover{text-decoration:underline}
+
+/* ===== 工作台 ===== */
+.flow-wrap{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 24px}
+.flow-head{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.flow-head .f-title{font-size:15px;font-weight:700;color:var(--ink)}
+.flow-auto{display:inline-flex;align-items:center;gap:6px;background:var(--green-bg);color:var(--green);font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:20px;margin-left:auto}
+.flow{display:grid;grid-template-columns:repeat(6,1fr);gap:0;position:relative}
+.flow .fstep{text-align:center;position:relative;padding:0 8px}
+.flow .fstep:not(:last-child)::after{content:"";position:absolute;top:19px;left:calc(50% + 26px);width:calc(100% - 52px);height:2px;background:var(--line-strong);border-top:2px dashed #C9DCF6}
+.flow .f-ic{width:40px;height:40px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;background:var(--brand-soft);color:var(--brand);border:1.5px solid var(--brand-line);position:relative;z-index:1}
+.flow .fstep.done .f-ic{background:var(--green-bg);color:var(--green);border-color:var(--green)}
+.flow .fstep.hot .f-ic{background:var(--red-bg);color:var(--red);border-color:var(--red)}
+.flow .f-name{font-size:12.5px;font-weight:600;color:var(--ink)}
+.flow .f-desc{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.5}
+.flow .f-auto{display:inline-block;font-size:10px;color:var(--brand-deep);background:var(--brand-soft);border-radius:8px;padding:1px 6px;margin-top:5px;font-weight:600}
+.dash-cols{display:grid;grid-template-columns:1.4fr 1fr;gap:16px}
+.recent-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #EDF3FC}
+.recent-item:last-child{border-bottom:none}
+.recent-item .r-ic{width:34px;height:34px;border-radius:8px;background:var(--brand-soft);color:var(--brand);display:flex;align-items:center;justify-content:center;flex:0 0 34px}
+.recent-item .r-main{flex:1;min-width:0}
+.recent-item .r-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recent-item .r-sub{font-size:11.5px;color:var(--muted);margin-top:2px}
+.recent-item .r-right{text-align:right;flex:0 0 auto}
+.recent-item .r-time{font-size:11px;color:var(--faint)}
+.bar-chart{display:flex;align-items:flex-end;gap:18px;height:130px;padding:10px 6px 0;border-bottom:1px solid var(--line);margin:6px 14px 0}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;height:100%;justify-content:flex-end}
+.bar-col .b-val{font-size:11px;font-weight:700;color:var(--brand-deep);font-variant-numeric:tabular-nums}
+.bar-col .b-bar{width:60%;border-radius:5px 5px 0 0;background:linear-gradient(180deg,#4D8DF2,#2067E8);min-height:3px;transition:height .4s}
+.bar-col .b-bar.hot{background:linear-gradient(180deg,#F29B66,#E85B3F)}
+.bar-col .b-lab{font-size:11px;color:var(--muted)}
+.expiry-item{display:flex;align-items:center;gap:11px;padding:11px 16px;border-bottom:1px solid #EDF3FC}
+.expiry-item:last-child{border-bottom:none}
+.expiry-item .e-days{width:44px;height:44px;border-radius:10px;background:var(--amber-bg);color:var(--amber);display:flex;flex-direction:column;align-items:center;justify-content:center;flex:0 0 44px;font-weight:700;line-height:1.1}
+.expiry-item .e-days .n{font-size:15px}
+.expiry-item .e-days .u{font-size:9px;font-weight:500}
+.expiry-item .e-main{flex:1;min-width:0}
+.expiry-item .e-name{font-size:12.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.expiry-item .e-sub{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* ===== 订立合同向导 ===== */
+.wizard{margin:0 auto;max-width:1060px}
+.stepper{display:flex;align-items:flex-start;margin:6px 0 24px}
+.step{flex:1;display:flex;flex-direction:column;align-items:center;position:relative}
+.step:not(:last-child)::after{content:"";position:absolute;top:17px;left:calc(50% + 24px);width:calc(100% - 48px);height:2px;background:var(--line-strong)}
+.step.done:not(:last-child)::after{background:var(--brand)}
+.step .s-ic{width:34px;height:34px;border-radius:50%;background:#F0F5FD;border:1.5px solid var(--brand-line);color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;position:relative;z-index:1;transition:all .2s}
+.step.done .s-ic{background:var(--brand);border-color:var(--brand);color:#FFF}
+.step.active .s-ic{background:var(--brand-2);border-color:var(--brand-2);color:#FFF;box-shadow:0 0 0 5px rgba(32,103,232,.15)}
+.step .s-name{font-size:12.5px;font-weight:600;margin-top:9px;color:var(--muted)}
+.step.active .s-name{color:var(--ink)}
+.step.done .s-name{color:var(--brand-deep)}
+.step .s-sub{font-size:10.5px;color:var(--faint);margin-top:2px}
+
+.tpl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.tpl-card{border:1.5px solid var(--line);border-radius:12px;background:var(--card);padding:20px 18px;cursor:pointer;transition:all .15s;position:relative}
+.tpl-card:hover{border-color:var(--brand-3);box-shadow:var(--shadow);transform:translateY(-2px)}
+.tpl-card.sel{border-color:var(--brand);box-shadow:0 0 0 3px rgba(32,103,232,.12),var(--shadow)}
+.tpl-card .t-ic{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:13px}
+.tpl-card .t-name{font-size:14.5px;font-weight:700;color:var(--ink)}
+.tpl-card .t-tag{display:inline-block;font-size:10.5px;color:var(--brand-deep);background:var(--brand-soft);border-radius:4px;padding:1.5px 7px;margin-top:7px;font-weight:600}
+.tpl-card .t-scene{font-size:12px;color:var(--muted);line-height:1.6;margin:11px 0 6px;min-height:38px}
+.tpl-card .t-fields{font-size:11px;color:var(--faint);display:flex;align-items:center;gap:5px}
+.tpl-card .t-check{position:absolute;top:14px;right:14px;width:22px;height:22px;border-radius:50%;background:var(--brand);color:#FFF;display:none;align-items:center;justify-content:center}
+.tpl-card.sel .t-check{display:flex}
+
+.form-card{padding:26px 30px}
+.form-sec{margin-bottom:24px}
+.form-sec:last-child{margin-bottom:4px}
+.form-sec h3{font-size:13.5px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:8px;margin-bottom:15px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+.form-sec h3 .sec-no{width:20px;height:20px;border-radius:6px;background:var(--brand);color:#FFF;font-size:11px;display:flex;align-items:center;justify-content:center}
+.form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 18px}
+.f-item{display:flex;flex-direction:column;gap:6px}
+.f-item.wide{grid-column:span 2}
+.f-item.full{grid-column:span 3}
+.f-item label{font-size:12px;font-weight:600;color:#3D5A8C}
+.f-item label .req{color:var(--red);margin-left:2px}
+.f-item input,.f-item select,.f-item textarea{border:1px solid var(--line-strong);border-radius:7px;padding:8.5px 11px;font-size:13px;color:var(--text);outline:none;background:#FFF;transition:border .15s,box-shadow .15s;width:100%}
+.f-item textarea{resize:vertical;min-height:66px}
+.f-item input:focus,.f-item select:focus,.f-item textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(32,103,232,.12)}
+.f-item input.invalid,.f-item select.invalid,.f-item textarea.invalid{border-color:var(--red);box-shadow:0 0 0 3px rgba(192,57,43,.1)}
+.f-item .hint{font-size:11px;color:var(--faint)}
+.f-item .hint-err{font-size:11px;color:var(--red);display:none}
+.f-item input.invalid ~ .hint-err,.f-item select.invalid ~ .hint-err{display:block}
+.f-item .prefix{position:relative}
+.f-item .prefix input{padding-left:60px}
+.f-item .prefix .px{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--muted);font-family:ui-monospace,Menlo,Consolas,monospace}
+.big-note{display:flex;gap:11px;align-items:flex-start;padding:12px 15px;border-radius:9px;background:var(--amber-bg);border:1px solid #F0D9AE;font-size:12.5px;color:#7A5418;line-height:1.8;margin-bottom:20px}
+.big-note svg{flex:0 0 17px;margin-top:2px}
+.wiz-actions{display:flex;align-items:center;justify-content:space-between;margin-top:26px;padding-top:20px;border-top:1px solid var(--line)}
+.wiz-actions .right{display:flex;gap:10px}
+
+/* ===== 合同文书 ===== */
+.doc-stage{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start}
+.doc-paper{background:#FFFEFB;border:1px solid var(--line-strong);border-radius:4px;box-shadow:0 8px 30px rgba(32,103,232,.10);padding:46px 52px;font-family:var(--font-doc);font-size:14.5px;line-height:2.05;color:#2B2B28;position:relative;max-height:640px;overflow-y:auto}
+.doc-paper .doc-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #2B2B28;padding-bottom:14px;margin-bottom:22px}
+.doc-paper .doc-no{font-size:12px;color:#6B675E;font-family:var(--font-ui)}
+.doc-paper .doc-no b{color:#2B2B28;font-size:12.5px}
+.doc-paper .doc-title{font-size:21px;font-weight:700;text-align:center;letter-spacing:6px;margin:6px 0 4px}
+.doc-paper .doc-sub{text-align:center;font-size:12px;color:#6B675E;letter-spacing:2px;margin-bottom:22px}
+.doc-paper .part{font-weight:700;margin:16px 0 6px;font-size:15px}
+.doc-paper .clause{text-indent:2em;margin:4px 0}
+.doc-paper .fill{background:var(--fill);border-bottom:1px dashed var(--fill-line);padding:0 3px;border-radius:2px}
+.doc-paper .sign-row{display:flex;justify-content:space-between;margin-top:46px;padding-top:18px;border-top:1px dashed #C9C4B6}
+.doc-paper .sign-box{text-align:center;font-size:12.5px;color:#55524B;line-height:2.2;position:relative}
+.doc-paper .sign-box .sb-line{display:inline-block;border-bottom:1px solid #55524B;min-width:170px;padding-bottom:2px}
+.party-seal{position:absolute;left:52%;top:56%;transform:translate(-50%,-50%) rotate(-4deg);opacity:.95;pointer-events:none}
+.party-seal.stamp-in{animation:stampIn .55s cubic-bezier(.22,1.4,.36,1) forwards}
+.doc-paper .seal-water{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.07;pointer-events:none}
+.doc-side{display:flex;flex-direction:column;gap:14px;position:sticky;top:0}
+.side-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+.side-card h4{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:13px;display:flex;align-items:center;gap:7px}
+.side-card h4::before{content:"";width:3px;height:13px;border-radius:2px;background:var(--brand)}
+.side-card h4 .h4-tag{margin-left:auto;font-size:10.5px;font-weight:600}
+.meta-row{display:flex;justify-content:space-between;font-size:12.5px;padding:6.5px 0;border-bottom:1px dashed #EDF3FC}
+.meta-row:last-child{border-bottom:none}
+.meta-row .mk{color:var(--muted)}
+.meta-row .mv{color:var(--text);font-weight:500;text-align:right}
+.link-box{margin-top:11px;border:1px dashed var(--brand-3);border-radius:8px;background:var(--brand-soft);padding:9px 11px;font-size:11.5px;color:var(--brand-deep);word-break:break-all;position:relative;padding-right:46px;font-family:ui-monospace,Menlo,Consolas,monospace;line-height:1.6}
+.link-box .copy-btn{position:absolute;right:5px;top:5px;height:26px;padding:0 8px;border-radius:6px;border:none;background:var(--brand);color:#FFF;font-size:11px;display:flex;align-items:center;gap:4px}
+.link-box .copy-btn:hover{background:var(--brand-deep)}
+.pipe{display:flex;flex-direction:column;gap:0}
+.pipe-item{display:flex;gap:12px;position:relative;padding-bottom:20px}
+.pipe-item:last-child{padding-bottom:0}
+.pipe-item::before{content:"";position:absolute;left:13px;top:30px;bottom:2px;width:2px;background:var(--line-strong)}
+.pipe-item:last-child::before{display:none}
+.pipe-ic{width:28px;height:28px;border-radius:50%;flex:0 0 28px;display:flex;align-items:center;justify-content:center;background:#F0F5FD;color:var(--muted);border:1.5px solid var(--brand-line);position:relative;z-index:1}
+.pipe-item.done .pipe-ic{background:var(--green-bg);color:var(--green);border-color:var(--green)}
+.pipe-item.running .pipe-ic{background:var(--amber-bg);color:var(--amber);border-color:var(--amber)}
+.pipe-item .pipe-main{flex:1;padding-top:3px}
+.pipe-item .pipe-name{font-size:12.5px;font-weight:600;color:var(--text)}
+.pipe-item .pipe-desc{font-size:11px;color:var(--muted);margin-top:2px}
+.spinner{width:14px;height:14px;border:2px solid rgba(185,122,36,.3);border-top-color:var(--amber);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.review-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed #EDF3FC;align-items:flex-start}
+.review-item:last-child{border-bottom:none}
+.review-item .rv-ic{width:20px;height:20px;border-radius:50%;flex:0 0 20px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.review-item.ok .rv-ic{background:var(--green-bg);color:var(--green)}
+.review-item.warn .rv-ic{background:var(--amber-bg);color:var(--amber)}
+.review-item .rv-main{flex:1;min-width:0}
+.review-item .rv-name{font-size:12.5px;font-weight:600;color:var(--text)}
+.review-item .rv-desc{font-size:11px;color:var(--muted);margin-top:1px;line-height:1.6}
+
+/* ===== 印章 ===== */
+.seal{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(1.9);opacity:0;pointer-events:none;z-index:5}
+.seal.stamp-in{animation:stampIn .55s cubic-bezier(.22,1.4,.36,1) forwards}
+@keyframes stampIn{0%{opacity:0;transform:translate(-50%,-50%) scale(2.1) rotate(-8deg)}55%{opacity:1;transform:translate(-50%,-50%) scale(.96) rotate(-3deg)}100%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(-4deg)}}
+.seal svg{display:block}
+
+/* ===== 归档成功 ===== */
+.success-wrap{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:44px;text-align:center;max-width:660px;margin:30px auto}
+.success-ic{width:64px;height:64px;border-radius:50%;background:var(--green-bg);color:var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 18px}
+.success-wrap h2{font-size:21px;color:var(--ink);margin-bottom:8px}
+.success-wrap .s-sub{font-size:13px;color:var(--muted);margin-bottom:26px}
+.success-meta{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:24px;text-align:left}
+.sm-row{display:flex;padding:12px 16px;border-bottom:1px solid var(--line);background:#F7FAFF}
+.sm-row:nth-child(odd){border-right:1px solid var(--line)}
+.sm-row .mk{font-size:12px;color:var(--muted);width:92px;flex:0 0 92px;align-self:center}
+.sm-row .mv{font-size:13px;font-weight:600;color:var(--text);align-self:center}
+.sm-row .mv.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:#3D5A8C}
+.success-link{display:flex;align-items:center;gap:10px;border:1px dashed var(--brand-3);border-radius:9px;background:var(--brand-soft);padding:10px 14px;margin-bottom:24px;text-align:left;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:var(--brand-deep)}
+.success-link .sl-t{font-family:var(--font-ui);font-size:11.5px;color:var(--muted);flex:0 0 auto}
+.success-link .sl-url{flex:1;word-break:break-all;line-height:1.5}
+.success-actions{display:flex;gap:12px;justify-content:center}
+
+/* ===== 列表工具栏 ===== */
+.list-toolbar{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.search-box{position:relative;flex:1;min-width:220px;max-width:340px}
+.search-box svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--faint)}
+.search-box input{width:100%;height:36px;border:1px solid var(--line-strong);border-radius:8px;padding:0 11px 0 34px;font-size:13px;outline:none;background:var(--card)}
+.search-box input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(32,103,232,.12)}
+.select-box{height:36px;border:1px solid var(--line-strong);border-radius:8px;padding:0 10px;font-size:13px;color:var(--text);background:var(--card);outline:none}
+.batch-bar{display:flex;align-items:center;gap:12px;background:linear-gradient(90deg,#2569E8,#1B57CE);color:#FFF;border-radius:9px;padding:9px 16px;margin-bottom:14px;animation:slideDown .2s ease}
+@keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.batch-bar .b-count{font-size:13px;font-weight:600}
+.batch-bar .b-spacer{flex:1}
+.tbl td input[type=checkbox],.tbl th input[type=checkbox]{width:16px;height:16px;accent-color:var(--brand);cursor:pointer}
+
+/* ===== 弹窗 ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(13,43,94,.45);backdrop-filter:blur(2px);z-index:100;display:flex;align-items:center;justify-content:center;animation:fadeIn .18s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--card);border-radius:14px;box-shadow:0 24px 70px rgba(13,43,94,.3);width:min(960px,94vw);max-height:88vh;display:flex;flex-direction:column;animation:modalIn .22s cubic-bezier(.2,1.1,.35,1)}
+@keyframes modalIn{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal.modal-sm{width:min(460px,92vw)}
+.modal-head{display:flex;align-items:center;gap:12px;padding:17px 22px;border-bottom:1px solid var(--line)}
+.modal-head h3{font-size:15px;font-weight:700;color:var(--ink);flex:1}
+.modal-close{width:30px;height:30px;border-radius:7px;border:none;background:#F0F5FD;color:var(--muted);display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:var(--brand-soft);color:var(--brand-deep)}
+.modal-body{padding:20px 22px;overflow-y:auto}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;padding:15px 22px;border-top:1px solid var(--line)}
+.modal-view{display:grid;grid-template-columns:1fr 300px;gap:0}
+.modal-view .mv-paper{background:#FFFEFB;padding:34px 38px;font-family:var(--font-doc);font-size:13.5px;line-height:2;color:#2B2B28;position:relative;overflow-y:auto;max-height:62vh}
+.modal-view .mv-side{padding:20px 22px;border-left:1px solid var(--line);background:#F6FAFF;overflow-y:auto;max-height:62vh}
+.void-reason textarea{width:100%;min-height:84px;border:1px solid var(--line-strong);border-radius:8px;padding:10px 12px;font-size:13px;outline:none;resize:vertical}
+.void-reason textarea:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(192,57,43,.1)}
+.void-reason .v-tip{font-size:11.5px;color:var(--muted);margin-top:7px}
+
+/* ===== Toast ===== */
+.toast-root{position:fixed;right:22px;bottom:22px;z-index:200;display:flex;flex-direction:column;gap:10px}
+.toast{background:#173C78;color:#EAF1F8;border-radius:10px;padding:12px 18px;font-size:13px;display:flex;align-items:center;gap:10px;box-shadow:0 10px 30px rgba(13,43,94,.35);animation:toastIn .25s cubic-bezier(.2,1.1,.35,1);max-width:400px}
+.toast.out{animation:toastOut .25s ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{to{opacity:0;transform:translateX(24px)}}
+.toast .t-ic{width:22px;height:22px;border-radius:50%;flex:0 0 22px;display:flex;align-items:center;justify-content:center}
+.toast.ok .t-ic{background:var(--green)}
+.toast.warn .t-ic{background:var(--amber)}
+.toast.err .t-ic{background:var(--red)}
+
+.page-enter{animation:pageIn .25s ease}
+@keyframes pageIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ============================================================
+   v3 新增：角色体系 / 标准-非标双流程 / 审核工作流
+============================================================ */
+.chip-purple{background:#F1ECFA;color:#6C4AB6}
+.chip-gray{background:#EDF1F6;color:#5B6B7D}
+
+/* 顶栏角色切换 */
+.role-switch{position:relative;display:flex;align-items:center}
+.role-switch select{height:36px;border:1px solid var(--line-strong);border-radius:8px;padding:0 30px 0 12px;font-size:12.5px;font-weight:600;color:var(--ink);background:var(--card);outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;transition:border .15s}
+.role-switch select:hover{border-color:var(--brand-3)}
+.role-switch select:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(32,103,232,.12)}
+.role-switch .rs-arrow{position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--faint)}
+.role-switch .rs-ic{position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--brand)}
+.role-switch select{padding-left:32px}
+
+/* 导航待办角标 */
+.nav-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#FFF;font-size:10.5px;font-weight:700;padding:0 5px;margin-left:auto;letter-spacing:0}
+
+/* 标准 / 非标 双入口 */
+.kind-tabs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.kind-tab{border:1.5px solid var(--line);border-radius:13px;padding:20px 22px;display:flex;gap:15px;align-items:center;cursor:pointer;transition:all .15s;background:var(--card);text-align:left}
+.kind-tab:hover{border-color:var(--brand-3);box-shadow:var(--shadow);transform:translateY(-1px)}
+.kind-tab.sel{border-color:var(--brand);box-shadow:0 0 0 3px rgba(32,103,232,.12),var(--shadow)}
+.kind-tab .kt-ic{width:48px;height:48px;border-radius:12px;flex:0 0 48px;display:flex;align-items:center;justify-content:center}
+.kind-tab .kt-name{font-size:15px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:8px}
+.kind-tab .kt-desc{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.7}
+.kind-tab .kt-tag{display:inline-block;font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:4px}
+
+/* 非标上传 */
+.ns-form{max-width:860px;margin:0 auto}
+.upload-zone{border:1.5px dashed var(--brand-3);border-radius:11px;background:var(--brand-soft);padding:28px;text-align:center;cursor:pointer;transition:all .15s}
+.upload-zone:hover{background:#E0EDFE;border-color:var(--brand)}
+.upload-zone .uz-ic{width:44px;height:44px;border-radius:50%;background:var(--card);color:var(--brand);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:var(--shadow)}
+.upload-zone .uz-main{font-size:13.5px;font-weight:600;color:var(--ink)}
+.upload-zone .uz-sub{font-size:11.5px;color:var(--muted);margin-top:4px}
+.file-chip{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line-strong);border-radius:8px;padding:8px 13px;font-size:12.5px;color:var(--ink)}
+.file-chip svg{color:var(--brand)}
+.flow-notice{display:flex;gap:11px;align-items:flex-start;padding:13px 16px;border-radius:9px;background:var(--brand-soft);border:1px solid var(--brand-line);font-size:12.5px;color:#2A5CAD;line-height:1.8;margin-bottom:20px}
+
+/* 审核任务列表 */
+.task-item{display:flex;gap:15px;padding:17px 20px;border-bottom:1px solid #EDF3FC;align-items:flex-start;transition:background .12s}
+.task-item:hover{background:#F7FAFF}
+.task-item .t-ic{width:40px;height:40px;border-radius:10px;flex:0 0 40px;display:flex;align-items:center;justify-content:center}
+.task-item .t-main{flex:1;min-width:0}
+.task-item .t-name{font-size:13.5px;font-weight:700;color:var(--ink);cursor:pointer}
+.task-item .t-name:hover{color:var(--brand-2)}
+.task-item .t-sub{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.7}
+.task-item .t-right{flex:0 0 auto;text-align:right;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+
+/* 非标流程状态条 */
+.flow-strip{display:flex;align-items:center;gap:0;margin:4px 0 2px}
+.fs-node{display:flex;align-items:center;gap:7px;flex:1;min-width:0}
+.fs-node:last-child{flex:0 0 auto}
+.fs-node .fs-dot{width:14px;height:14px;border-radius:50%;flex:0 0 14px;background:#E4EDFB;border:2px solid #C9DCF6}
+.fs-node.done .fs-dot{background:var(--green);border-color:var(--green)}
+.fs-node.cur .fs-dot{background:var(--brand);border-color:var(--brand);box-shadow:0 0 0 4px rgba(32,103,232,.15)}
+.fs-node.warn .fs-dot{background:var(--red);border-color:var(--red)}
+.fs-node .fs-line{height:2px;flex:1;background:#E4EDFB;margin:0 8px}
+.fs-node.done .fs-line,.fs-node.cur .fs-line{background:var(--brand-3)}
+.fs-node .fs-name{font-size:11px;color:var(--muted);white-space:nowrap}
+.fs-node.done .fs-name{color:var(--green)}
+.fs-node.cur .fs-name{color:var(--brand-deep);font-weight:700}
+
+/* 版本时间线 */
+.timeline{margin-top:4px}
+.tl-item{display:flex;gap:13px;position:relative;padding-bottom:17px}
+.tl-item:last-child{padding-bottom:0}
+.tl-item::before{content:"";position:absolute;left:12px;top:26px;bottom:2px;width:2px;background:var(--line-strong)}
+.tl-item:last-child::before{display:none}
+.tl-dot{width:26px;height:26px;border-radius:50%;flex:0 0 26px;display:flex;align-items:center;justify-content:center;background:#F0F5FD;color:var(--brand);border:1.5px solid var(--brand-line);position:relative;z-index:1;font-size:10px;font-weight:700}
+.tl-item.act .tl-dot{background:var(--brand);color:#FFF;border-color:var(--brand)}
+.tl-item.rej .tl-dot{background:var(--red-bg);color:var(--red);border-color:#F3C9C1}
+.tl-item.ok .tl-dot{background:var(--green-bg);color:var(--green);border-color:var(--green)}
+.tl-main{flex:1;padding-top:1px}
+.tl-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tl-ver{font-size:11px;font-weight:700;color:var(--brand-deep);font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--brand-soft);padding:1px 7px;border-radius:4px}
+.tl-act{font-size:12.5px;font-weight:600;color:var(--text)}
+.tl-who{font-size:11px;color:var(--muted)}
+.tl-time{font-size:10.5px;color:var(--faint);font-family:ui-monospace,Menlo,Consolas,monospace}
+.tl-comment{font-size:12px;color:#3D5A8C;background:#F4F8FF;border-radius:7px;padding:7px 11px;margin-top:6px;line-height:1.7}
+.tl-file{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--brand-deep);margin-top:6px}
+
+/* 审核动作面板 */
+.audit-panel{border:1px solid var(--brand-line);border-radius:10px;background:#F6FAFF;padding:15px 16px;margin-top:14px}
+.audit-panel h5{font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.audit-panel textarea{width:100%;min-height:74px;border:1px solid var(--line-strong);border-radius:8px;padding:10px 12px;font-size:12.5px;outline:none;resize:vertical;font-family:var(--font-ui);margin-bottom:10px}
+.audit-panel textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(32,103,232,.12)}
+.audit-panel .ap-actions{display:flex;gap:8px;flex-wrap:wrap}
+.role-tag{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:5px;background:var(--brand-soft);color:var(--brand-deep)}
+</style>
+</head>
+<body>
+<div id="app">
+  <aside class="sidebar">
+    <div class="side-logo">
+      <div class="logo-tile"><span class="logo-cow">七七七</span></div>
+      <div>
+        <div class="name">七七七合同管理系统</div>
+        <div class="sub">CONTRACT AUTO · FLOW</div>
+      </div>
+    </div>
+    <nav class="side-nav" id="side-nav"></nav>
+    <div class="side-foot">
+      <div class="badge">DEMO 原型</div><br>
+      七七七 · 法务部<br>标准/非标双流程 · 分级审核<br>演示环境 · 数据为模拟数据
+    </div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <div class="crumb">
+        <h1 id="crumb-title">工作台总览</h1>
+        <span class="desc" id="crumb-desc">标准合同全自动 · 非标合同分级审核</span>
+      </div>
+      <div class="top-search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="global-search" placeholder="搜索合同编号 / 名称 / 相对方…" onkeydown="if(event.key==='Enter')globalSearch(this.value)">
+      </div>
+      <div class="role-switch" title="切换演示角色">
+        <svg class="rs-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>
+        <select id="role-select" onchange="switchRole(this.value)">
+          <option value="biz">业务人员 · 张明</option>
+          <option value="legal">法务专员 · 李雯</option>
+          <option value="legalLead">法务主管 · 王建国</option>
+          <option value="finance">财务 · 陈芳</option>
+          <option value="tech">技术 · 刘洋</option>
+        </select>
+        <svg class="rs-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="top-user" style="margin-left:4px">
+        <button class="bell" onclick="toast('info','您有新的抄送与审核动态','ok')">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 9a6 6 0 1 0-12 0c0 6-2.5 7.5-2.5 7.5h17S18 15 18 9"/><path d="M10.3 20.5a2 2 0 0 0 3.4 0"/></svg>
+          <span class="dot"></span>
+        </button>
+        <div class="user-chip">
+          <div class="avatar" id="user-avatar">张</div>
+          <div>
+            <div class="u-name" id="user-name">张明</div>
+            <div class="u-role" id="user-role">市场部 · 业务申请人</div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="content" id="view"></main>
+  </div>
+</div>
+<div class="modal-root" id="modal-root"></div>
+<div class="toast-root" id="toast-root"></div>
+
+<script>
+"use strict";
+/* ============================================================
+   v3 数据层：模板库 + 角色体系 + 标准/非标双流程状态机
+============================================================ */
+const TEMPLATES = {
+  purchase:{id:"purchase",name:"商品采购合同",tag:"采购类",scene:"适用于通用物资、办公用品与原材料采购",color:"#E7EEF7",fields:[
+    {key:"goods",label:"采购标的",ph:"如：办公笔记本电脑 20 台",req:1},
+    {key:"quantity",label:"采购数量",ph:"如：20 台",req:1},
+    {key:"unitPrice",label:"单价（元）",ph:"如：6200",req:1},
+    {key:"deliveryPlace",label:"交付地点",ph:"上海市浦东新区 XX 路 XX 号",req:1},
+    {key:"deliveryDays",label:"交付期限（天）",ph:"如：30",req:1},
+    {key:"qualityStd",label:"质量标准",ph:"国标 / 双方约定标准",req:0},
+    {key:"warranty",label:"质保期（月）",ph:"如：12",req:1},
+    {key:"payment",label:"付款方式",ph:"货到验收合格后 30 日内付款",req:1}
+  ]},
+  service:{id:"service",name:"技术服务合同",tag:"服务类",scene:"适用于软件开发、系统集成与技术咨询",color:"#E9F1E8",fields:[
+    {key:"serviceContent",label:"服务内容",ph:"描述服务范围与具体工作内容",req:1},
+    {key:"servicePeriod",label:"服务期限",ph:"如：合同签订后 6 个月",req:1},
+    {key:"deliverable",label:"交付成果",ph:"如：系统源码、部署文档、验收报告",req:1},
+    {key:"acceptance",label:"验收标准",ph:"双方确认的验收标准与流程",req:1},
+    {key:"ipOwner",label:"成果知识产权归属",ph:"甲方 / 乙方 / 双方共有",req:1},
+    {key:"payment",label:"付款方式",ph:"如：按里程碑分期支付",req:1}
+  ]},
+  sales:{id:"sales",name:"销售合同",tag:"销售类",scene:"适用于产品销售与供货往来",color:"#F7EFE0",fields:[
+    {key:"product",label:"产品名称",ph:"如：企业云盘 SaaS 服务",req:1},
+    {key:"quantity",label:"数量",ph:"如：500 账号 / 年",req:1},
+    {key:"unitPrice",label:"单价（元）",ph:"如：300",req:1},
+    {key:"deliveryPlace",label:"交货地点",ph:"上海市浦东新区 XX 路 XX 号",req:1},
+    {key:"deliveryDays",label:"交货期限（天）",ph:"如：15",req:1},
+    {key:"payment",label:"付款方式",ph:"如：预付 30%，验收后付清",req:1},
+    {key:"qualityStd",label:"质量标准",ph:"国标 / 双方约定标准",req:0}
+  ]},
+  nda:{id:"nda",name:"保密协议（NDA）",tag:"保密类",scene:"适用于商务洽谈、信息共享与合作前保密",color:"#F7E7E4",fields:[
+    {key:"scope",label:"保密信息范围",ph:"明确受保护的保密信息范围",req:1},
+    {key:"obligation",label:"保密义务约定",ph:"双方保密义务的具体约定",req:1},
+    {key:"period",label:"保密期限",ph:"如：自签署之日起 3 年",req:1},
+    {key:"liability",label:"违约责任",ph:"如：违约金 50 万元",req:1}
+  ]}
+};
+const TPL_ORDER = ["purchase","service","sales","nda"];
+/* 我方签约主体（多主体可扩展，直接在此列表增删即可） */
+const ENTITIES = ["上海七七七信息技术有限公司","七七七信息技术有限公司","自定义主体"];
+const BIG_AMOUNT = 1000000; /* 大额阈值：标准流程超过则自动升级法务复核 */
+
+/* ---------- 角色体系 ---------- */
+const ROLES = {
+  biz:{key:"biz",name:"业务人员",user:"张明",dept:"市场部 · 业务申请人",avatar:"张"},
+  legal:{key:"legal",name:"法务专员",user:"李雯",dept:"法务部 · 合同审核专员",avatar:"李"},
+  legalLead:{key:"legalLead",name:"法务主管",user:"王建国",dept:"法务部 · 审核主管",avatar:"王"},
+  finance:{key:"finance",name:"财务",user:"陈芳",dept:"财务部 · 审核专员",avatar:"陈"},
+  tech:{key:"tech",name:"技术",user:"刘洋",dept:"技术部 · 项目审核",avatar:"刘"}
+};
+let currentRole = "biz";
+function role(){ return ROLES[currentRole]; }
+function operator(){ return role().user+"（"+role().name+"）"; }
+
+/* ---------- 非标合同流程状态机 ---------- */
+const NS_FLOW = [
+  {key:"pending_tech",name:"技术审核",roles:["tech"],label:"待技术审核"},
+  {key:"pending_finance",name:"财务审核",roles:["finance"],label:"待财务审核"},
+  {key:"pending_legal",name:"法务专员审核",roles:["legal"],label:"待法务审核"},
+  {key:"pending_legal_lead",name:"法务主管审核",roles:["legalLead"],label:"待主管终审"},
+  {key:"signed",name:"终版签约归档",roles:[],label:"已签约归档"}
+];
+const NS_STATUS_LABEL = {
+  pending_biz:"待业务修改", pending_tech:"待技术审核", pending_finance:"待财务审核",
+  pending_legal:"待法务审核", pending_legal_lead:"待主管终审", signed:"已签约归档"
+};
+
+const LS_KEY = "contractAutoSys.v1";
+let state = loadState();
+function loadState(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(raw){const s = JSON.parse(raw); if(s && s.contracts){
+      if(!s.nsContracts||!s.nsCounter){const seed=seedState();s.nsContracts=s.nsContracts||seed.nsContracts;s.nsCounter=Math.max(s.nsCounter||0,(s.nsContracts||[]).length);}
+      return s;
+    }}
+  }catch(e){}
+  return seedState();
+}
+function saveState(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){} }
+function seedState(){
+  const C = (o)=>({aContact:"陈志远",aPhone:"021-6888 1201",bContact:"周晓敏",bPhone:"021-5067 8832",remark:"",...o});
+  return {
+    counter:97,
+    nsCounter:3,
+    contracts:[
+      C({id:"c31",no:"HT-2026-0031",name:"2026 年办公设备采购合同",template:"purchase",status:"archived",signType:"标准模板",partyA:"上海七七七信息技术有限公司",partyB:"上海晨光办公用品有限公司",amount:"186000",signDate:"2026-02-26",startDate:"2026-03-01",endDate:"2026-12-31",archivedAt:"2026-03-02 09:41:05",ccAt:"2026-03-02 09:41:06",fields:{goods:"办公笔记本电脑 30 台、投影仪 5 台",quantity:"35",unitPrice:"5314",deliveryPlace:"上海市浦东新区博云路 2 号",deliveryDays:"15",qualityStd:"国标 GB/T 9813",warranty:"12",payment:"货到验收合格后 30 日内付清"}}),
+      C({id:"c47",no:"HT-2026-0047",name:"云计算平台运维服务合同",template:"service",status:"archived",signType:"标准模板",partyA:"上海七七七信息技术有限公司",partyB:"杭州云杉信息技术有限公司",amount:"980000",signDate:"2026-03-20",startDate:"2026-04-01",endDate:"2027-03-31",archivedAt:"2026-04-02 14:18:33",ccAt:"2026-04-02 14:18:34",fields:{serviceContent:"云平台 7×24 小时运维监控、故障处置与安全巡检",servicePeriod:"合同签订后 12 个月",deliverable:"运维报告、故障处置记录、安全巡检报告",acceptance:"按季度考核 SLA≥99.9%",ipOwner:"双方共有（既有成果除外）",payment:"按季度分期支付，每季度 245,000 元"}}),
+      C({id:"c58",no:"HT-2026-0058",name:"数据中台建设项目合同",template:"service",status:"archived",signType:"标准模板",partyA:"上海七七七信息技术有限公司",partyB:"北京数帆科技有限公司",amount:"2150000",signDate:"2026-05-06",startDate:"2026-05-15",endDate:"2026-11-30",archivedAt:"2026-05-08 10:22:47",ccAt:"2026-05-08 10:22:48",fields:{serviceContent:"数据中台规划、数据治理实施与 BI 看板建设",servicePeriod:"合同签订后 6 个月",deliverable:"数据中台系统、治理文档、培训材料",acceptance:"按项目里程碑验收，里程碑节点 5 个",ipOwner:"甲方",payment:"按里程碑分期支付，首期 40%"}}),
+      C({id:"c62",no:"HT-2026-0062",name:"服务器采购合同",template:"purchase",status:"archived",signType:"标准模板",partyA:"上海七七七信息技术有限公司",partyB:"浪潮信息（上海）有限公司",amount:"3420000",signDate:"2026-06-10",startDate:"2026-06-20",endDate:"2026-09-30",archivedAt:"2026-06-12 16:05:19",ccAt:"2026-06-12 16:05:20",fields:{goods:"机架式服务器 60 台及配套存储",quantity:"60",unitPrice:"57000",deliveryPlace:"上海市金桥数据中心机房",deliveryDays:"30",qualityStd:"厂商出厂标准，三年原厂质保",warranty:"36",payment:"到货验收后 60 日内付清"}}),
+      C({id:"c75",no:"HT-2026-0075",name:"企业云盘服务销售合同",template:"sales",status:"archived",signType:"标准模板",partyA:"上海七七七信息技术有限公司",partyB:"上海智联网络科技有限公司",amount:"456000",signDate:"2026-07-15",startDate:"2026-08-01",endDate:"2027-07-31",archivedAt:"2026-07-16 11:30:02",ccAt:"2026-07-16 11:30:03",fields:{product:"企业云盘 SaaS 服务（500 账号）",quantity:"500 账号/年",unitPrice:"912",deliveryPlace:"线上开通交付",deliveryDays:"5",payment:"预付 30%，验收后付清",qualityStd:"服务可用性 ≥99.9%"}}),
+      C({id:"c83",no:"HT-2026-0083",name:"商务洽谈保密协议",template:"nda",status:"archived",signType:"标准模板",partyA:"上海七七七信息技术有限公司",partyB:"广州星河数据服务有限公司",amount:"",signDate:"2026-08-05",startDate:"2026-08-05",endDate:"2029-08-04",archivedAt:"2026-08-06 09:12:44",ccAt:"2026-08-06 09:12:45",fields:{scope:"双方在合作洽谈中披露的技术方案、客户名单与经营数据",obligation:"未经对方书面同意不得向第三方披露，仅用于评估合作目的",period:"自签署之日起 3 年",liability:"违约金 50 万元，并赔偿实际损失"}}),
+      C({id:"c90",no:"HT-2026-0090",name:"政企云专线合作框架协议",template:"service",status:"archived",signType:"非标审核",partyA:"上海七七七信息技术有限公司",partyB:"中国电信股份有限公司上海分公司",amount:"1280000",signDate:"2026-09-10",startDate:"2026-10-01",endDate:"2027-09-30",archivedAt:"2026-09-28 15:20:11",ccAt:"2026-09-28 15:20:12",nsNo:"NS-2026-0002",fields:{serviceContent:"政企云专线带宽与专网接入服务（对方模板，经法务修订）",servicePeriod:"12 个月",deliverable:"专线开通、SLA 承诺、运维支持",acceptance:"按 SLA 99.95% 验收",ipOwner:"双方各自保留既有权利",payment:"按季度支付，季度初预付"}}),
+      C({id:"c91",no:"HT-2026-0091",name:"线上推广服务合同",template:"service",status:"archived",signType:"标准模板",partyA:"上海七七七信息技术有限公司",partyB:"上海分众传媒有限公司",amount:"620000",signDate:"2026-09-18",startDate:"2026-10-01",endDate:"2026-12-31",archivedAt:"2026-10-15 10:24:08",ccAt:"2026-10-15 10:24:09",fields:{serviceContent:"楼宇电梯屏与线上信息流广告投放及效果追踪",servicePeriod:"3 个月",deliverable:"投放排期表、效果数据周报、结案报告",acceptance:"按曝光量与转化漏斗数据验收",ipOwner:"甲方",payment:"分两期支付，各 50%"}}),
+      C({id:"c97",no:"HT-2026-0097",name:"年度办公耗材采购合同",template:"purchase",status:"archived",signType:"标准模板",partyA:"上海七七七信息技术有限公司",partyB:"得力集团有限公司上海分公司",amount:"128500",signDate:"2026-10-09",startDate:"2026-10-15",endDate:"2027-10-14",archivedAt:"2026-10-20 15:47:31",ccAt:"2026-10-20 15:47:32",fields:{goods:"打印耗材、文具及办公用品年度框架采购",quantity:"1 批",unitPrice:"128500",deliveryPlace:"上海市浦东新区博云路 2 号",deliveryDays:"7",qualityStd:"厂商正品，假一赔十",warranty:"12",payment:"按月度结算"}}),
+      C({id:"c88",no:"HT-2026-0088",name:"办公室装修工程采购合同",template:"purchase",status:"voided",signType:"标准模板",partyA:"上海七七七信息技术有限公司",partyB:"上海鼎盛装潢工程有限公司",amount:"860000",signDate:"2026-07-20",startDate:"2026-08-01",endDate:"2026-11-30",archivedAt:"2026-07-21 10:02:15",ccAt:"2026-07-21 10:02:16",voidReason:"供应商资质复核未通过，已另行采购",voidAt:"2026-08-15 09:30:00",fields:{goods:"办公区装修工程整体采购",quantity:"1 项",unitPrice:"860000",deliveryPlace:"上海市浦东新区博云路 2 号",deliveryDays:"90",qualityStd:"符合消防与装修验收规范",warranty:"24",payment:"按工程进度分期支付"}}),
+      C({id:"c94",no:"HT-2026-0094",name:"试用软件许可服务合同",template:"service",status:"voided",signType:"标准模板",partyA:"上海七七七信息技术有限公司",partyB:"深圳青云软件有限公司",amount:"350000",signDate:"2026-08-28",startDate:"2026-09-01",endDate:"2027-08-31",archivedAt:"2026-08-29 14:55:20",ccAt:"2026-08-29 14:55:21",voidReason:"商务条款未达成一致，双方协商终止",voidAt:"2026-09-20 16:02:00",fields:{serviceContent:"项目管理软件授权许可与实施服务",servicePeriod:"12 个月",deliverable:"软件授权、实施上线、培训",acceptance:"上线运行 30 日无重大故障",ipOwner:"乙方",payment:"预付 50%，验收后付 50%"}})
+    ],
+    nsContracts:[
+      {id:"ns1",no:"NS-2026-0001",name:"客户定制私有云部署框架协议",partyB:"北京合纵数据技术有限公司",amount:"2680000",sourceFile:"对方提供模板-私有云部署框架协议V1.0.docx",status:"pending_legal",version:"V1.0",submittedAt:"2026-10-16 10:12:00",submittedBy:"张明（市场部）",
+       versions:[
+         {v:"V1.0",at:"2026-10-16 10:12:00",by:"张明（市场部）",act:"业务上传",comment:"客户指定使用对方模板，条款较我司标准模板差异较大",file:"对方提供模板-私有云部署框架协议V1.0.docx"},
+         {v:"V1.0",at:"2026-10-17 14:30:00",by:"刘洋（技术部）",act:"技术审核通过",comment:"技术范围与交付标准无异议，建议明确验收里程碑"},
+         {v:"V1.0",at:"2026-10-18 09:45:00",by:"陈芳（财务部）",act:"财务审核通过",comment:"付款节奏符合现金流要求，无异议"}
+       ]},
+      {id:"ns2",no:"NS-2026-0002",name:"数据中心机房租赁协议",partyB:"上海临港新片区数据中心有限公司",amount:"1560000",sourceFile:"对方提供模板-机房租赁协议V1.0.pdf",status:"pending_finance",version:"V1.1",submittedAt:"2026-10-15 16:40:00",submittedBy:"张明（市场部）",
+       versions:[
+         {v:"V1.0",at:"2026-10-15 16:40:00",by:"张明（市场部）",act:"业务上传",comment:"机房扩容需求，对方租赁模板，需各方审核",file:"对方提供模板-机房租赁协议V1.0.pdf"},
+         {v:"V1.0",at:"2026-10-16 11:20:00",by:"刘洋（技术部）",act:"技术审核通过",comment:"机房技术参数与带宽需求满足"},
+         {v:"V1.0",at:"2026-10-17 15:10:00",by:"陈芳（财务部）",act:"财务退回",comment:"首期预付比例过高，建议调整为 30%，且增加逾期付款违约金条款"},
+         {v:"V1.1",at:"2026-10-20 10:05:00",by:"张明（市场部）",act:"业务修改重传",comment:"已按财务意见调整首期比例为 30%，并补充逾期条款",file:"机房租赁协议V1.1（业务修改）.docx"},
+         {v:"V1.1",at:"2026-10-21 14:50:00",by:"刘洋（技术部）",act:"技术审核通过",comment:"修改后无技术异议"}
+       ]},
+      {id:"ns3",no:"NS-2026-0003",name:"战略合作框架协议",partyB:"深圳华章科技有限公司",amount:"900000",sourceFile:"对方提供模板-战略合作框架协议V1.0.docx",status:"pending_tech",version:"V1.0",submittedAt:"2026-10-22 11:30:00",submittedBy:"张明（市场部）",
+       versions:[
+         {v:"V1.0",at:"2026-10-22 11:30:00",by:"张明（市场部）",act:"业务上传",comment:"双方拟开展联合产品合作，对方模板条款较多需逐条审核",file:"对方提供模板-战略合作框架协议V1.0.docx"}
+       ]}
+    ],
+    logs:[
+      {id:"l3",time:"2026-10-20 15:50:12",operator:"张明（市场部）",type:"批量导出",count:5,refs:["HT-2026-0031","HT-2026-0047","HT-2026-0058","HT-2026-0062","HT-2026-0075"],detail:"导出 PDF 归档卷宗"},
+      {id:"l2",time:"2026-09-20 16:03:40",operator:"张明（市场部）",type:"批量作废",count:2,refs:["HT-2026-0088","HT-2026-0094"],detail:"供应商资质与商务条款原因"},
+      {id:"l1",time:"2026-08-16 09:40:05",operator:"张明（市场部）",type:"批量导出",count:6,refs:["HT-2026-0031","HT-2026-0047","HT-2026-0058","HT-2026-0062","HT-2026-0075","HT-2026-0083"],detail:"季度法务台账备份"}
+    ],
+    logCounter:3
+  };
+}
+
+/* ============================================================
+   工具函数
+============================================================ */
+const $ = (s,r)=>(r||document).querySelector(s);
+const $$ = (s,r)=>Array.from((r||document).querySelectorAll(s));
+function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function fmtMoney(n){const v=Number(n||0);return v?v.toLocaleString("zh-CN")+" 元":"—";}
+function fmtNum(n){return Number(n||0).toLocaleString("zh-CN");}
+function pad(n){return String(n).padStart(4,"0");}
+function nextNo(){return "HT-2026-"+pad(state.counter+1);}
+function nextNsNo(){return "NS-2026-"+pad(state.nsCounter+1);}
+function nowStr(){const d=new Date();const p=n=>String(n).padStart(2,"0");return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())+" "+p(d.getHours())+":"+p(d.getMinutes())+":"+p(d.getSeconds());}
+function todayStr(){const d=new Date();const p=n=>String(n).padStart(2,"0");return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate());}
+function ts(d){return new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime();}
+function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x;}
+function bumpVersion(v){const x=parseFloat(v.slice(1));return "V"+Math.round((x+0.1)*10)/10;}
+function toast(kind,msg){
+  const root=$("#toast-root");
+  const el=document.createElement("div");
+  el.className="toast "+(kind==="err"?"err":kind==="warn"?"warn":"ok");
+  const ic=kind==="err"
+    ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>'
+    : kind==="warn"
+    ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 5v9M12 19h.01"/></svg>'
+    : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>';
+  el.innerHTML='<span class="t-ic">'+ic+'</span><span>'+msg+'</span>';
+  root.appendChild(el);
+  setTimeout(()=>{el.classList.add("out");setTimeout(()=>el.remove(),260);},3000);
+}
+function openModal(html,sm){
+  const root=$("#modal-root");
+  root.innerHTML='<div class="modal-overlay" onclick="if(event.target===this)closeModal()"><div class="modal'+(sm?" modal-sm":"")+'">'+html+'</div></div>';
+}
+function closeModal(){$("#modal-root").innerHTML="";}
+function modalHead(title){
+  return '<div class="modal-head"><h3>'+title+'</h3><button class="modal-close" onclick="closeModal()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>';
+}
+function copyText(txt,msg){
+  const ta=document.createElement("textarea");
+  ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";
+  document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,99999);
+  let ok=false;
+  try{ok=document.execCommand("copy");}catch(e){}
+  ta.remove();
+  if(!ok&&navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).catch(function(){});ok=true;}
+  toast("ok",msg||"签约链接已复制，可发送给对方签署");
+}
+function signLink(no){return "https://sign.77q.com/contract/"+no;}
+function nsStatusChip(status){
+  const map={pending_biz:['chip-red','待业务修改'],pending_tech:['chip-blue','待技术审核'],pending_finance:['chip-blue','待财务审核'],pending_legal:['chip-purple','待法务审核'],pending_legal_lead:['chip-purple','待主管终审'],signed:['chip-green','已签约归档']};
+  const m=map[status]||['chip-gray',status];
+  return '<span class="chip '+m[0]+'">'+m[1]+'</span>';
+}
+/* ============================================================
+   角色化导航 + 路由
+============================================================ */
+function pendingCount(){
+  return state.nsContracts.filter(function(c){return NS_FLOW.find(function(f){return f.key===c.status&&f.roles.indexOf(currentRole)>=0;});}).length;
+}
+function bizReturnedCount(){
+  return state.nsContracts.filter(function(c){return c.status==="pending_biz";}).length;
+}
+const NAV_DEF = [
+  {group:"工作台",items:[
+    {route:"dashboard",icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="9" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="5.5" rx="1.5"/><rect x="13.5" y="12" width="7.5" height="9" rx="1.5"/><rect x="3" y="15.5" width="7.5" height="5.5" rx="1.5"/></svg>',label:"工作台总览"}
+  ]},
+  {group:"合同业务",items:[
+    {route:"create",icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>',label:"订立合同"},
+    {route:"tasks",icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h11"/></svg>',label:null,badge:null}
+  ]},
+  {group:"数据与记录",items:[
+    {route:"archived",icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 7l1.2 13h13.6L20 7M9 12h6"/><path d="M8 3.5h8l1 3.5H7l1-3.5z"/></svg>',label:"已归档合同"},
+    {route:"voided",icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6.5 7l.9 13.2a1 1 0 0 0 1 .8h7.2a1 1 0 0 0 1-.8L17.5 7M10 11v6M14 11v6"/></svg>',label:"已作废合同"},
+    {route:"logs",icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>',label:"批量操作记录"}
+  ]}
+];
+function renderSideNav(){
+  const cur=parseHash().route;
+  const taskBadge = currentRole==="biz" ? bizReturnedCount() : pendingCount();
+  $("#side-nav").innerHTML = NAV_DEF.map(function(g){
+    const items=g.items.map(function(it){
+      let badge=0;
+      if(it.route==="tasks"&&taskBadge>0)badge=taskBadge;
+      const badgeHtml=badge?'<span class="nav-badge">'+badge+'</span>':"";
+      const label=it.label||(it.route==="tasks"?(currentRole==="biz"?"我的发起":"审核任务"):"");
+      return '<div class="nav-item '+(cur===it.route?"active":"")+'" data-route="'+it.route+'" onclick="go(\''+it.route+'\')"><svg width="18" height="18">'+it.icon+'</svg>'+label+badgeHtml+'</div>';
+    }).join("");
+    return '<div class="nav-group">'+g.group+'</div>'+items;
+  }).join("");
+}
+function switchRole(key){
+  if(!ROLES[key])return;
+  currentRole=key;
+  const r=ROLES[key];
+  $("#role-select").value=key;
+  $("#user-avatar").textContent=r.avatar;
+  $("#user-name").textContent=r.user;
+  $("#user-role").textContent=r.dept;
+  if(currentRole!=="biz"&&draft.kind==="ns"){draft.kind="std";draft.step=1;}
+  renderSideNav();
+  const p=pendingCount();
+  if(p>0)toast("ok","已切换为「"+r.name+" · "+r.user+"」，您有 "+p+" 个待审核任务");
+  else toast("ok","已切换为「"+r.name+" · "+r.user+"」");
+  router();
+}
+const CRUMBS = {
+  dashboard:["工作台总览","标准合同全自动 · 非标合同分级审核"],
+  create:["订立合同","标准模板业务填写 / 非标合同上传审核"],
+  tasks:["审核任务","分级审核 · 全程留痕 · 版本管理"],
+  archived:["已归档合同","法务部归档卷宗 · 全自动流转"],
+  voided:["已作废合同","归档后作废的合同记录"],
+  logs:["批量操作记录","批量归档 · 批量作废 · 批量导出审计"]
+};
+function parseHash(){
+  const h=location.hash.replace(/^#\/?/,"");
+  const parts=h.split("?");
+  const path=parts[0];
+  const params={};
+  if(parts[1])parts[1].split("&").forEach(function(p){const kv=p.split("=");params[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||"");});
+  const route=path||"dashboard";
+  return {route:["dashboard","create","tasks","archived","voided","logs"].indexOf(route)>=0?route:"dashboard",params:params};
+}
+function go(route,params){
+  location.hash="#/"+route+(params?"?"+new URLSearchParams(params).toString():"");
+}
+function router(){
+  const parsed=parseHash();
+  const route=parsed.route, params=parsed.params;
+  const crumb=CRUMBS[route];
+  $("#crumb-title").textContent=crumb[0];
+  $("#crumb-desc").textContent=crumb[1];
+  renderSideNav();
+  const view=$("#view");
+  view.classList.remove("page-enter");void view.offsetWidth;view.classList.add("page-enter");
+  if(route==="dashboard")view.innerHTML=renderDashboard();
+  else if(route==="create")view.innerHTML=renderCreate(params);
+  else if(route==="tasks")view.innerHTML=renderTasks();
+  else if(route==="archived")view.innerHTML=renderArchived(params);
+  else if(route==="voided")view.innerHTML=renderVoided(params);
+  else if(route==="logs")view.innerHTML=renderLogs();
+}
+window.addEventListener("hashchange",router);
+
+/* ============================================================
+   工作台（按角色）
+============================================================ */
+const FLOW_STD=[
+  {ic:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h5v16H5V4h5"/><path d="M9 2h6v4H9zM9 12h6M9 16h4"/></svg>',n:"业务发起",d:"业务人员发起合同申请",auto:0},
+  {ic:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4zM8 8h8M8 12h8M8 16h5"/></svg>',n:"选择法务模板",d:"条款锁定 · 业务不可编辑",auto:0},
+  {ic:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',n:"业务填写",d:"对方信息 / 金额 / 履约要素",auto:0},
+  {ic:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13l2 2 4-4"/></svg>',n:"生成合同与电子签",d:"已盖公章 · 链接待对方签署",auto:1},
+  {ic:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8M1 8h22V4H1zM10 12h4"/></svg>',n:"自动归档法务部",d:"零人工审批 · 大额自动复核",auto:1},
+  {ic:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg>',n:"抄送董事长",d:"归档完成即时抄送",auto:1}
+];
+const FLOW_NS=[
+  {ic:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0l-4 4m4-4l4 4M4 20h16"/></svg>',n:"业务上传",d:"对方提供或需修改的合同",auto:0},
+  {ic:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6l-4 5v7h12v-7l-4-5V3"/></svg>',n:"技术审核",d:"技术范围与交付",auto:0},
+  {ic:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>',n:"财务审核",d:"金额与付款条款",auto:0},
+  {ic:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>',n:"法务专员→主管",d:"条款修订 · 版本留痕",auto:0},
+  {ic:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13l2 2 4-4"/></svg>',n:"生成终版签约",d:"最终版 + 电子签约链接",auto:0},
+  {ic:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg>',n:"归档并抄送董事长",d:"终版归档法务部 · 抄送",auto:0}
+];
+function flowBlock(title,steps,note){
+  return '<div class="flow-wrap" style="margin-bottom:16px"><div class="flow-head"><div class="f-title">'+title+'</div><div class="flow-auto"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>'+note+'</div></div>'+
+    '<div class="flow">'+steps.map(function(f,i){return '<div class="fstep '+(i>=steps.length-2?"done":"")+'"><div class="f-ic">'+f.ic+'</div><div class="f-name">'+f.n+'</div><div class="f-desc">'+f.d+'</div>'+(f.auto?'<div class="f-auto">自动化</div>':"")+'</div>';}).join("")+'</div></div>';
+}
+function renderDashboard(){
+  const total=state.contracts.length;
+  const archived=state.contracts.filter(function(c){return c.status==="archived";});
+  const voided=state.contracts.filter(function(c){return c.status==="voided";});
+  const ym=todayStr().slice(0,7);
+  const monthNew=archived.filter(function(c){return c.archivedAt.slice(0,7)===ym;}).length;
+  const recent=archived.slice().sort(function(a,b){return b.archivedAt.localeCompare(a.archivedAt);}).slice(0,5);
+  const recentLogs=state.logs.slice().sort(function(a,b){return b.time.localeCompare(a.time);}).slice(0,3);
+  const md=monthlyData();
+  const expiry=expiryList();
+  const pCnt=pendingCount();
+  const bRet=bizReturnedCount();
+  const kpiTop = currentRole==="biz"
+    ? '<div class="kpi"><div class="k-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>在办合同</div><div class="k-num">'+total+'</div><div class="k-foot">归档卷宗内全部合同</div></div>'+
+      '<div class="kpi"><div class="k-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 7l1.2 13h13.6L20 7M9 12h6"/></svg>已归档</div><div class="k-num">'+archived.length+'</div><div class="k-foot"><span class="up">'+Math.round(archived.length/Math.max(total,1)*100)+'%</span> 归档率 · 全自动</div></div>'+
+      '<div class="kpi"><div class="k-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>需我修改</div><div class="k-num" style="color:'+(bRet>0?"var(--red)":"var(--ink)")+'">'+bRet+'</div><div class="k-foot">被审核退回的非标合同</div></div>'+
+      '<div class="kpi"><div class="k-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>本月归档</div><div class="k-num">'+monthNew+'</div><div class="k-foot">'+ym+' 新增归档</div></div>'
+    : '<div class="kpi" style="border-color:var(--brand-3)"><div class="k-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h11"/></svg>待我审核</div><div class="k-num" style="color:var(--brand)">'+pCnt+'</div><div class="k-foot">非标合同分级审核任务</div></div>'+
+      '<div class="kpi"><div class="k-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>合同总量</div><div class="k-num">'+total+'</div><div class="k-foot">归档卷宗内全部合同</div></div>'+
+      '<div class="kpi"><div class="k-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 7l1.2 13h13.6L20 7M9 12h6"/></svg>已归档</div><div class="k-num">'+archived.length+'</div><div class="k-foot"><span class="up">'+Math.round(archived.length/Math.max(total,1)*100)+'%</span> 归档率</div></div>'+
+      '<div class="kpi"><div class="k-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>本月归档</div><div class="k-num">'+monthNew+'</div><div class="k-foot">'+ym+' 新增归档</div></div>';
+  const todoCard = currentRole==="biz"
+    ? '<div class="card" style="margin-bottom:16px"><div class="section-title" style="margin:0;padding:16px 16px 6px"><h2>我的非标合同进度</h2><span class="more" onclick="go(\'tasks\')">全部 →</span></div>'+
+      (state.nsContracts.length?state.nsContracts.slice().sort(function(a,b){return b.submittedAt.localeCompare(a.submittedAt);}).slice(0,4).map(function(c){
+        return '<div class="task-item"><div class="t-ic" style="background:var(--purple-bg||#F1ECFA);color:#6C4AB6"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div><div class="t-main"><div class="t-name" onclick="openNsTask(\''+c.id+'\')">'+esc(c.name)+'</div><div class="t-sub"><span class="mono">'+c.no+'</span> · 当前 '+c.version+' · '+esc(c.partyB)+'</div></div><div class="t-right">'+nsStatusChip(c.status)+'<span style="font-size:11px;color:var(--faint)">'+c.submittedAt.slice(0,10)+' 提交</span></div></div>';
+      }).join(""):'<div class="empty"><div class="e-title">暂无非标合同</div><div class="e-sub">在订立合同中选择「非标准合同」上传</div></div>')+'</div>'
+    : '<div class="card" style="margin-bottom:16px"><div class="section-title" style="margin:0;padding:16px 16px 6px"><h2>待我审核</h2><span class="more" onclick="go(\'tasks\')">全部 →</span></div>'+
+      (pCnt>0?state.nsContracts.filter(function(c){return NS_FLOW.find(function(f){return f.key===c.status&&f.roles.indexOf(currentRole)>=0;});}).map(function(c){
+        return '<div class="task-item"><div class="t-ic" style="background:var(--brand-soft);color:var(--brand)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h11"/></svg></div><div class="t-main"><div class="t-name" onclick="openNsTask(\''+c.id+'\')">'+esc(c.name)+'</div><div class="t-sub"><span class="mono">'+c.no+'</span> · 版本 '+c.version+' · 金额 '+fmtMoney(c.amount)+'</div></div><div class="t-right"><span class="chip chip-amber" style="background:var(--amber-bg);color:var(--amber)">待处理</span><button class="btn btn-primary btn-sm" onclick="openNsTask(\''+c.id+'\')">去审核 →</button></div></div>';
+      }).join(""):'<div class="empty"><div class="e-title">当前没有待审核任务</div><div class="e-sub">非标合同流转到您的环节时会在此提醒</div></div>')+'</div>';
+  const chartCard = '<div class="card"><div class="section-title" style="margin:0;padding:16px 16px 6px"><h2>近 6 个月归档趋势</h2><span class="more">全自动归档 · 分级留痕</span></div>'+
+    '<div class="bar-chart">'+md.counts.map(function(c,i){return '<div class="bar-col"><div class="b-val">'+c+'</div><div class="b-bar '+(i===md.counts.length-1?"hot":"")+'" style="height:'+Math.max(3,Math.round(c/md.max*100))+'%"></div><div class="b-lab">'+md.months[i]+'</div></div>';}).join("")+'</div>'+
+    '<div style="padding:12px 16px 16px;font-size:11.5px;color:var(--muted)">含标准合同自动归档与非标合同终版归档，均即时抄送董事长办公室</div></div>';
+  const expiryCard = '<div class="card"><div class="section-title" style="margin:0;padding:16px 16px 6px"><h2>履约监控 · 90 天内到期</h2><span class="more" onclick="go(\'archived\')">全部合同 →</span></div>'+
+    (expiry.map(function(c){const days=Math.max(0,Math.round((ts(new Date(c.endDate))-ts(new Date()))/86400000));return '<div class="expiry-item"><div class="e-days"><span class="n">'+days+'</span><span class="u">天后到期</span></div><div class="e-main"><div class="e-name" onclick="viewContract(\''+c.id+'\')">'+esc(c.name)+'</div><div class="e-sub"><span class="mono">'+c.no+'</span> · 到期 '+c.endDate+' · '+esc(c.partyB)+'</div></div><span class="chip chip-amber">待续约</span></div>';}).join("") || '<div class="empty"><div class="e-title">90 天内无到期合同</div><div class="e-sub">所有合同履约状态正常</div></div>')+'</div>';
+  const recentCard = '<div class="card"><div class="section-title" style="margin:0;padding:16px 16px 6px"><h2>最近归档合同</h2><span class="more" onclick="go(\'archived\')">查看全部 →</span></div>'+
+    recent.map(function(c){return '<div class="recent-item"><div class="r-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div><div class="r-main"><div class="r-name" onclick="viewContract(\''+c.id+'\')">'+esc(c.name)+'</div><div class="r-sub"><span class="mono">'+c.no+'</span> · '+TEMPLATES[c.template].name+' · '+esc(c.partyB)+'</div></div><div class="r-right"><span class="chip '+(c.signType==="非标审核"?"chip-purple":"chip-green")+'">'+(c.signType==="非标审核"?"非标终版":"已归档")+'</span><div class="r-time" style="margin-top:4px">'+c.archivedAt.slice(0,16)+'</div></div></div>';}).join("")+'</div>';
+  const logCard = '<div class="card"><div class="section-title" style="margin:0;padding:16px 16px 6px"><h2>批量操作动态</h2><span class="more" onclick="go(\'logs\')">操作审计 →</span></div>'+
+    recentLogs.map(function(l){const red=l.type==="批量作废";return '<div class="recent-item"><div class="r-ic" style="background:'+(red?"var(--red-bg)":"var(--brand-soft)")+';color:'+(red?"var(--red)":"var(--brand)")+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+(red?'<path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6.5 7l.9 13.2a1 1 0 0 0 1 .8h7.2a1 1 0 0 0 1-.8L17.5 7"/>':'<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>')+'</svg></div><div class="r-main"><div class="r-name">'+l.type+' · '+l.count+' 份合同</div><div class="r-sub">'+esc(l.detail)+'</div></div><div class="r-right"><span class="chip chip-green">成功</span><div class="r-time" style="margin-top:4px">'+l.time.slice(0,16)+'</div></div></div>';}).join("")+
+    (recentLogs.length===0?'<div class="empty"><div class="e-title">暂无批量操作</div><div class="e-sub">在归档列表勾选合同即可批量操作</div></div>':"")+'</div>';
+
+  return '<div class="kpi-grid">'+kpiTop+'</div>'+
+    todoCard+
+    flowBlock("标准合同 · 全自动链路",FLOW_STD, "全自动 · 零人工审批 · 模板锁定")+
+    flowBlock("非标合同 · 分级审核链路",FLOW_NS, "技术→财务→法务专员→法务主管 · 全程留痕")+
+    '<div class="dash-cols"><div class="card" style="margin-bottom:16px"><div class="section-title" style="margin:0;padding:16px 16px 6px"><h2>标准 / 非标双流程选择</h2></div>'+
+      '<div style="padding:6px 16px 18px;font-size:12.5px;color:var(--muted);line-height:2">'+
+      '· <b style="color:var(--ink)">标准合同</b>：乙方不更改条款，业务只填对方信息与金额等履约要素，自动生成模板合同并归档；<br>'+
+      '· <b style="color:var(--ink)">非标合同</b>：对方模板改动较大或金额超过 '+fmtMoney(BIG_AMOUNT)+'，走技术→财务→法务专员→法务主管分级审核，法务可修改版本并写审核意见，终版生成电子签约链接后归档并抄送董事长。</div></div>'+chartCard+'</div>'+
+    '<div class="dash-cols" style="margin-top:16px">'+expiryCard+recentCard+'</div>'+
+    '<div class="dash-cols" style="margin-top:16px">'+logCard+'<div class="card" style="padding:18px 20px;display:flex;gap:14px;align-items:flex-start"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.8" stroke-linecap="round" style="flex:0 0 18px;margin-top:2px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg><div style="font-size:12.5px;color:var(--muted);line-height:1.9">标准模板合同由法务部审定锁定，业务不可编辑条款；非标合同每一步审核意见与版本修订均留痕，最终版签约后自动归档并抄送董事长。系统内「生成协议内容」的权限不对业务开放。</div></div></div>';
+}
+function monthlyData(){
+  const months=[];const d=new Date();
+  for(let i=5;i>=0;i--){const dt=new Date(d.getFullYear(),d.getMonth()-i,1);months.push({label:(dt.getMonth()+1)+"月",key:dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")});}
+  const counts=months.map(function(m){return state.contracts.filter(function(c){return c.status==="archived"&&c.archivedAt.slice(0,7)===m.key;}).length;});
+  return {months:months.map(function(m){return m.label;}),counts:counts,max:Math.max.apply(null,counts.concat([1]))};
+}
+function expiryList(){
+  const t0=ts(new Date()),t1=ts(addDays(new Date(),90));
+  return state.contracts.filter(function(c){return c.status==="archived"&&c.endDate;})
+    .filter(function(c){const t=ts(new Date(c.endDate));return t>=t0&&t<=t1;})
+    .sort(function(a,b){return a.endDate.localeCompare(b.endDate);}).slice(0,5);
+}
+/* ============================================================
+   订立合同 · 标准 / 非标双流程
+============================================================ */
+const draft = {kind:"std",step:1,templateId:null,values:{}};
+const nsDraft = {name:"",partyB:"",amount:"",sourceFile:"",comment:""};
+function resetDraft(){
+  draft.step=1;draft.templateId=null;
+  draft.values={no:nextNo(),partyA:ENTITIES[0],signDate:todayStr(),startDate:"",endDate:"",aContact:"",aPhone:"",bContact:"",bPhone:"",aCredit:"",bCredit:"",name:"",amount:"",remark:"",partyACust:""};
+}
+resetDraft();
+
+function kindTabs(){
+  const canNs = currentRole==="biz";
+  return '<div class="kind-tabs">'+
+    '<div class="kind-tab '+(draft.kind==="std"?"sel":"")+'" onclick="switchKind(\'std\')">'+
+      '<div class="kt-ic" style="background:var(--brand-soft);color:var(--brand)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13l2 2 4-4"/></svg></div>'+
+      '<div><div class="kt-name">标准合同<span class="kt-tag" style="background:var(--green-bg);color:var(--green)">模板锁定 · 全自动</span></div>'+
+      '<div class="kt-desc">乙方不更改条款，业务只需填对方信息、金额、履约期限等要素，一键生成已盖公章的模板合同并自动归档。条款由法务锁定，业务不可编辑。</div></div>'+
+    '</div>'+
+    '<div class="kind-tab '+(draft.kind==="ns"?"sel":"")+'" onclick="switchKind(\'ns\')">'+
+      '<div class="kt-ic" style="background:#F1ECFA;color:#6C4AB6"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0l-4 4m4-4l4 4M4 20h16"/></svg></div>'+
+      '<div><div class="kt-name">非标准合同<span class="kt-tag" style="background:var(--amber-bg);color:var(--amber)">分级审核 · 全程留痕</span></div>'+
+      '<div class="kt-desc">对方模板改动较大或金额超过 '+fmtMoney(BIG_AMOUNT)+' 时，业务上传合同文件，依次经技术 → 财务 → 法务专员 → 法务主管审核，法务可修改版本并写意见，终版生成签约链接。</div></div>'+
+    '</div>'+
+  '</div>'+(canNs?"":'<div style="font-size:12px;color:var(--muted);margin:-8px 0 16px">当前为「'+role().name+'」视角：仅可演示标准合同流程，非标合同发起需切换为业务人员。</div>');
+}
+function switchKind(k){
+  if(k==="ns"&&currentRole!=="biz"){toast("warn","非标合同发起权限仅限业务人员，请切换角色");return;}
+  draft.kind=k;draft.step=1;
+  if(k==="ns"){resetDraft();}
+  render();
+}
+function renderCreate(params){
+  if(currentRole!=="biz"&&draft.kind==="ns"){draft.kind="std";draft.step=1;}
+  if(params.t && TEMPLATES[params.t] && !draft.templateId){draft.templateId=params.t;}
+  if(draft.kind==="ns")return renderNsCreate();
+  const steps=[
+    {n:"选择模板",s:"法务标准模板"},
+    {n:"填写信息",s:"履约要素"},
+    {n:"生成预览",s:"合同 + 电子签"},
+    {n:"归档完成",s:"抄送董事长"}
+  ];
+  const stepper='<div class="stepper">'+
+    steps.map(function(s,i){const n=i+1;const cls=draft.step>n?"done":draft.step===n?"active":"";return '<div class="step '+cls+'"><div class="s-ic">'+(draft.step>n?'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>':n)+'</div><div class="s-name">'+s.n+'</div><div class="s-sub">'+s.s+'</div></div>';}).join("")+
+  '</div>';
+
+  if(draft.step===1){
+    return '<div class="wizard">'+kindTabs()+stepper+
+      '<div class="flow-notice"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex:0 0 17px;margin-top:2px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg><div>标准合同使用<b>法务审定模板</b>，条款完全锁定、业务不可编辑，仅可填写履约要素字段；生成内容权限不对业务开放。</div></div>'+
+      '<div class="section-title" style="margin-top:0"><h2>选择法务标准模板</h2><span style="font-size:12px;color:var(--muted)">模板由法务部审定维护，业务人员不可修改条款</span></div>'+
+      '<div class="tpl-grid">'+
+        TPL_ORDER.map(function(id){const t=TEMPLATES[id];return '<div class="tpl-card '+(draft.templateId===id?"sel":"")+'" onclick="pickTemplate(\''+id+'\')">'+
+          '<div class="t-check"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></div>'+
+          '<div class="t-ic" style="background:'+t.color+';color:var(--brand-deep)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg></div>'+
+          '<div class="t-name">'+t.name+'</div><div class="t-tag">'+t.tag+'</div>'+
+          '<div class="t-scene">'+t.scene+'</div>'+
+          '<div class="t-fields"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>'+(t.fields.length+6)+' 个履约要素 · 条款锁定 · 电子签约</div>'+
+        '</div>';}).join("")+
+      '</div>'+
+      '<div class="wiz-actions">'+
+        '<span style="font-size:12px;color:var(--muted)">未选择模板时，请先挑选适用合同类型</span>'+
+        '<button class="btn btn-primary" '+(draft.templateId?"":"disabled")+' onclick="draft.step=2;render();">下一步：填写履约信息 →</button>'+
+      '</div>'+
+    '</div>';
+  }
+
+  if(draft.step===2){
+    const t=TEMPLATES[draft.templateId];
+    const v=draft.values;
+    const paInList=ENTITIES.indexOf(v.partyA)>=0;
+    const paVal=paInList?v.partyA:"__custom__";
+    const f=function(k,label,ph,opt){
+      const val=v[k]||"";
+      return '<div class="f-item '+(opt?"":"wide")+'"><label>'+label+(opt?"":'<span class="req">*</span>')+'</label>'+
+        '<input id="f-'+k+'" value="'+esc(val)+'" placeholder="'+ph+'" data-k="'+k+'" '+(opt?"":'oninput="markValid(\''+k+'\')"')+'>'+
+        '<span class="hint-err">此字段为必填项</span></div>';
+    };
+    const tplFields=t.fields.map(function(fd){return '<div class="f-item"><label>'+fd.label+'<span class="req">*</span></label>'+
+      '<input id="f-'+fd.key+'" value="'+esc(v[fd.key]||"")+'" placeholder="'+fd.ph+'" data-k="'+fd.key+'" oninput="markValid(\''+fd.key+'\')">'+
+      '<span class="hint-err">此字段为必填项</span></div>';}).join("");
+    const big = t.id!=="nda" && Number(v.amount||0) > BIG_AMOUNT;
+    const entOpts=ENTITIES.map(function(e){return '<option value="'+esc(e)+'" '+(paVal===e?"selected":"")+'>'+esc(e)+'</option>';}).join("");
+    return '<div class="wizard">'+kindTabs()+stepper+
+      '<div class="card form-card">'+
+        '<div class="flow-notice" style="margin-bottom:20px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex:0 0 17px;margin-top:2px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg><div>标准模板 <b>「'+t.name+'」</b> 条款由法务锁定，以下仅可填写<b>履约要素</b>（对方信息、金额、期限、空白字段），不可修改任何条款内容。</div></div>'+
+        (big?'<div class="big-note"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg><div>本单金额超过 '+fmtMoney(BIG_AMOUNT)+'，属于大额合同：归档时将自动并行提交法务部复核（演示规则），复核通过后仍全自动完成归档与抄送。</div></div>':"")+
+        '<div class="form-sec"><h3><span class="sec-no">1</span>合同标识</h3><div class="form-grid">'+
+          '<div class="f-item"><label>合同编号<span class="req">*</span></label><div class="prefix"><span class="px">HT-2026-</span><input id="f-no" value="'+esc(v.no.replace(/^HT-2026-/,""))+'" data-k="no" oninput="markValid(\'no\')"></div><span class="hint-err">此字段为必填项</span></div>'+
+          '<div class="f-item wide"><label>合同名称<span class="req">*</span></label><input id="f-name" value="'+esc(v.name||"")+'" placeholder="如：2026 年度云服务采购合同" data-k="name" oninput="markValid(\'name\')"><span class="hint-err">此字段为必填项</span></div>'+
+        '</div></div>'+
+        '<div class="form-sec"><h3><span class="sec-no">2</span>甲方信息（我方签约主体）</h3><div class="form-grid">'+
+          '<div class="f-item wide"><label>签约主体（我方）<span class="req">*</span></label>'+
+            '<select id="f-partyA" data-k="partyA" onchange="onPartyAChange()">'+entOpts+'<option value="__custom__" '+(paVal==="__custom__"?"selected":"")+'>自定义主体…</option></select>'+
+            '<span class="hint">多个公司主体均可选择，盖章主体随选择自动切换</span></div>'+
+          (paVal==="__custom__"?'<div class="f-item wide"><label>自定义主体名称<span class="req">*</span></label><input id="f-partyA-cust" value="'+esc(v.partyACust||"")+'" placeholder="输入我方签约主体全称" oninput="draft.values.partyA=this.value;draft.values.partyACust=this.value;markValid(\'partyA\')"><span class="hint-err">此字段为必填项</span></div>':"")+
+          f("aContact","甲方联系人","如：陈志远")+
+          f("aPhone","联系电话","如：021-6888 1201")+
+          '<div class="f-item wide"><label>统一社会信用代码（选填）</label><input id="f-aCredit" value="'+esc(v.aCredit||"")+'" placeholder="如：91310000MA1KXXXXXX" data-k="aCredit"><span class="hint">用于合同正文，选填</span></div>'+
+        '</div></div>'+
+        '<div class="form-sec"><h3><span class="sec-no">3</span>乙方信息（相对方）</h3><div class="form-grid">'+
+          f("partyB","乙方名称","对方公司全称")+
+          f("bContact","乙方联系人","如：周晓敏")+
+          f("bPhone","联系电话","如：021-5067 8832")+
+          '<div class="f-item wide"><label>统一社会信用代码（选填）</label><input id="f-bCredit" value="'+esc(v.bCredit||"")+'" placeholder="如：91310115MA1KXXXXXX" data-k="bCredit"><span class="hint">用于合同正文，选填</span></div>'+
+        '</div></div>'+
+        '<div class="form-sec"><h3><span class="sec-no">4</span>履约信息</h3><div class="form-grid">'+
+          '<div class="f-item"><label>签约日期<span class="req">*</span></label><input id="f-signDate" type="date" value="'+(v.signDate||"")+'" data-k="signDate"></div>'+
+          '<div class="f-item"><label>履约起始日<span class="req">*</span></label><input id="f-startDate" type="date" value="'+(v.startDate||"")+'" data-k="startDate" oninput="markValid(\'startDate\')"></div>'+
+          '<div class="f-item"><label>履约截止日<span class="req">*</span></label><input id="f-endDate" type="date" value="'+(v.endDate||"")+'" data-k="endDate" oninput="markValid(\'endDate\')"></div>'+
+          (t.id==="nda"?"":'<div class="f-item"><label>合同总金额（元）<span class="req">*</span></label><input id="f-amount" type="number" min="0" value="'+esc(v.amount||"")+'" placeholder="如：500000" data-k="amount" oninput="markValid(\'amount\')"><span class="hint-err">此字段为必填项</span></div>')+
+        '</div></div>'+
+        '<div class="form-sec"><h3><span class="sec-no">5</span>模板条款要素 · '+t.name+'</h3><div class="form-grid">'+tplFields+'</div></div>'+
+        '<div class="form-sec"><h3><span class="sec-no">6</span>备注</h3><div class="form-grid"><div class="f-item full"><textarea data-k="remark" placeholder="补充说明（选填），将写入合同备注栏">'+esc(v.remark||"")+'</textarea></div></div></div>'+
+        '<div class="wiz-actions">'+
+          '<button class="btn btn-ghost" onclick="draft.step=1;render();">← 上一步：重新选模板</button>'+
+          '<div class="right"><button class="btn btn-ghost" onclick="resetDraft();render();">清空重填</button>'+
+          '<button class="btn btn-primary" onclick="submitWizard()">生成合同与签约链接 →</button></div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }
+
+  if(draft.step===3){
+    const c=currentContract();
+    const t=TEMPLATES[c.template];
+    const big=!!c.amount&&Number(c.amount)>BIG_AMOUNT;
+    const review=smartReview(c);
+    return '<div class="wizard">'+kindTabs()+stepper+
+      '<div class="doc-stage">'+
+        '<div class="doc-paper" id="doc-paper">'+buildDocHtml(c)+'</div>'+
+        '<div class="doc-side">'+
+          '<div class="side-card"><h4>合同要素</h4>'+
+            '<div class="meta-row"><span class="mk">合同编号</span><span class="mv mono">'+c.no+'</span></div>'+
+            '<div class="meta-row"><span class="mk">合同模板</span><span class="mv">'+t.name+'</span></div>'+
+            '<div class="meta-row"><span class="mk">我方主体</span><span class="mv">'+esc(c.partyA)+'</span></div>'+
+            '<div class="meta-row"><span class="mk">乙方</span><span class="mv">'+esc(c.partyB)+'</span></div>'+
+            (c.amount?'<div class="meta-row"><span class="mk">合同金额</span><span class="mv">'+fmtMoney(c.amount)+'</span></div>':"")+
+            '<div class="meta-row"><span class="mk">履约期限</span><span class="mv">'+c.startDate+' 至 '+c.endDate+'</span></div>'+
+            '<div class="meta-row"><span class="mk">申请人</span><span class="mv">'+esc(operator())+'</span></div>'+
+          '</div>'+
+          '<div class="side-card" style="border-color:var(--green)"><h4>模板锁定说明<span class="h4-tag chip chip-green">条款不可编辑</span></h4>'+
+            '<div style="font-size:12px;color:var(--muted);line-height:1.9">本合同由法务审定标准模板自动生成，业务仅填写履约要素；任何条款修改均不向业务开放，如对方提出条款变更请走「非标准合同」流程。</div>'+
+          '</div>'+
+          '<div class="side-card" style="border-color:var(--brand-3)"><h4>电子化签约<span class="h4-tag chip chip-blue">已生成</span></h4>'+
+            '<div class="meta-row"><span class="mk">签约平台</span><span class="mv">七七七电子签约</span></div>'+
+            '<div class="meta-row"><span class="mk">我方主体</span><span class="mv" style="white-space:nowrap">'+esc(c.partyA)+'</span></div>'+
+            '<div class="meta-row"><span class="mk">我方公章</span><span class="mv"><span class="chip chip-red">已加盖</span></span></div>'+
+            '<div class="meta-row"><span class="mk">对方状态</span><span class="mv"><span class="chip chip-amber">待对方签署</span></span></div>'+
+            '<div class="link-box">'+signLink(c.no)+'<button class="copy-btn" onclick="copyText(\''+signLink(c.no)+'\')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>复制</button></div>'+
+            '<div style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.7">合同已加盖我方公章，将链接发送对方完成电子签署后，系统自动完成归档并抄送董事长。</div>'+
+          '</div>'+
+          '<div class="side-card"><h4>AI 智能审查<span class="h4-tag" style="font-size:10.5px;color:var(--brand);font-weight:600">规则引擎</span></h4>'+
+            review.map(function(r){return '<div class="review-item '+(r.ok?"ok":"warn")+'"><div class="rv-ic">'+(r.ok?'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>':'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v9M12 19h.01"/></svg>')+'</div><div class="rv-main"><div class="rv-name">'+esc(r.t)+'</div><div class="rv-desc">'+esc(r.d)+'</div></div></div>';}).join("")+
+          '</div>'+
+          (big?'<div class="side-card" style="background:var(--amber-bg);border-color:#F0D9AE"><h4 style="color:#7A5418">大额合同复核</h4><div style="font-size:12px;color:#7A5418;line-height:1.8">本单金额 '+fmtMoney(c.amount)+'，超过 '+fmtMoney(BIG_AMOUNT)+' 阈值。归档时将自动并行提交法务部复核，复核通过后照常完成归档与抄送。</div></div>':"")+
+          '<button class="btn btn-red" style="height:44px;font-size:14px" onclick="confirmArchive()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 7l1.2 13h13.6L20 7M9 12h6"/></svg>确认归档并盖章</button>'+
+          '<button class="btn btn-ghost" onclick="draft.step=2;render();">← 返回修改填写</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }
+
+  if(draft.step===4){
+    const c=currentContract();
+    const big=!!c.amount&&Number(c.amount)>BIG_AMOUNT;
+    return '<div class="wizard">'+kindTabs()+stepper+
+      '<div class="success-wrap" id="success-wrap">'+
+        '<div class="success-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></div>'+
+        '<h2>标准合同已自动归档</h2>'+
+        '<div class="s-sub">模板条款锁定 · 全流程零人工审批 · 电子签约链接已生成 · 已抄送董事长办公室</div>'+
+        '<div class="success-meta">'+
+          '<div class="sm-row"><span class="mk">合同编号</span><span class="mv mono">'+c.no+'</span></div>'+
+          '<div class="sm-row"><span class="mk">合同名称</span><span class="mv">'+esc(c.name)+'</span></div>'+
+          '<div class="sm-row"><span class="mk">归档时间</span><span class="mv">'+c.archivedAt+'</span></div>'+
+          '<div class="sm-row"><span class="mk">归档人</span><span class="mv">'+esc(operator())+'</span></div>'+
+          '<div class="sm-row"><span class="mk">归档位置</span><span class="mv">法务部 · 合同卷宗</span></div>'+
+          '<div class="sm-row"><span class="mk">复核方式</span><span class="mv">'+(big?'<span class="chip chip-amber">大额 · 法务复核</span>':'<span class="chip chip-green">零审批自动归档</span>')+'</span></div>'+
+          '<div class="sm-row"><span class="mk">抄送对象</span><span class="mv"><span class="chip chip-green">董事长办公室</span></span></div>'+
+          '<div class="sm-row"><span class="mk">签约主体</span><span class="mv" style="font-size:12px">'+esc(c.partyA)+'</span></div>'+
+        '</div>'+
+        '<div class="success-link"><span class="sl-t">电子签约链接</span><span class="sl-url">'+signLink(c.no)+'</span><button class="btn btn-primary btn-sm" onclick="copyText(\''+signLink(c.no)+'\')">复制链接</button></div>'+
+        '<div style="font-size:11.5px;color:var(--muted);margin:-14px 0 22px">对方完成电子签署后，系统将自动更新签署状态并再次抄送董事长。</div>'+
+        '<div class="success-actions">'+
+          '<button class="btn btn-primary" onclick="viewContract(\''+c.id+'\')">查看归档合同</button>'+
+          '<button class="btn btn-ghost" onclick="downloadContract(\''+c.id+'\')">下载合同</button>'+
+          '<button class="btn btn-ghost" onclick="go(\'dashboard\')">回到工作台</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }
+}
+/* ---------- 非标合同：上传发起 ---------- */
+function renderNsCreate(){
+  const nsSteps=[
+    {n:"上传合同",s:"对方模板 / 需修改"},
+    {n:"提交审核",s:"进入分级审核流"}
+  ];
+  const stepper='<div class="stepper" style="max-width:560px;margin-left:0">'+
+    nsSteps.map(function(s,i){const n=i+1;const cls=draft.step>n?"done":draft.step===n?"active":"";return '<div class="step '+cls+'" style="max-width:280px"><div class="s-ic">'+(draft.step>n?'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>':n)+'</div><div class="s-name">'+s.n+'</div><div class="s-sub">'+s.s+'</div></div>';}).join("")+
+  '</div>';
+  if(draft.step===1){
+    return '<div class="wizard"><div class="ns-form">'+kindTabs()+stepper+
+      '<div class="flow-notice"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex:0 0 17px;margin-top:2px"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg><div>非标合同适用：<b>乙方模板条款改动较大</b> 或 <b>金额超过 '+fmtMoney(BIG_AMOUNT)+'</b>。上传后依次经 <b>技术 → 财务 → 法务专员 → 法务主管</b> 审核，全程留痕、版本可追溯。</div></div>'+
+      '<div class="card form-card" style="padding:26px 30px">'+
+        '<div class="form-sec"><h3><span class="sec-no">1</span>合同信息</h3><div class="form-grid">'+
+          '<div class="f-item wide"><label>合同名称<span class="req">*</span></label><input id="ns-name" value="'+esc(nsDraft.name)+'" placeholder="如：XX 定制化软件开发框架协议" oninput="nsDraft.name=this.value;markValid(\'ns-name\')"><span class="hint-err">此字段为必填项</span></div>'+
+          '<div class="f-item"><label>相对方（乙方）<span class="req">*</span></label><input id="ns-partyB" value="'+esc(nsDraft.partyB)+'" placeholder="对方公司全称" oninput="nsDraft.partyB=this.value;markValid(\'ns-partyB\')"><span class="hint-err">此字段为必填项</span></div>'+
+          '<div class="f-item"><label>合同金额（元）<span class="req">*</span></label><input id="ns-amount" type="number" min="0" value="'+esc(nsDraft.amount)+'" placeholder="如：1500000" oninput="nsDraft.amount=this.value;markValid(\'ns-amount\')"><span class="hint-err">此字段为必填项</span></div>'+
+          '<div class="f-item"><label>我方签约主体</label><select id="ns-partyA"><option>上海七七七信息技术有限公司</option><option>七七七信息技术有限公司</option></select></div>'+
+        '</div></div>'+
+        '<div class="form-sec"><h3><span class="sec-no">2</span>上传合同文件</h3>'+
+          '<label class="upload-zone" style="display:block" for="ns-file">'+
+            '<div class="uz-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0l-4 4m4-4l4 4M4 20h16"/></svg></div>'+
+            '<div class="uz-main">'+(nsDraft.sourceFile?'已选择文件：'+esc(nsDraft.sourceFile):"点击选择合同文件（对方提供模板 / 需修改版本）")+'</div>'+
+            '<div class="uz-sub">支持 docx / pdf，大小不超过 20MB</div>'+
+          '</label>'+
+          '<input type="file" id="ns-file" accept=".docx,.pdf,.doc" style="display:none" onchange="onNsFile(this)">'+
+          '<div id="ns-file-chip"></div>'+
+          (nsDraft.sourceFile?'<div style="margin-top:10px"><span class="file-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15l2 2 4-4"/></svg>'+esc(nsDraft.sourceFile)+'</span></div>':"")+
+        '</div>'+
+        '<div class="form-sec"><h3><span class="sec-no">3</span>发起说明</h3><div class="form-grid"><div class="f-item full"><textarea id="ns-comment" placeholder="说明为何使用非标流程：如对方指定模板、条款差异点、特殊商务安排等（供审核人参考）" style="min-height:80px" oninput="nsDraft.comment=this.value">'+esc(nsDraft.comment)+'</textarea></div></div></div>'+
+        '<div class="wiz-actions" style="margin-top:18px">'+
+          '<button class="btn btn-ghost" onclick="switchKind(\'std\')">← 返回标准合同流程</button>'+
+          '<button class="btn btn-primary" onclick="submitNsContract()">提交进入分级审核 →</button>'+
+        '</div>'+
+      '</div>'+
+    '</div></div>';
+  }
+  if(draft.step===2){
+    return '<div class="wizard"><div class="ns-form">'+kindTabs()+
+      '<div class="success-wrap" id="ns-success-wrap" style="max-width:680px;margin:16px auto">'+
+        '<div class="success-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h11"/></svg></div>'+
+        '<h2>已提交，进入分级审核流</h2>'+
+        '<div class="s-sub">技术 → 财务 → 法务专员 → 法务主管 · 全程留痕 · 每一步可追溯</div>'+
+        '<div class="success-meta">'+
+          '<div class="sm-row"><span class="mk">非标编号</span><span class="mv mono" id="ns-ok-no">NS-2026-0000</span></div>'+
+          '<div class="sm-row"><span class="mk">合同名称</span><span class="mv" id="ns-ok-name">-</span></div>'+
+          '<div class="sm-row"><span class="mk">当前状态</span><span class="mv"><span class="chip chip-blue">待技术审核</span></span></div>'+
+          '<div class="sm-row"><span class="mk">提交人</span><span class="mv">'+esc(operator())+'</span></div>'+
+          '<div class="sm-row"><span class="mk">首版文件</span><span class="mv" id="ns-ok-file" style="font-size:11.5px">-</span></div>'+
+          '<div class="sm-row"><span class="mk">抄送对象</span><span class="mv"><span class="chip chip-green">董事长办公室（终版）</span></span></div>'+
+        '</div>'+
+        '<div class="flow-strip" style="max-width:520px;margin:0 auto 24px">'+nsFlowStrip("pending_tech")+'</div>'+
+        '<div class="success-actions">'+
+          '<button class="btn btn-primary" onclick="go(\'tasks\')">跟踪我的发起</button>'+
+          '<button class="btn btn-ghost" onclick="go(\'dashboard\')">回到工作台</button>'+
+        '</div>'+
+      '</div>'+
+    '</div></div>';
+  }
+}
+function onNsFile(input){
+  const f=input.files&&input.files[0];
+  if(f){nsDraft.sourceFile=f.name;}
+  render();
+}
+function nsFlowStrip(status){
+  const defs=[
+    {k:"pending_tech",n:"业务上传",done:1},
+    {k:"pending_finance",n:"技术审核"},
+    {k:"pending_legal",n:"财务审核"},
+    {k:"pending_legal_lead",n:"法务专员"},
+    {k:"signed",n:"法务主管"}
+  ];
+  const order=["pending_biz","pending_tech","pending_finance","pending_legal","pending_legal_lead","signed"];
+  const cur=order.indexOf(status);
+  let html="";
+  defs.forEach(function(d,i){
+    const nodeIdx=[0,1,2,3,4][i];
+    const done=cur>nodeIdx+1||status==="signed"&&i<4;
+    const isCur=cur===nodeIdx+1;
+    html+='<div class="fs-node '+(done?"done":isCur?"cur":"")+'"><span class="fs-dot"></span><span class="fs-name">'+d.n+'</span>'+(i<4?'<span class="fs-line"></span>':"")+'</div>';
+  });
+  return html;
+}
+function submitNsContract(){
+  const need=[["name","ns-name","合同名称"],["partyB","ns-partyB","相对方"],["amount","ns-amount","合同金额"]];
+  const miss=[];
+  need.forEach(function(p){if(!(nsDraft[p[0]]||"").trim()){const el=$("#"+p[1]);if(el)el.classList.add("invalid");miss.push(p[2]);}});
+  if(!nsDraft.sourceFile){toast("warn","请先选择要上传的合同文件");return;}
+  if(miss.length){toast("warn","请完善必填项："+miss.join("、"));return;}
+  const amt=parseFloat(nsDraft.amount);
+  if(amt<=BIG_AMOUNT&&nsDraft.comment.indexOf("改动")<0&&nsDraft.comment.indexOf("模板")<0&&nsDraft.comment.indexOf("对方")<0){
+    /* 金额低于阈值且未说明条款差异：提示可走标准流程，但不阻断（演示保留弹窗提醒） */
+    toast("info","金额未超阈值且未说明条款差异，若为标准模板建议走标准合同流程");
+  }
+  const id="ns"+Date.now();
+  const no=nextNsNo();
+  state.nsCounter++;
+  const now=nowStr();
+  const ns={id:id,no:no,name:nsDraft.name.trim(),partyB:nsDraft.partyB.trim(),amount:String(amt),sourceFile:nsDraft.sourceFile,status:"pending_tech",version:"V1.0",submittedAt:now,submittedBy:operator(),partyA:($("#ns-partyA")&&$("#ns-partyA").value)||ENTITIES[0],
+    versions:[{v:"V1.0",at:now,by:operator(),act:"业务上传",comment:nsDraft.comment.trim()||"对方模板，需分级审核",file:nsDraft.sourceFile}]};
+  state.nsContracts.unshift(ns);
+  saveState();
+  draft.step=2;render();
+  const okNo=$("#ns-ok-no"),okName=$("#ns-ok-name"),okFile=$("#ns-ok-file");
+  if(okNo)okNo.textContent=no;
+  if(okName)okName.textContent=nsDraft.name.trim();
+  if(okFile)okFile.textContent=nsDraft.sourceFile;
+  toast("ok","非标合同已提交，进入技术审核环节");
+}
+
+/* ---------- 标准合同：向导函数 ---------- */
+function pickTemplate(id){draft.templateId=id;render();}
+function markValid(k){
+  const el=document.getElementById(k);
+  if(el)el.classList.remove("invalid");
+  const f=$("#f-"+k);
+  if(f)f.classList.remove("invalid");
+}
+function onPartyAChange(){
+  const sel=$("#f-partyA");
+  if(!sel)return;
+  if(sel.value==="__custom__"){
+    draft.values.partyA=draft.values.partyACust||"";
+  }else{
+    draft.values.partyA=sel.value;
+  }
+  markValid("partyA");
+  render();
+  if(sel.value==="__custom__"){
+    const cust=$("#f-partyA-cust");
+    if(cust)setTimeout(function(){cust.focus();},30);
+  }
+}
+function render(){router();}
+function collectForm(){
+  const v=draft.values;
+  $$("#view .f-item input,#view .f-item textarea,#view .f-item select").forEach(function(el){
+    const k=el.dataset.k;
+    if(k&&k!=="partyA"){if(k==="no"){v.no="HT-2026-"+el.value.trim();}else{v[k]=el.value.trim();}}
+  });
+  const paSel=$("#f-partyA");
+  if(paSel){const pv=paSel.value;if(pv==="__custom__"){v.partyA=(v.partyACust||"").trim();}else{v.partyA=pv;}}
+  return v;
+}
+function submitWizard(){
+  const v=collectForm();
+  const t=TEMPLATES[draft.templateId];
+  const required=["name","partyA","partyB","aContact","bContact","startDate","endDate","signDate"];
+  if(t.id!=="nda")required.push("amount");
+  t.fields.forEach(function(fd){required.push(fd.key);});
+  const missing=[];
+  required.forEach(function(k){const val=String(v[k]||"").trim();if(!val)missing.push(k);});
+  if(v.startDate && v.endDate && v.endDate<v.startDate){
+    toast("err","履约截止日不能早于起始日");
+    ["startDate","endDate"].forEach(function(k){const el=$("#f-"+k);if(el)el.classList.add("invalid");});
+    return;
+  }
+  if(missing.length){
+    const labels=[];
+    missing.forEach(function(k){
+      let el=document.getElementById("f-"+k);
+      if(k==="partyA")el=el||$("#f-partyA-cust");
+      if(el)el.classList.add("invalid");
+      const map={name:"合同名称",partyA:"签约主体",partyB:"乙方名称",aContact:"甲方联系人",bContact:"乙方联系人",startDate:"履约起始日",endDate:"履约截止日",signDate:"签约日期",amount:"合同金额"};
+      labels.push(map[k]||(t.fields.find(function(f){return f.key===k;})||{}).label||k);
+    });
+    toast("warn","请完善必填项："+labels.join("、"));
+    return;
+  }
+  draft.step=3;render();
+}
+let archiving=false;
+function confirmArchive(){
+  if(archiving)return;archiving=true;
+  const c=currentContract();
+  const big=!!c.amount&&Number(c.amount)>BIG_AMOUNT;
+  const side=$("#view .doc-side");
+  const btn=$("#view .doc-side .btn-red");
+  if(!side){archiving=false;return;}
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span>正在自动归档…';
+  const sealEl=$("#doc-paper .party-seal");
+  if(sealEl){sealEl.classList.remove("stamp-in");void sealEl.offsetWidth;sealEl.classList.add("stamp-in");}
+  let pipes=[
+    {name:"自动校验合同要素",desc:"必填项 · 期限 · 智能条款扫描"},
+    {name:"生成标准化合同文本",desc:"法务模板套打 · 条款锁定"},
+    {name:"加盖我方公章并生成签约链接",desc:"已发送对方签署"},
+    {name:"归档至法务部卷宗",desc:"无需人工审批"},
+    {name:"抄送董事长办公室",desc:"归档即抄送 · 全程留痕"}
+  ];
+  if(big)pipes.splice(2,0,{name:"大额合同 · 法务复核",desc:"金额超阈值自动并行复核"});
+  const stepMsgs=["合同要素校验通过，智能审查无阻断","标准化合同文本已生成","我方公章已加盖，电子签约链接已生成并待对方签署"].concat(big?["法务复核通过，可归档"]:[],["已归档至法务部合同卷宗","已抄送董事长办公室"]);
+  side.insertAdjacentHTML("beforeend",'<div class="side-card" id="pipe-run" style="border-color:var(--brand-3)"><h4>自动化执行中</h4><div class="pipe" id="pipe-list">'+
+    pipes.map(function(p,i){return '<div class="pipe-item '+(i===0?"running":"")+'"><div class="pipe-ic">'+(i===0?'<span class="spinner"></span>':'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>')+'</div><div class="pipe-main"><div class="pipe-name">'+p.name+'</div><div class="pipe-desc">'+p.desc+'</div></div></div>';}).join("")+
+  '</div></div>');
+  const pipeEls=$$("#pipe-list .pipe-item");
+  pipeEls.forEach(function(p,i){
+    setTimeout(function(){
+      p.classList.remove("running");p.classList.add("done");
+      p.querySelector(".pipe-ic").innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>';
+      p.querySelector(".pipe-desc").textContent=stepMsgs[i];
+      if(i===0)toast("ok","要素校验通过，智能审查完成");
+      if(i===2)toast("ok","签约链接已生成并发送对方签署");
+      if(i===3)toast("ok","已自动归档至法务部卷宗");
+      if(i===pipeEls.length-1){toast("ok","合同已抄送董事长办公室");finishArchive(c);}
+    },650*(i+1));
+  });
+}
+function finishArchive(c){
+  const no=c.no;
+  const ccAt=nowStr();
+  state.counter=Math.max(state.counter,parseInt(no.split("-").pop(),10)||state.counter);
+  c.archivedAt=ccAt;c.ccAt=ccAt;c.archivedBy=operator();
+  c.signType="标准模板";
+  state.contracts.unshift(c);
+  saveState();
+  archiving=false;
+  draft.step=4;render();
+  toast("ok","归档完成：合同已入法务卷宗并抄送董事长");
+}
+function currentContract(){
+  const v=Object.assign({},draft.values);
+  const no=v.no.indexOf("HT-2026-")===0?v.no:"HT-2026-"+v.no;
+  const id="c"+Date.now();
+  const t=TEMPLATES[draft.templateId];
+  const fields={};
+  t.fields.forEach(function(fd){fields[fd.key]=v[fd.key]||"";});
+  return {id:id,no:no,name:v.name,template:draft.templateId,status:"archived",partyA:v.partyA||ENTITIES[0],partyB:v.partyB,amount:t.id==="nda"?"":v.amount,signDate:v.signDate,startDate:v.startDate,endDate:v.endDate,remark:v.remark,aContact:v.aContact,aPhone:v.aPhone,bContact:v.bContact,bPhone:v.bPhone,aCredit:v.aCredit,bCredit:v.bCredit,fields:fields};
+}
+/* ============================================================
+   合同文书生成（标准/终版通用）
+============================================================ */
+function buildDocHtml(c){
+  const t=TEMPLATES[c.template];
+  const F=function(k){return '<span class="fill">'+esc(c.fields[k]||"")+'</span>';};
+  const m=function(k){return '<span class="fill">'+esc(c[k]||"")+'</span>';};
+  let clauses="";
+  if(t.id==="purchase"){
+    clauses='<div class="part">第一条　合同标的</div><div class="clause">甲方向乙方采购如下商品：'+F("goods")+'。</div>'+
+      '<div class="part">第二条　数量与价款</div><div class="clause">采购数量：'+F("quantity")+'；单价：'+F("unitPrice")+' 元；合同总金额：<b>'+fmtMoney(c.amount)+'</b>（含税）。</div>'+
+      '<div class="part">第三条　交付</div><div class="clause">交付地点：'+F("deliveryPlace")+'；乙方应于合同签订后 '+F("deliveryDays")+' 日内完成交付。</div>'+
+      '<div class="part">第四条　质量与质保</div><div class="clause">质量标准：'+F("qualityStd")+'；质保期自验收合格之日起 '+F("warranty")+' 个月。</div>'+
+      '<div class="part">第五条　付款方式</div><div class="clause">'+F("payment")+'。</div>';
+  }else if(t.id==="service"){
+    clauses='<div class="part">第一条　服务内容</div><div class="clause">乙方为甲方提供如下服务：'+F("serviceContent")+'。</div>'+
+      '<div class="part">第二条　服务期限与交付成果</div><div class="clause">服务期限：'+F("servicePeriod")+'；交付成果：'+F("deliverable")+'。</div>'+
+      '<div class="part">第三条　验收标准</div><div class="clause">'+F("acceptance")+'。</div>'+
+      '<div class="part">第四条　合同金额与支付</div><div class="clause">合同总金额：<b>'+fmtMoney(c.amount)+'</b>；支付方式：'+F("payment")+'。</div>'+
+      '<div class="part">第五条　知识产权与保密</div><div class="clause">履行本合同所产生的知识产权归'+F("ipOwner")+'所有；双方对履约过程中知悉的对方信息承担保密义务。</div>';
+  }else if(t.id==="sales"){
+    clauses='<div class="part">第一条　产品与数量</div><div class="clause">甲方向乙方销售：'+F("product")+'，数量：'+F("quantity")+'。</div>'+
+      '<div class="part">第二条　价格与结算</div><div class="clause">单价：'+F("unitPrice")+' 元；合同总金额：<b>'+fmtMoney(c.amount)+'</b>；付款方式：'+F("payment")+'。</div>'+
+      '<div class="part">第三条　交货</div><div class="clause">交货地点：'+F("deliveryPlace")+'；交货期限：合同签订后 '+F("deliveryDays")+' 日内。</div>'+
+      '<div class="part">第四条　质量保证</div><div class="clause">'+F("qualityStd")+'。</div>';
+  }else{
+    clauses='<div class="part">第一条　保密信息范围</div><div class="clause">本协议所称保密信息包括：'+F("scope")+'。</div>'+
+      '<div class="part">第二条　保密义务</div><div class="clause">'+F("obligation")+'。</div>'+
+      '<div class="part">第三条　保密期限</div><div class="clause">保密期限：'+F("period")+'，自 '+c.startDate+' 起至 '+c.endDate+' 止（或持续至该信息合法公开之日）。</div>'+
+      '<div class="part">第四条　违约责任</div><div class="clause">任何一方违反本协议约定的，应承担'+F("liability")+'。</div>';
+  }
+  const blankFill='<span class="fill" style="background:transparent;border-bottom-color:#CFC9BA"></span>';
+  return '<div class="doc-head"><div></div><div class="doc-no">合同编号：<b>'+esc(c.no)+'</b></div></div>'+
+    '<div class="doc-title">'+esc(t.name)+'</div><div class="doc-sub">合 同 书</div>'+
+    '<div class="part">甲方（'+(t.id==="sales"?"出卖方":t.id==="nda"?"披露方":"买受方")+'）</div>'+
+    '<div class="clause">名称：'+m("partyA")+'</div>'+
+    '<div class="clause">统一社会信用代码：'+(c.aCredit?'<span class="fill">'+esc(c.aCredit)+'</span>':blankFill)+'</div>'+
+    '<div class="clause">联系人：<span class="fill">'+esc(c.aContact)+'</span>　　联系电话：<span class="fill">'+esc(c.aPhone)+'</span></div>'+
+    '<div class="part">乙方（'+(t.id==="sales"?"买受方":t.id==="nda"?"接收方":"服务方")+'）</div>'+
+    '<div class="clause">名称：<span class="fill">'+esc(c.partyB)+'</span></div>'+
+    '<div class="clause">统一社会信用代码：'+(c.bCredit?'<span class="fill">'+esc(c.bCredit)+'</span>':blankFill)+'</div>'+
+    '<div class="clause">联系人：<span class="fill">'+esc(c.bContact)+'</span>　　联系电话：<span class="fill">'+esc(c.bPhone)+'</span></div>'+
+    '<div class="part">签约信息</div>'+
+    '<div class="clause">签约日期：<span class="fill">'+esc(c.signDate)+'</span>；本合同履约期限自 <span class="fill">'+esc(c.startDate)+'</span> 至 <span class="fill">'+esc(c.endDate)+'</span>。</div>'+
+    clauses+
+    '<div class="part">第六条　其他约定</div>'+
+    '<div class="clause">本合同一式两份，甲乙双方各执一份，具有同等法律效力。本合同依据我方法务部审定之标准模板自动生成，未经法务部书面修订，任何一方不得擅自变更合同条款。</div>'+
+    (c.remark?'<div class="clause">备注：'+esc(c.remark)+'</div>':"")+
+    '<div class="sign-row">'+
+      '<div class="sign-box"><div><b>甲方（盖章）</b></div><div class="sb-line" style="margin-top:10px">'+esc(c.partyA)+'</div><div>法定代表人 / 授权代表：<span class="sb-line">'+esc(c.aContact)+'</span></div><div>日期：<span class="sb-line">'+esc(c.signDate)+'</span></div><div class="party-seal">'+sealSvg(c.partyA,128)+'</div></div>'+
+      '<div class="sign-box"><div><b>乙方（盖章）</b></div><div class="sb-line" style="margin-top:10px">'+esc(c.partyB)+'</div><div>法定代表人 / 授权代表：<span class="sb-line">'+esc(c.bContact)+'</span></div><div>日期：<span class="sb-line">'+esc(c.signDate)+'</span></div><div style="font-size:10.5px;color:#A39C8C;margin-top:6px">电子签约 · 待对方签署</div></div>'+
+    '</div>';
+}
+function sealSvg(name,size){
+  name=name||"七七七信息技术";
+  const r=size/2;
+  const arcR=r-16;
+  const arcLen=Math.PI*arcR;
+  const fs=Math.max(7.5,Math.min(15,arcLen*0.92/Math.max(name.length,4)));
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" xmlns="http://www.w3.org/2000/svg">'+
+    '<circle cx="'+r+'" cy="'+r+'" r="'+(r-4)+'" fill="none" stroke="#C0392B" stroke-width="4"/>'+
+    '<circle cx="'+r+'" cy="'+r+'" r="'+(r-12)+'" fill="none" stroke="#C0392B" stroke-width="1.4"/>'+
+    '<path id="sealArc-'+size+'" d="M '+(r-arcR)+' '+r+' A '+arcR+' '+arcR+' 0 0 1 '+(r+arcR)+' '+r+'" fill="none"/>'+
+    '<text font-family="Noto Sans SC,sans-serif" font-size="'+fs+'" fill="#C0392B" font-weight="700"><textPath href="#sealArc-'+size+'" startOffset="50%" text-anchor="middle">'+esc(name)+'</textPath></text>'+
+    '<polygon points="'+starPoints(r,r*0.42,r*0.18)+'" fill="#C0392B"/>'+
+    '<text x="'+r+'" y="'+(r+r*0.30)+'" text-anchor="middle" font-family="Noto Sans SC,sans-serif" font-size="'+(size*0.105)+'" fill="#C0392B" font-weight="700" letter-spacing="2">合同专用章</text>'+
+  '</svg>';
+}
+function starPoints(cx,ro,ri){
+  const pts=[];
+  for(let i=0;i<10;i++){
+    const ang=Math.PI/2 + i*Math.PI/5;
+    const rad=i%2===0?ro:ri;
+    pts.push((cx+rad*Math.cos(ang)).toFixed(1)+","+(cx-rad*Math.sin(ang)).toFixed(1));
+  }
+  return pts.join(" ");
+}
+function smartReview(c){
+  const t=TEMPLATES[c.template];
+  const checks=[];
+  if(t.id==="purchase"||t.id==="sales"){
+    const q=parseFloat(String(c.fields.quantity||"").replace(/[^\d.]/g,""));
+    const p=parseFloat(c.fields.unitPrice);
+    const amt=parseFloat(c.amount);
+    if(!isNaN(q)&&!isNaN(p)&&!isNaN(amt)){
+      const calc=q*p;
+      if(Math.abs(calc-amt)/Math.max(amt,1)>0.02)checks.push({ok:false,t:"金额一致性校验",d:"数量 × 单价 = "+fmtNum(calc)+"，与合同总额 "+fmtNum(amt)+" 不一致，请核对"});
+      else checks.push({ok:true,t:"金额一致性校验",d:"数量 × 单价与合同总额一致（"+fmtNum(calc)+"）"});
+    }else checks.push({ok:true,t:"金额一致性校验",d:"金额要素齐备"});
+  }else if(c.amount){checks.push({ok:true,t:"金额要素校验",d:"合同金额已填写"});}
+  if(c.startDate&&c.endDate){
+    const days=(ts(new Date(c.endDate))-ts(new Date(c.startDate)))/86400000;
+    if(days<30)checks.push({ok:false,t:"履约期限校验",d:"履约期仅 "+Math.round(days)+" 天，请确认期限合理性"});
+    else checks.push({ok:true,t:"履约期限校验",d:"履约期 "+Math.round(days)+" 天，期限合理"});
+  }
+  const riskWords=["无限责任","单方解除","放弃追偿","免责","赔偿上限","违约金 100%"];
+  const allTxt=[c.name,c.remark].concat(t.fields.map(function(f){return c.fields[f.key]||"";})).join(" ");
+  const hit=riskWords.find(function(w){return allTxt.indexOf(w)>=0;});
+  if(hit)checks.push({ok:false,t:"敏感条款扫描",d:"检测到敏感表述「"+hit+"」，建议法务确认"});
+  else checks.push({ok:true,t:"敏感条款扫描",d:"未发现高风险敏感条款"});
+  checks.push({ok:true,t:"模板合规校验",d:"已匹配法务标准模板「"+t.name+"」，必备条款齐备"});
+  return checks;
+}
+
+/* ============================================================
+   合同下载
+============================================================ */
+function downloadContract(id){
+  const c=state.contracts.find(function(x){return x.id===id;});
+  if(!c)return;
+  const html=buildStandaloneHtml(c);
+  const blob=new Blob([html],{type:"text/html;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=(c.no+"-"+c.name+".html").replace(/[\\/:*?"<>|]/g,"_");
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(function(){URL.revokeObjectURL(url);},2000);
+  toast("ok","合同文件已下载："+c.no);
+}
+function buildStandaloneHtml(c){
+  return '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>'+esc(c.no)+' '+esc(c.name)+'</title>'+
+  '<style>'+
+  'body{font-family:"Noto Serif SC","Songti SC","SimSun",serif;background:#EEF0F2;margin:0;padding:40px 24px}'+
+  '.paper{max-width:820px;margin:0 auto;background:#FFFEFB;border:1px solid #C9C4B6;padding:52px 60px;font-size:15px;line-height:2.1;color:#2B2B28;position:relative}'+
+  '.doc-head{display:flex;justify-content:space-between;border-bottom:2px solid #2B2B28;padding-bottom:14px;margin-bottom:22px}'+
+  '.doc-no{font-size:12px;color:#6B675E;font-family:"Noto Sans SC",sans-serif}'+
+  '.doc-title{font-size:22px;font-weight:700;text-align:center;letter-spacing:6px;margin:6px 0 4px}'+
+  '.doc-sub{text-align:center;font-size:12px;color:#6B675E;letter-spacing:2px;margin-bottom:22px}'+
+  '.part{font-weight:700;margin:16px 0 6px;font-size:15px}'+
+  '.clause{text-indent:2em;margin:4px 0}'+
+  '.fill{background:#FFF3D2;border-bottom:1px dashed #D9A93C;padding:0 3px}'+
+  '.sign-row{display:flex;justify-content:space-between;margin-top:46px;padding-top:18px;border-top:1px dashed #C9C4B6}'+
+  '.sign-box{text-align:center;font-size:12.5px;color:#55524B;line-height:2.2;position:relative}'+
+  '.sb-line{display:inline-block;border-bottom:1px solid #55524B;min-width:170px;padding-bottom:2px}'+
+  '.party-seal{position:absolute;left:52%;top:56%;transform:translate(-50%,-50%) rotate(-4deg);opacity:.95;pointer-events:none}'+
+  '.foot{text-align:center;font-size:11px;color:#9AA0A6;margin-top:20px;font-family:"Noto Sans SC",sans-serif}'+
+  '</style></head><body><div class="paper">'+buildDocHtml(c)+'</div>'+
+  '<div class="foot">本文件由七七七合同管理系统自动生成 · '+esc(c.no)+' · '+(c.signType||"")+' · 电子签约中</div>'+
+  '</body></html>';
+}
+
+/* ============================================================
+   审核任务（按角色）
+============================================================ */
+function renderTasks(){
+  if(currentRole==="biz"){
+    const list=state.nsContracts.slice().sort(function(a,b){return b.submittedAt.localeCompare(a.submittedAt);});
+    return '<div class="card">'+
+      '<div class="list-toolbar" style="padding:16px 16px 0;margin-bottom:6px">'+
+        '<span style="font-size:12.5px;color:var(--muted)">我发起的非标合同，实时跟踪每一步审核进度与版本</span>'+
+        '<span style="margin-left:auto;font-size:12.5px;color:var(--muted)">共 <b style="color:var(--brand-deep)">'+list.length+'</b> 个发起</span>'+
+        '<button class="btn btn-primary" onclick="switchKind(\'ns\');go(\'create\')">+ 上传非标合同</button>'+
+      '</div>'+
+      (list.map(function(c){
+        const cur=NS_FLOW.find(function(f){return f.key===c.status;});
+        return '<div class="task-item"><div class="t-ic" style="background:#F1ECFA;color:#6C4AB6"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>'+
+          '<div class="t-main"><div class="t-name" onclick="openNsTask(\''+c.id+'\')">'+esc(c.name)+'</div>'+
+          '<div class="t-sub"><span class="mono">'+c.no+'</span> · 当前版本 '+c.version+' · '+esc(c.partyB)+' · 金额 '+fmtMoney(c.amount)+'</div>'+
+          '<div class="flow-strip" style="margin-top:10px;max-width:560px">'+nsFlowStrip(c.status)+'</div></div>'+
+          '<div class="t-right">'+nsStatusChip(c.status)+
+          (c.status==="pending_biz"?'<button class="btn btn-red btn-sm" onclick="openNsResubmit(\''+c.id+'\')">去修改重传</button>':"")+
+          (c.status==="signed"?'<button class="btn btn-ghost btn-sm" onclick="viewNsFinal(\''+c.id+'\')">查看终版</button>':"")+
+          '<span style="font-size:11px;color:var(--faint)">'+c.submittedAt.slice(0,10)+' 提交</span></div></div>';
+      }).join(""))+
+    '</div>';
+  }
+  const myRole=role().key;
+  const list=state.nsContracts.filter(function(c){return NS_FLOW.find(function(f){return f.key===c.status&&f.roles.indexOf(myRole)>=0;});});
+  return '<div class="card">'+
+    '<div class="list-toolbar" style="padding:16px 16px 0;margin-bottom:6px">'+
+      '<span style="font-size:12.5px;color:var(--muted)">当前角色：'+role().name+' · '+role().user+'，以下为流转至您的非标合同</span>'+
+      '<span style="margin-left:auto;font-size:12.5px;color:var(--muted)">待处理 <b style="color:var(--brand-deep)">'+list.length+'</b> 份</span>'+
+    '</div>'+
+    (list.map(function(c){
+      return '<div class="task-item"><div class="t-ic" style="background:var(--brand-soft);color:var(--brand)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h11"/></svg></div>'+
+        '<div class="t-main"><div class="t-name" onclick="openNsTask(\''+c.id+'\')">'+esc(c.name)+'</div>'+
+        '<div class="t-sub"><span class="mono">'+c.no+'</span> · 版本 '+c.version+' · '+esc(c.partyB)+' · 金额 '+fmtMoney(c.amount)+'</div>'+
+        '<div class="flow-strip" style="margin-top:10px;max-width:560px">'+nsFlowStrip(c.status)+'</div></div>'+
+        '<div class="t-right"><span class="chip chip-amber" style="background:var(--amber-bg);color:var(--amber)">待您审核</span>'+
+        '<button class="btn btn-primary btn-sm" onclick="openNsTask(\''+c.id+'\')">去审核 →</button></div></div>';
+    }).join(""))+
+    (list.length===0?'<div class="empty"><div class="e-title">当前没有待审核任务</div><div class="e-sub">非标合同流转到您的环节时会在此提醒</div></div>':"")+
+  '</div>';
+}
+/* ---------- 非标合同：详情弹窗 + 审核动作 ---------- */
+function openNsTask(id){
+  const c=state.nsContracts.find(function(x){return x.id===id;});
+  if(!c)return;
+  const curIdx=NS_FLOW.findIndex(function(f){return f.key===c.status;});
+  const myRole=role().key;
+  const canAct=NS_FLOW.find(function(f){return f.key===c.status&&f.roles.indexOf(myRole)>=0;});
+  const isBizPending=c.status==="pending_biz"&&currentRole==="biz";
+  let panel="";
+  if(canAct){
+    const stageName=NS_FLOW[curIdx].name;
+    let actions="";
+    if(c.status==="pending_legal_lead"){
+      actions='<button class="btn btn-red" style="flex:1" onclick="doNsSign(\''+c.id+'\')">审核通过 · 生成终版签约</button>'+
+        '<button class="btn btn-ghost" onclick="nsModifyFile()">修改版本（新文件）</button>'+
+        '<button class="btn btn-ghost" style="color:var(--red)" onclick="doNsReject(\''+c.id+'\')">退回业务</button>';
+    }else if(c.status==="pending_legal"){
+      actions='<button class="btn btn-primary" style="flex:1" onclick="doNsApprove(\''+c.id+'\')">审核通过 → 法务主管</button>'+
+        '<button class="btn btn-ghost" onclick="nsModifyFile()">修改版本（新文件）</button>'+
+        '<button class="btn btn-ghost" style="color:var(--red)" onclick="doNsReject(\''+c.id+'\')">退回业务</button>';
+    }else{
+      actions='<button class="btn btn-primary" style="flex:1" onclick="doNsApprove(\''+c.id+'\')">审核通过</button>'+
+        '<button class="btn btn-ghost" style="color:var(--red)" onclick="doNsReject(\''+c.id+'\')">退回业务</button>';
+    }
+    panel='<div class="audit-panel"><h5><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h11"/></svg>'+stageName+' · 审核意见（必填）</h5>'+
+      '<textarea id="ns-cmt" placeholder="填写您的审核意见，将完整留痕…"></textarea>'+
+      '<div id="ns-file-row" style="margin-bottom:10px;display:none"><span class="file-chip" id="ns-mod-file"></span></div>'+
+      '<input type="file" id="ns-mod-input" accept=".docx,.pdf,.doc" style="display:none">'+
+      '<div class="ap-actions">'+actions+'</div>'+
+      '<div style="font-size:11px;color:var(--muted);margin-top:8px">'+((c.status==="pending_legal"||c.status==="pending_legal_lead")?"「修改版本」将生成新版本并写修改说明，留痕后可继续流转。":"退回后由业务修改并重新提交新版本，全程留痕。")+'</div></div>';
+  }else if(isBizPending){
+    panel='<div class="audit-panel" style="border-color:#F3C9C1;background:var(--red-bg)"><h5 style="color:var(--red-deep)">已被审核退回，需修改重传</h5>'+
+      '<div style="font-size:12px;color:#7C3B30;line-height:1.9;margin-bottom:10px">最近退回意见：'+esc((c.versions[c.versions.length-1]||{}).comment||"")+'</div>'+
+      '<textarea id="ns-cmt" placeholder="填写修改说明（必填）…"></textarea>'+
+      '<div id="ns-file-row" style="margin-bottom:10px;display:none"><span class="file-chip" id="ns-mod-file"></span></div>'+
+      '<input type="file" id="ns-mod-input" accept=".docx,.pdf,.doc" style="display:none">'+
+      '<div class="ap-actions"><button class="btn btn-ghost" onclick="nsModifyFile()">选择新版本文件</button>'+
+      '<button class="btn btn-primary" style="flex:1" onclick="doNsResubmit(\''+c.id+'\')">修改后重新提交 →</button></div></div>';
+  }else{
+    panel='<div class="audit-panel"><h5>当前环节</h5><div style="font-size:12px;color:var(--muted);line-height:1.9">本单正在「'+NS_STATUS_LABEL[c.status]+'」环节，您当前为「'+role().name+'」，无操作权限；切换对应角色可执行审核。</div></div>';
+  }
+  const tl=c.versions.slice().reverse().map(function(v,i){
+    const cls=v.act.indexOf("退回")>=0?"rej":v.act.indexOf("终版")>=0||v.act.indexOf("通过")>=0?"ok":v.act.indexOf("修改")>=0||v.act.indexOf("重传")>=0?"act":"";
+    return '<div class="tl-item '+cls+'"><div class="tl-dot">'+(v.act.indexOf("退回")>=0?"!":v.act.indexOf("通过")>=0||v.act.indexOf("终版")>=0?"✓":String(i+1))+'</div>'+
+      '<div class="tl-main"><div class="tl-head"><span class="tl-ver">'+v.v+'</span><span class="tl-act">'+esc(v.act)+'</span><span class="tl-who">'+esc(v.by)+'</span><span class="tl-time">'+v.at+'</span></div>'+
+      '<div class="tl-comment">'+esc(v.comment||"")+'</div>'+
+      (v.file?'<div class="tl-file"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>'+esc(v.file)+'</div>':"")+
+    '</div></div>';
+  }).join("");
+  openModal(modalHead('非标合同审核 · '+esc(c.name))+
+    '<div class="modal-body"><div style="display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start">'+
+      '<div>'+
+        '<div class="side-card" style="margin-bottom:16px"><h4>基本信息</h4>'+
+          '<div class="meta-row"><span class="mk">非标编号</span><span class="mv mono">'+c.no+'</span></div>'+
+          '<div class="meta-row"><span class="mk">相对方</span><span class="mv">'+esc(c.partyB)+'</span></div>'+
+          '<div class="meta-row"><span class="mk">合同金额</span><span class="mv">'+fmtMoney(c.amount)+'</span></div>'+
+          '<div class="meta-row"><span class="mk">我方主体</span><span class="mv">'+esc(c.partyA)+'</span></div>'+
+          '<div class="meta-row"><span class="mk">当前版本</span><span class="mv"><b style="color:var(--brand-deep)">'+c.version+'</b></span></div>'+
+          '<div class="meta-row"><span class="mk">发起人</span><span class="mv">'+esc(c.submittedBy)+'</span></div>'+
+          '<div class="meta-row"><span class="mk">发起时间</span><span class="mv" style="font-size:11px">'+c.submittedAt+'</span></div>'+
+          '<div class="meta-row"><span class="mk">最新文件</span><span class="mv" style="font-size:10.5px;max-width:180px">'+esc(c.sourceFile)+'</span></div>'+
+        '</div>'+
+        '<div class="side-card"><h4>版本留痕 · 全过程审计</h4><div class="timeline">'+tl+'</div></div>'+
+      '</div>'+
+      '<div>'+
+        '<div class="side-card" style="margin-bottom:16px"><h4>审核进度</h4><div class="flow-strip" style="flex-direction:column;align-items:stretch;gap:10px">'+
+          NS_FLOW.map(function(f,i){
+            const done=i<curIdx;const cur=i===curIdx;
+            return '<div style="display:flex;align-items:center;gap:10px"><span class="fs-dot" style="'+(done?'background:var(--green);border-color:var(--green)':cur?'background:var(--brand);border-color:var(--brand);box-shadow:0 0 0 4px rgba(32,103,232,.15)':"")+'"></span><span style="font-size:12px;'+(cur?"font-weight:700;color:var(--brand-deep)":done?"color:var(--green)":"color:var(--muted)")+'">'+f.label+'</span></div>';
+          }).join("")+
+        '</div></div>'+
+        panel+
+      '</div>'+
+    '</div></div>');
+  bindNsFileInput();
+}
+function nsCmt(){
+  const el=$("#ns-cmt");
+  return el?(el.value||"").trim():"";
+}
+function nsModFile(){
+  const el=$("#ns-mod-file");
+  return el?el.textContent.trim():"";
+}
+function nsModifyFile(){
+  const input=$("#ns-mod-input");
+  if(input){input.click();}
+}
+function bindNsFileInput(){
+  const input=$("#ns-mod-input");
+  if(input&&!input.dataset.bound){
+    input.dataset.bound="1";
+    input.addEventListener("change",function(){
+      const f=input.files&&input.files[0];
+      if(f){
+        const row=$("#ns-file-row"),chip=$("#ns-mod-file");
+        if(row)row.style.display="block";
+        if(chip)chip.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>'+esc(f.name);
+      }
+    });
+  }
+}
+function doNsApprove(id){
+  const comment=nsCmt();
+  if(!comment){toast("warn","请填写审核意见");return;}
+  const c=state.nsContracts.find(function(x){return x.id===id;});
+  if(!c)return;
+  const now=nowStr();
+  const next={"pending_tech":"pending_finance","pending_finance":"pending_legal","pending_legal":"pending_legal_lead"};
+  const to=next[c.status];
+  c.status=to;c.sourceFile=c.sourceFile;
+  c.versions.push({v:c.version,at:now,by:operator(),act:"审核通过",comment:comment,file:c.sourceFile});
+  saveState();closeModal();
+  toast("ok","已通过，流转至「"+NS_STATUS_LABEL[to]+"」");
+  render();
+}
+function doNsReject(id){
+  const comment=nsCmt();
+  if(!comment){toast("warn","请填写退回意见（必填，将完整留痕）");return;}
+  const c=state.nsContracts.find(function(x){return x.id===id;});
+  if(!c)return;
+  const now=nowStr();
+  c.status="pending_biz";
+  c.versions.push({v:c.version,at:now,by:operator(),act:"审核退回",comment:comment,file:c.sourceFile});
+  saveState();closeModal();
+  toast("warn","已退回业务修改，意见已留痕");
+  render();
+}
+function doNsModify(id){
+  const comment=nsCmt();
+  if(!comment){toast("warn","请填写修改说明");return;}
+  const file=nsModFile();
+  if(!file){toast("warn","请选择修改后的新版本文件");return;}
+  const c=state.nsContracts.find(function(x){return x.id===id;});
+  if(!c)return;
+  const now=nowStr();
+  c.version=bumpVersion(c.version);
+  c.sourceFile=file;
+  const to=c.status==="pending_legal_lead"?"pending_legal":"pending_legal_lead";
+  c.status=to;
+  c.versions.push({v:c.version,at:now,by:operator(),act:"法务修改版本",comment:comment,file:file});
+  saveState();closeModal();
+  toast("ok","已生成新版本 "+c.version+"，流转至「"+NS_STATUS_LABEL[to]+"」");
+  render();
+}
+function doNsResubmit(id){
+  const comment=nsCmt();
+  if(!comment){toast("warn","请填写修改说明");return;}
+  const file=nsModFile();
+  if(!file){toast("warn","请选择修改后的新版本文件");return;}
+  const c=state.nsContracts.find(function(x){return x.id===id;});
+  if(!c)return;
+  const now=nowStr();
+  c.version=bumpVersion(c.version);
+  c.sourceFile=file;
+  c.status="pending_tech";
+  c.versions.push({v:c.version,at:now,by:operator(),act:"业务修改重传",comment:comment,file:file});
+  saveState();closeModal();
+  toast("ok","新版本 "+c.version+" 已重新提交，进入技术审核");
+  render();
+}
+function doNsSign(id){
+  const comment=nsCmt();
+  if(!comment){toast("warn","请填写终审意见");return;}
+  const ns=state.nsContracts.find(function(x){return x.id===id;});
+  if(!ns)return;
+  const now=nowStr();
+  ns.status="signed";ns.signedAt=now;
+  ns.versions.push({v:ns.version,at:now,by:operator(),act:"终版签约",comment:comment,file:ns.sourceFile});
+  state.counter++;
+  const endD=new Date();endD.setFullYear(endD.getFullYear()+1);
+  const pd=n=>String(n).padStart(2,"0");
+  const endStr=endD.getFullYear()+"-"+pd(endD.getMonth()+1)+"-"+pd(endD.getDate());
+  const c={id:"c"+Date.now(),no:"HT-2026-"+pad(state.counter),name:ns.name,template:"service",status:"archived",signType:"非标终版",nsNo:ns.no,partyA:ns.partyA||ENTITIES[0],partyB:ns.partyB,amount:ns.amount,signDate:todayStr(),startDate:todayStr(),endDate:endStr,aContact:"陈志远",aPhone:"021-6888 1201",bContact:"",bPhone:"",archivedAt:now,ccAt:now,archivedBy:operator(),fields:{serviceContent:"非标合同终版（"+ns.no+"），经技术/财务/法务分级审核通过",servicePeriod:"依据终版约定",deliverable:"终版文件："+ns.sourceFile,acceptance:"分级审核通过，条款锁定",ipOwner:"按终版约定",payment:"按终版约定"}};
+  state.contracts.unshift(c);
+  saveState();closeModal();
+  toast("ok","终版已归档法务部，签约链接已生成，已抄送董事长办公室");
+  render();
+}
+function openNsResubmit(id){openNsTask(id);}
+function viewNsFinal(id){
+  const ns=state.nsContracts.find(function(x){return x.id===id;});
+  if(!ns)return;
+  const c=state.contracts.find(function(x){return x.nsNo===ns.no;});
+  if(c){viewContract(c.id);return;}
+  toast("info","终版合同已归档至「已归档合同」列表");
+}
+/* ============================================================
+   已归档合同（含标准模板 / 非标终版）
+============================================================ */
+let batchSel=new Set();
+function renderArchived(params){
+  const kw=(params&&params.q?params.q:"").trim().toLowerCase();
+  let list=state.contracts.filter(function(c){return c.status==="archived";});
+  if(kw)list=list.filter(function(c){return [c.no,c.name,c.partyB,c.partyA].join(" ").toLowerCase().indexOf(kw)>=0;});
+  list.sort(function(a,b){return b.archivedAt.localeCompare(a.archivedAt);});
+  const rows=list.map(function(c){
+    const sel=batchSel.has(c.id);
+    const stChip=c.signType==="非标终版"?'<span class="chip chip-purple">非标终版</span>':'<span class="chip chip-green">已归档</span>';
+    return '<tr>'+
+      '<td style="width:34px"><input type="checkbox" '+(sel?"checked":"")+' onchange="toggleBatch(\''+c.id+'\',this.checked)"></td>'+
+      '<td><span class="mono">'+c.no+'</span></td>'+
+      '<td><div class="cell-main" onclick="viewContract(\''+c.id+'\')">'+esc(c.name)+'</div><div class="cell-sub">'+TEMPLATES[c.template].name+' · '+esc(c.signType||"标准模板")+'</div></td>'+
+      '<td>'+esc(c.partyA)+'</td>'+
+      '<td>'+esc(c.partyB)+'</td>'+
+      '<td>'+(c.amount?fmtMoney(c.amount):'<span class="tag">保密</span>')+'</td>'+
+      '<td><span class="mono" style="font-size:11.5px">'+c.startDate.slice(5)+' ~ '+c.endDate.slice(5)+'</span></td>'+
+      '<td>'+stChip+'</td>'+
+      '<td><div style="display:flex;gap:6px;flex-wrap:nowrap">'+
+        '<button class="btn btn-ghost btn-sm" onclick="viewContract(\''+c.id+'\')">查看</button>'+
+        '<button class="btn btn-ghost btn-sm" style="color:var(--brand-deep);border-color:var(--brand-3)" onclick="downloadContract(\''+c.id+'\')">下载</button>'+
+        '<button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:#F3C9C1" onclick="openVoidOne(\''+c.id+'\')">作废</button>'+
+      '</div></td></tr>';
+  }).join("");
+  const batchBar=batchSel.size>0
+    ? '<div class="batch-bar"><span class="b-count">已选择 '+batchSel.size+' 份合同</span>'+
+      '<button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#FFF;border:1px solid rgba(255,255,255,.4)" onclick="openBatchExport()">批量导出</button>'+
+      '<button class="btn btn-sm" style="background:var(--red);color:#FFF;border:none" onclick="openBatchVoid()">批量作废</button>'+
+      '<span class="b-spacer"></span>'+
+      '<button class="btn btn-sm" style="background:transparent;color:#D8E6FB;border:none" onclick="batchSel.clear();render();">取消选择</button></div>'
+    : "";
+  const allSel=list.length>0&&list.every(function(c){return batchSel.has(c.id);});
+  return '<div class="card">'+
+    '<div class="list-toolbar" style="padding:16px 16px 0;margin-bottom:6px">'+
+      '<div class="search-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input placeholder="搜索合同编号 / 名称 / 相对方…" value="'+esc(kw)+'" oninput="batchFilter(this.value)"></div>'+
+      '<span style="margin-left:auto;font-size:12.5px;color:var(--muted)">共 <b style="color:var(--brand-deep)">'+list.length+'</b> 份归档合同</span>'+
+      '<button class="btn btn-ghost" onclick="go(\'create\')">+ 订立新合同</button>'+
+    '</div>'+
+    batchBar+
+    '<table class="tbl"><thead><tr>'+
+      '<th style="width:34px"><input type="checkbox" '+(allSel?"checked":"")+' onchange="toggleAll(this.checked)"></th>'+
+      '<th>合同编号</th><th>合同名称</th><th>我方签约主体</th><th>相对方</th><th>合同金额</th><th>履约期限</th><th>状态</th><th style="width:190px">操作</th>'+
+    '</tr></thead><tbody>'+(rows||'<tr><td colspan="9"><div class="empty"><div class="e-title">暂无归档合同</div><div class="e-sub">完成订立后合同将自动归档至此</div></div></td></tr>')+'</tbody></table>'+
+  '</div>';
+}
+function batchFilter(kw){go("archived",{q:kw});}
+function toggleBatch(id,checked){if(checked)batchSel.add(id);else batchSel.delete(id);render();}
+function toggleAll(checked){
+  const list=state.contracts.filter(function(c){return c.status==="archived";});
+  if(checked)list.forEach(function(c){batchSel.add(c.id);});
+  else batchSel.clear();
+  render();
+}
+
+/* ============================================================
+   批量操作
+============================================================ */
+function openBatchExport(){
+  const items=state.contracts.filter(function(c){return c.status==="archived"&&batchSel.has(c.id);});
+  if(!items.length){toast("warn","请先勾选要导出的合同");return;}
+  const refs=items.map(function(c){return c.no;});
+  state.logs.unshift({id:"l"+(++state.logCounter),time:nowStr(),operator:operator(),type:"批量导出",count:items.length,refs:refs,detail:"导出归档合同文件（演示）"});
+  saveState();
+  toast("ok","已导出 "+items.length+" 份合同归档文件");
+  batchSel.clear();render();
+}
+function openBatchVoid(){
+  const items=state.contracts.filter(function(c){return c.status==="archived"&&batchSel.has(c.id);});
+  if(!items.length){toast("warn","请先勾选要作废的合同");return;}
+  openModal(modalHead("批量作废合同")+
+    '<div class="modal-body void-reason">'+
+      '<div style="font-size:13px;color:var(--text);margin-bottom:6px">即将作废以下 <b style="color:var(--red)">'+items.length+'</b> 份已归档合同：</div>'+
+      '<div style="margin-bottom:16px;background:#F7FAFF;border:1px solid var(--line);border-radius:8px;padding:10px 14px;max-height:110px;overflow-y:auto">'+
+        items.map(function(c){return '<div style="font-size:12px;color:#3D5A8C;padding:2px 0"><span class="mono">'+c.no+'</span>　'+esc(c.name)+'</div>';}).join("")+
+      '</div>'+
+      '<label style="font-size:12px;font-weight:600;color:#3D5A8C">作废原因<span style="color:var(--red)">*</span></label>'+
+      '<textarea id="void-reason" placeholder="请填写作废原因，将记录于批量操作审计…"></textarea>'+
+      '<div class="v-tip">作废后合同移入「已作废」列表，记录不可删除，全程留痕可追溯。</div>'+
+    '</div>'+
+    '<div class="modal-foot">'+
+      '<button class="btn btn-ghost" onclick="closeModal()">取消</button>'+
+      '<button class="btn btn-red" onclick="doBatchVoid()">确认批量作废</button>'+
+    '</div>');
+}
+function doBatchVoid(){
+  const reason=($("#void-reason").value||"").trim();
+  if(!reason){toast("warn","请填写作废原因");return;}
+  const items=state.contracts.filter(function(c){return c.status==="archived"&&batchSel.has(c.id);});
+  const now=nowStr();
+  items.forEach(function(c){c.status="voided";c.voidReason=reason;c.voidAt=now;c.voidBy=operator();});
+  state.logs.unshift({id:"l"+(++state.logCounter),time:now,operator:operator(),type:"批量作废",count:items.length,refs:items.map(function(c){return c.no;}),detail:reason});
+  saveState();
+  batchSel.clear();closeModal();
+  toast("warn","已作废 "+items.length+" 份合同，记录已留痕");
+  render();
+}
+function openVoidOne(id){
+  const c=state.contracts.find(function(x){return x.id===id;});
+  if(!c)return;
+  openModal(modalHead("作废合同")+
+    '<div class="modal-body void-reason">'+
+      '<div style="font-size:13px;color:var(--text);margin-bottom:14px">确定作废合同 <b style="color:var(--ink)">'+esc(c.name)+'</b>（<span class="mono">'+c.no+'</span>）？作废后移入「已作废」列表并全程留痕。</div>'+
+      '<label style="font-size:12px;font-weight:600;color:#3D5A8C">作废原因<span style="color:var(--red)">*</span></label>'+
+      '<textarea id="void-reason" placeholder="请填写作废原因…"></textarea>'+
+      '<div class="v-tip">如对方已通过电子签约链接签署，请先在签约平台解除该合同。</div>'+
+    '</div>'+
+    '<div class="modal-foot">'+
+      '<button class="btn btn-ghost" onclick="closeModal()">取消</button>'+
+      '<button class="btn btn-red" onclick="doVoidOne(\''+id+'\')">确认作废</button>'+
+    '</div>');
+}
+function doVoidOne(id){
+  const reason=($("#void-reason").value||"").trim();
+  if(!reason){toast("warn","请填写作废原因");return;}
+  const c=state.contracts.find(function(x){return x.id===id;});
+  if(!c)return;
+  const now=nowStr();
+  c.status="voided";c.voidReason=reason;c.voidAt=now;c.voidBy=operator();
+  state.logs.unshift({id:"l"+(++state.logCounter),time:now,operator:operator(),type:"批量作废",count:1,refs:[c.no],detail:reason});
+  saveState();
+  closeModal();
+  toast("warn","合同 "+c.no+" 已作废并留痕");
+  render();
+}
+
+/* ============================================================
+   已作废合同
+============================================================ */
+function renderVoided(params){
+  const kw=(params&&params.q?params.q:"").trim().toLowerCase();
+  let list=state.contracts.filter(function(c){return c.status==="voided";});
+  if(kw)list=list.filter(function(c){return [c.no,c.name,c.partyB,c.partyA,c.voidReason].join(" ").toLowerCase().indexOf(kw)>=0;});
+  list.sort(function(a,b){return (b.voidAt||"").localeCompare(a.voidAt||"");});
+  const rows=list.map(function(c){
+    return '<tr>'+
+      '<td><span class="mono">'+c.no+'</span></td>'+
+      '<td><div class="cell-main" onclick="viewContract(\''+c.id+'\')">'+esc(c.name)+'</div><div class="cell-sub">'+TEMPLATES[c.template].name+' · '+esc(c.signType||"标准模板")+'</div></td>'+
+      '<td>'+esc(c.partyA)+'</td>'+
+      '<td>'+esc(c.partyB)+'</td>'+
+      '<td>'+(c.amount?fmtMoney(c.amount):'<span class="tag">保密</span>')+'</td>'+
+      '<td><span class="chip chip-red">已作废</span><div class="cell-sub" style="margin-top:3px">'+esc(c.voidReason||"")+'</div></td>'+
+      '<td><span style="font-size:11.5px;color:var(--muted)">'+esc(c.voidAt||"")+'</span></td>'+
+      '<td><div style="display:flex;gap:6px;flex-wrap:nowrap">'+
+        '<button class="btn btn-ghost btn-sm" onclick="viewContract(\''+c.id+'\')">查看</button>'+
+        '<button class="btn btn-ghost btn-sm" style="color:var(--brand-deep);border-color:var(--brand-3)" onclick="downloadContract(\''+c.id+'\')">下载</button>'+
+      '</div></td></tr>';
+  }).join("");
+  return '<div class="card">'+
+    '<div class="list-toolbar" style="padding:16px 16px 0;margin-bottom:6px">'+
+      '<div class="search-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input placeholder="搜索编号 / 名称 / 作废原因…" value="'+esc(kw)+'" oninput="voidFilter(this.value)"></div>'+
+      '<span style="margin-left:auto;font-size:12.5px;color:var(--muted)">共 <b style="color:var(--brand-deep)">'+list.length+'</b> 份作废合同 · 全程留痕可追溯</span>'+
+    '</div>'+
+    '<table class="tbl"><thead><tr>'+
+      '<th>合同编号</th><th>合同名称</th><th>我方签约主体</th><th>相对方</th><th>合同金额</th><th>作废原因</th><th>作废时间</th><th style="width:130px">操作</th>'+
+    '</tr></thead><tbody>'+(rows||'<tr><td colspan="8"><div class="empty"><div class="e-title">暂无作废合同</div><div class="e-sub">作废记录将在此保留，不可删除</div></div></td></tr>')+'</tbody></table>'+
+  '</div>';
+}
+function voidFilter(kw){go("voided",{q:kw});}
+
+/* ============================================================
+   批量操作记录
+============================================================ */
+function renderLogs(){
+  const logs=state.logs.slice().sort(function(a,b){return b.time.localeCompare(a.time);});
+  const ic=function(type){return type==="批量作废"
+    ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6.5 7l.9 13.2a1 1 0 0 0 1 .8h7.2a1 1 0 0 0 1-.8L17.5 7M10 11v6M14 11v6"/></svg>'
+    : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>';};
+  return '<div class="card">'+
+    '<div class="list-toolbar" style="padding:16px 16px 0;margin-bottom:6px">'+
+      '<span style="font-size:12.5px;color:var(--muted)">批量导出 / 批量作废等操作全量留痕，供法务与审计追溯</span>'+
+      '<span style="margin-left:auto;font-size:12.5px;color:var(--muted)">共 <b style="color:var(--brand-deep)">'+logs.length+'</b> 条记录</span>'+
+    '</div>'+
+    (logs.map(function(l){
+      const red=l.type==="批量作废";
+      const refs=l.refs&&l.refs.length?'<div style="margin-top:6px"><span class="tag" style="background:var(--brand-soft);color:var(--brand-deep)">涉及合同</span>'+l.refs.map(function(r){return '<span class="tag">'+r+'</span>';}).join("")+'</div>':"";
+      return '<div style="display:flex;gap:14px;padding:16px 20px;border-bottom:1px solid #EDF3FC;align-items:flex-start">'+
+        '<div class="r-ic" style="width:38px;height:38px;border-radius:9px;flex:0 0 38px;display:flex;align-items:center;justify-content:center;background:'+(red?"var(--red-bg)":"var(--brand-soft)")+';color:'+(red?"var(--red)":"var(--brand)")+'">'+ic(l.type)+'</div>'+
+        '<div style="flex:1;min-width:0">'+
+          '<div style="display:flex;align-items:center;gap:10px"><span style="font-size:13.5px;font-weight:700;color:var(--ink)">'+l.type+'</span><span class="chip '+(red?"chip-red":"chip-green")+'">'+l.count+' 份</span><span class="chip chip-gray">'+esc(l.operator)+'</span></div>'+
+          '<div style="font-size:12px;color:var(--muted);margin-top:5px;line-height:1.6">'+esc(l.detail)+'</div>'+refs+
+        '</div>'+
+        '<div style="text-align:right;flex:0 0 auto"><div style="font-size:11px;color:var(--faint);font-family:ui-monospace,Menlo,Consolas,monospace">'+l.time+'</div><span class="chip chip-green" style="margin-top:6px">已完成</span></div>'+
+      '</div>';
+    }).join(""))+
+  '</div>';
+}
+
+/* ============================================================
+   合同查看弹窗 + 全局搜索
+============================================================ */
+function viewContract(id){
+  const c=state.contracts.find(function(x){return x.id===id;});
+  if(!c)return;
+  const big=!!c.amount&&Number(c.amount)>BIG_AMOUNT;
+  const isNs=c.signType==="非标终版";
+  const status=c.status==="voided"?'<span class="chip chip-red">已作废</span>':(isNs?'<span class="chip chip-purple">非标终版</span>':'<span class="chip chip-green">已归档</span>');
+  openModal(modalHead("合同详情 · "+esc(c.name))+
+    '<div class="modal-body" style="padding:0"><div class="modal-view">'+
+      '<div class="mv-paper">'+buildDocHtml(c)+'</div>'+
+      '<div class="mv-side">'+
+        '<div class="side-card" style="margin-bottom:14px"><h4>合同要素</h4>'+
+          '<div class="meta-row"><span class="mk">合同编号</span><span class="mv mono">'+c.no+'</span></div>'+
+          (c.nsNo?'<div class="meta-row"><span class="mk">非标编号</span><span class="mv mono">'+c.nsNo+'</span></div>':"")+
+          '<div class="meta-row"><span class="mk">合同状态</span><span class="mv">'+status+'</span></div>'+
+          '<div class="meta-row"><span class="mk">生成方式</span><span class="mv">'+esc(c.signType||"标准模板")+'</span></div>'+
+          '<div class="meta-row"><span class="mk">我方主体</span><span class="mv">'+esc(c.partyA)+'</span></div>'+
+          '<div class="meta-row"><span class="mk">相对方</span><span class="mv">'+esc(c.partyB)+'</span></div>'+
+          (c.amount?'<div class="meta-row"><span class="mk">合同金额</span><span class="mv">'+fmtMoney(c.amount)+'</span></div>':"")+
+          '<div class="meta-row"><span class="mk">履约期限</span><span class="mv">'+c.startDate+' 至 '+c.endDate+'</span></div>'+
+          '<div class="meta-row"><span class="mk">归档时间</span><span class="mv" style="font-size:11px">'+esc(c.archivedAt||"")+'</span></div>'+
+          '<div class="meta-row"><span class="mk">归档人</span><span class="mv">'+esc(c.archivedBy||operator())+'</span></div>'+
+        '</div>'+
+        '<div class="side-card" style="margin-bottom:14px;border-color:var(--brand-3)"><h4>电子化签约</h4>'+
+          '<div class="meta-row"><span class="mk">签约平台</span><span class="mv">七七七电子签约</span></div>'+
+          '<div class="meta-row"><span class="mk">我方公章</span><span class="mv"><span class="chip chip-red">已加盖</span></span></div>'+
+          '<div class="meta-row"><span class="mk">对方签署</span><span class="mv"><span class="chip chip-amber">待签署</span></span></div>'+
+          '<div class="link-box">'+signLink(c.no)+'<button class="copy-btn" onclick="copyText(\''+signLink(c.no)+'\')">复制</button></div>'+
+        '</div>'+
+        (c.status==="voided"
+          ?'<div class="side-card" style="background:var(--red-bg);border-color:#F3C9C1;margin-bottom:14px"><h4 style="color:var(--red-deep)">作废信息</h4>'+
+            '<div class="meta-row"><span class="mk">作废时间</span><span class="mv" style="font-size:11px">'+esc(c.voidAt||"")+'</span></div>'+
+            '<div style="font-size:12px;color:#7C3B30;line-height:1.8;margin-top:8px">原因：'+esc(c.voidReason||"")+'</div></div>'
+          :'<div class="side-card" style="background:'+(isNs?"#F1ECFA":"var(--green-bg)")+';border-color:'+(isNs?"#D9C9F2":"#CBE7D8")+';margin-bottom:14px"><h4 style="color:'+(isNs?"#6C4AB6":"var(--green)")+'">'+(isNs?"分级审核流转":"全自动流转")+'</h4>'+
+            '<div style="font-size:12px;color:'+(isNs?"#5B3E9E":"#2F6B51")+';line-height:1.9">'+(isNs?'本单为非标合同终版，经技术 → 财务 → 法务专员 → 法务主管分级审核，全部意见与版本已留痕；':'本单为零审批标准模板合同，要素校验通过后直接归档；')+'归档完成即时抄送董事长办公室。</div></div>')+
+        '<div style="display:flex;gap:8px">'+
+          '<button class="btn btn-primary" style="flex:1" onclick="downloadContract(\''+c.id+'\')">下载合同</button>'+
+          '<button class="btn btn-ghost" style="flex:1" onclick="copyText(\''+signLink(c.no)+'\')">复制签约链接</button>'+
+        '</div>'+
+      '</div>'+
+    '</div></div>');
+}
+function globalSearch(kw){
+  kw=(kw||"").trim();
+  if(!kw){toast("info","请输入合同编号 / 名称 / 相对方关键词");return;}
+  go("archived",{q:kw});
+  toast("ok","已在已归档中搜索："+kw);
+}
+
+/* ============================================================
+   启动
+============================================================ */
+window.draftStep2=function(){draft.step=2;render();};
+window.draftPartyA=function(){return draft.values.partyA;};
+if(!location.hash)location.replace("#/dashboard");
+router();
+</script>
+</body>
+</html>
